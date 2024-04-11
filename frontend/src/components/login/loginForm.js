@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import {Link} from 'react-router-dom'
 import axios from 'axios';
 import logo from '../../assets/softinsa.svg';
+import '../../styles/login.css';
+import {GoogleLogin} from 'react-google-login';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -45,64 +48,85 @@ function Login() {
     handleLogin(email, password);
   };
 
-return (
-  <div className="container mt-5">
-    <div className="wrapper d-flex align-items-center justify-content-center" style={{ height: "30vh", width: "30vw"}}>
-      <div className="card mt-5" style={{ margin: '10 auto' }}>
-    <div className="header-image">
-  {/* Adicione o seu logo aqui */}
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <img src={logo} alt="Logo" style={{ width: "100px", height: "100px" }} />
-    </div>  </div>
-      <div className="card-body">
-        <form onSubmit={handleSubmit}>
-          <div data-mdb-input-init className="form-outline mb-4">
-          <label htmlFor="email">E-Mail</label>
-          <input
-              id="email"
-              type="email"
-              className="form-control"
-              name="email"
-              required
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {errorMessage && <div className="invalid-feedback">{errorMessage}</div>}
-          </div>
-          <div className="textarea-container">
-            <label htmlFor="password">Password</label>
-            <div className="password-input">
-              <input
-                id="password"
-                type="password"
-                className="form-control shadow-none"
-                name="password"
-                autoComplete="off"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="btn-wrapper">
-            <div className="btn-group">
-              <button
-                type="submit"
-                className="btn btn-outline-success"
-                style={{ marginBottom: "10px" }}
-              >
-                <span className="bi bi-check-lg"> Entrar</span>
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-
+  const handleGoogleLogin = () => {
+    const googleLogin = new GoogleLogin({
+      clientId: "946771932227-a38o98q56j3dqaubcqk9pho47u76u89n.apps.googleusercontent.com",
+      onSuccess: responseGoogle,
+      onFailure: responseGoogle,
+    });
   
+    googleLogin.signIn();
+  };
+
+ const responseGoogle = (response) => {
+  console.log(response);
+  const token = response.tokenId; // O token do Google está disponível no campo tokenId da resposta
+
+  // Enviar o token para o seu servidor
+  axios.post('http://localhost:3000/google-login', { token })
+    .then(res => {
+      console.log(res.data);
+      // Aqui você pode lidar com a resposta do seu servidor
+      // Por exemplo, você pode armazenar o token JWT que o seu servidor retorna no localStorage
+    })
+    .catch(err => {
+      console.error('Erro ao enviar o token para o servidor:', err);
+    });
+}
+
+  return (
+  <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{height:'65vh'}}>
+    <header className="header mb-1">
+      <img src={logo} alt="Logo" className="logo" />
+    </header>
+    <form onSubmit={handleSubmit} className="login-form">
+      <div className="form-group">
+        <input
+          type="email"
+          className="form-control"
+          id="email"
+          name="email"
+          required
+          autoFocus
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Nome de Utilizador"
+          style={{backgroundColor: '#DCDCDC'}}
+        />
+      </div>
+      <div className="form-group">
+        <input
+          type="password"
+          className="form-control"
+          id="password"
+          name="password"
+          autoComplete="off"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Palavra-passe"
+          style={{backgroundColor: '#DCDCDC'}}
+        />
+      </div>
+      <div className="d-flex flex-column justify-content-between mb-3">
+      <button type="submit" className="btn btn-outline-success" id='botaoEntrar'>
+        ENTRAR
+      </button>
+      <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
+        CRIAR CONTA
+      </button> 
+      <hr/>
+      <GoogleLogin
+            clientId="946771932227-a38o98q56j3dqaubcqk9pho47u76u89n.apps.googleusercontent.com"
+            buttonText="Login com Google"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}  
+          />
+    </div>
+    <a href="#" className="text-muted mb-2 text-center" style={{ display: 'block', textAlign: 'center', fontSize:'13px'}}>
+  Esqueceu a palavra-passe?
+    </a>
+    </form>
+  </div>
 );
 }
 

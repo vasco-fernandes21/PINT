@@ -34,7 +34,7 @@ async function login(req, res) {
 
     // Generate JWT token
     const token = jwt.sign({ id: user.recordset[0].ID_UTILIZADOR }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '1h', //adicionar rota do refresh do token
     });
 
     res.send({ message: 'Login realizado com sucesso', token });
