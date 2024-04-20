@@ -1,28 +1,20 @@
-const sql = require('mssql');
-const dotenv = require('dotenv');
+const Pool = require('pg').Pool;
 
-// Load environment variables
-dotenv.config({ path: '../../.env' });
-
-const config = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER, 
-  database: process.env.DB_NAME,
-  options: {
-    encrypt: true,
-    trustServerCertificate: true,
-  }, 
-};
-
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  password: 'postgres',
+  port: 5432,
+  database: "pint"
+});
 
 async function connect() {
   try {
-    await sql.connect(config);
-    console.log('Conectado ao MSSQL');
+    await pool.connect();
+    console.log('Conectado ao PostgreSQL');
   } catch (err) {
-    console.error('Erro ao conectar ao MSSQL:', err);
+    console.error('Erro ao conectar ao PostgreSQL:', err);
   }
 }
 
-module.exports = { sql, connect };
+module.exports = { pool, connect };

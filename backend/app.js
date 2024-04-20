@@ -3,6 +3,7 @@ const port = 3000;
 
 const app = express();
 const cors = require('cors');
+const pool = require('./src/utils/database');
 
 app.use(cors({
   origin: ['http://localhost:3001'], // Especificar a origem do frontend
@@ -12,8 +13,6 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 
 app.use((req, res, next) => {
   console.log(req.body);
@@ -32,5 +31,5 @@ app.use('/users', usersRoutes)
 app.use('/registar', registarRoutes);
 
 app.listen(port, () => {
-  console.log(`Servidor escutando na porta ${port}`);
+  console.log(`Servidor iniciado na porta ${port}`);
 });
