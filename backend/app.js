@@ -2,7 +2,7 @@ const express = require('express');
 const port = 3000;
 
 const app = express();
-const cors = require('cors');
+const cors = require('cors'); 
 const pool = require('./src/utils/database');
 
 app.use(cors({
@@ -21,13 +21,10 @@ app.use((req, res, next) => {
 
 // Importação do módulo de roteamento para o login
 const loginRoutes = require('./src/routes/loginRoute');
-const usersRoutes = require('./src/routes/users');
-const registarRoutes = require('./src/routes/registar');
-console.log(usersRoutes);
+const registarRoutes = require('./src/routes/registarRoute');
 
 // Rotas da API
 app.use('/login', loginRoutes);
-app.use('/users', usersRoutes)
 app.use('/registar', registarRoutes);
 
 app.listen(port, () => {

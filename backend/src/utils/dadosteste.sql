@@ -1,0 +1,31 @@
+INSERT INTO TABELA_UTILIZADOR (
+  NOME, 
+  NIF, 
+  LOCALIDADE, 
+  TELEMOVEL, 
+  EMAIL, 
+  PALAVRA_PASSE, 
+  ESTADO, 
+  ID_GOOGLE, 
+  TOKEN_GOOGLE, 
+  ID_FACEBOOK, 
+  TOKEN_FACEBOOK, 
+  CARGO, 
+  TIPO_UTILIZADOR, 
+  AREAS_INTERESSE
+) VALUES (
+  'Teste', 
+  '123456789', 
+  'Viseu', 
+  '912345678', 
+  'teste@email.com', 
+  'teste', 
+  FALSE, 
+  'idGoogleTeste', 
+  'tokenGoogleTeste', 
+  'idFacebookTeste', 
+  'tokenFacebookTeste', 
+  'Cargo Teste', 
+  FALSE, 
+  'Áreas de Interesse Teste'
+);
