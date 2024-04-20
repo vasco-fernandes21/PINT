@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { sql, connect } = require('../utils/database'); // Import the sql module and connect function from database.js
 
-/* GET all users. */
-router.get('/', async function(req, res, next) {
+const pool = require('../utils/database'); 
+
+router.get('/', async (req, res, next) => {
   try {
-    // Connect to the database
-    await connect();
-
-    const users = await sql.query`SELECT * FROM TABELA_UTILIZADOR`;
-
-    res.send(users.recordset);
+    const result = await pool.query('SELECT ID_UTILIZADOR, NOME FROM TABELA_UTILIZADOR');
+    res.send(result.rows);
   } catch (error) {
     console.error('Error getting users:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
