@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../../assets/softinsa.svg';
 import '../../styles/login.css';
+import Swal from 'sweetalert2';
+
 
 function RegistarForm() {
   const [nome, setNome] = useState('');
@@ -12,20 +14,32 @@ function RegistarForm() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleRegistar = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/registar', {
-        nome,
-        email,
-        password,
-        confirmPassword,
-      });
+  try {
+    const response = await axios.post('http://localhost:3000/registar', {
+      nome,
+      email,
+      password,
+      confirmPassword,
+    });
+
+    if (response.data.success) {
       console.log('Conta criada com sucesso:', response.data);
-      // Aqui você pode redirecionar o usuário para a página de login ou fazer qualquer outra ação necessária após o registro
-    } catch (error) {
-      console.error('Erro ao registar:', error);
-      setErrorMessage('Erro ao registar. Por favor, tente novamente.');
+      Swal.fire({
+        title: 'Conta criada!',
+        text: 'A sua conta foi criada com sucesso.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#1D324F'
+      });
+    } else {
+      console.error('Erro ao registar:', response.data.message);
+      setErrorMessage(response.data.message);
     }
-  };
+  } catch (error) {
+    console.error('Erro ao registar:', error);
+    setErrorMessage('Erro ao registar. Por favor, tente novamente.');
+  }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,7 +54,7 @@ function RegistarForm() {
   };
 
   return (
-    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '65vh' }}>
+    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '59vh' }}>
       <header className="header mb-1">
         <img src={logo} alt="Logo" className="logo" />
       </header>
@@ -100,9 +114,9 @@ function RegistarForm() {
             style={{ backgroundColor: '#DCDCDC' }}
           />
         </div>
-        <button type="submit" className="btn btn-outline-success" id='botaoRegistar'>
-          REGISTAR
-        </button>
+        <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
+        CRIAR CONTA
+      </button> 
         {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
       </form>
     </div>
