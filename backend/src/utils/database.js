@@ -1,20 +1,18 @@
-const Pool = require('pg').Pool;
+const { Sequelize } = require('sequelize');
 
-const pool = new Pool({
-  user: 'postgres',
+const sequelize = new Sequelize('pint', 'postgres', 'postgres', {
   host: 'localhost',
-  password: 'postgres',
-  port: 5432,
-  database: "pint"
+  dialect: 'postgres',
+  logging: false,
 });
 
 async function connect() {
   try {
-    await pool.connect();
-    console.log('Conectado ao PostgreSQL');
-  } catch (err) {
-    console.error('Erro ao conectar ao PostgreSQL:', err);
+    await sequelize.authenticate();
+    console.log('Conexão com o PostgreSQL estabelecida com sucesso.');
+  } catch (error) {
+    console.error('Não foi possível conectar ao PostgreSQL:', error);
   }
 }
 
-module.exports = { pool, connect };
+module.exports = { sequelize, connect };

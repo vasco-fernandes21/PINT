@@ -15,7 +15,7 @@ function RegistarForm() {
 
   const handleRegistar = async () => {
   try {
-    const response = await axios.post('http://localhost:3000/registar', {
+    const response = await axios.post('http://localhost:3001/registar', {
       nome,
       email,
       password,

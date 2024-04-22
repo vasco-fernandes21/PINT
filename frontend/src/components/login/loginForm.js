@@ -4,6 +4,7 @@ import axios from 'axios';
 import logo from '../../assets/softinsa.svg';
 import '../../styles/login.css';
 import {GoogleLogin} from 'react-google-login';
+import Swal from 'sweetalert2';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -12,12 +13,20 @@ function Login() {
   
   const handleLogin = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/login', { email, password });
+      const response = await axios.post('http://localhost:3001/login', { email, password });
       const token = response.data.token; // Assuming token is here
       console.log('Received token:', token); // Verify token presence
       localStorage.setItem('token', token);
-      // Redirect to home page
-      window.location.href = '/';
+      Swal.fire({
+      title: 'Sucesso!',
+      text: 'Login realizado com sucesso',
+      icon: 'success',
+      confirmButtonColor: '#1D324F',
+      willClose: () => {
+        // Redirecionar para a página inicial quando o alerta for fechado
+        window.location.href = '/';
+      },
+    });
     } catch (error) {
     console.error('Error during login:', error);
     // Handle specific errors based on status code (if available)
