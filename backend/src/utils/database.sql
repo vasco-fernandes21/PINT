@@ -1,10 +1,12 @@
 -- Criação da tabela para as áreas de atuação
+--(Viseu,Tomar,Fundão,Portalegre,Vila Real)
 CREATE TABLE TABELA_POSTO (
     ID_POSTO INT PRIMARY KEY,
     NOME_POSTO VARCHAR(255) NOT NULL
 );
 
 -- Criação da tabela de áreas de atuação
+--(7 Áreas: Saúde, Desporto, Formação, Gastronomia, Habitação/Alojamento, Transportes ,Lazer)
 CREATE TABLE TABELA_AREA (
     ID_AREA INT PRIMARY KEY IDENTITY(1,1),
     NOME_AREA VARCHAR(255) NOT NULL
@@ -65,7 +67,7 @@ CREATE TABLE TABELA_EVENTO (
 );
 
 -- Criação da tabela de Estabelecimentos
-CREATE TABLE Estabelecimentos (
+CREATE TABLE TABELA_ESTABELECIMENTOS (
     ID_ESTABELECIMENTO INT PRIMARY KEY IDENTITY(1,1),
     NOME VARCHAR(255),
     ID_AREA INT FOREIGN KEY (ID_AREA) REFERENCES TABELA_AREA(ID_AREA),
