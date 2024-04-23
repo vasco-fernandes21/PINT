@@ -84,6 +84,24 @@ INSERT INTO Estabelecimentos (NOME, ID_AREA, ID_SUBAREA, ID_POSTO, LOCALIZACAO, 
   ('Cinema Sétimo Art', 7, 7, 2, 'Avenida da Liberdade, 321 - Fundão', 'Cinema com programação diversificada e preços acessíveis.'),
   ('Museu de História Local', 9, 9, 3, 'Praça da Matriz, 123 - Portalegre', 'Museu com acervo sobre a história da região.'),
   ('Livraria Bertrand', 10, 10, 4, 'Rua dos Livros, 456 - Vila Real', 'Livraria com grande variedade de livros e outros produtos culturais.')
-);
+;
 
+INSERT INTO TABELA_FORUM (ID_FORUM, ID_EVENTO, TITULO_FORUM, DESCRICAO_FORUM) VALUES
+(1, 1, 'Dúvidas sobre a Maratona de Saúde', 'Tire as suas dúvidas sobre a Maratona de Saúde aqui!'),
+(2, 2, 'Novidades da Feira de Saúde', 'Acompanhe as últimas novidades da Feira de Saúde de Tomar!'),
+(3, 3, 'Regulamento do Torneio de Futebol', 'Consulte o regulamento completo do Torneio de Futebol de Fundão!'),
+(4, 4, 'Dicas para a Corrida de Bicicleta', 'Dicas e sugestões para participar na Corrida de Bicicleta de Portalegre!'),
+(5, 5, 'Perguntas sobre o Workshop de Programação', 'Tire as suas dúvidas sobre o Workshop de Programação de Vila Real!');
+
+INSERT INTO TABELA_COMENTARIO (ID_COMENTARIO, ID_FORUM, ID_UTILIZADOR, TEXTO_COMENTARIO, DATA_COMENTARIO, ID_ADMIN) VALUES
+(1, 1, 2, 'Estou muito animada para a Maratona de Saúde! Alguém mais vai participar?', '2024-04-23 14:37:00', 1),
+(2, 1, 4, 'Também vou participar na Maratona! Quem sabe encontramo-nos lá?', '2024-04-23 14:38:00', 1),
+(3, 2, 3, 'A Feira de Saúde de Tomar está muito interessante! Já visitei alguns stands.', '2024-04-23 14:39:00', 2),
+(4, 3, 5, 'Adorei o Torneio de Futebol! A energia das equipas está bem alta!', '2024-04-23 14:40:00', 3),
+(5, 4, 1, 'Inscrevi-me para ir andar de bicicleta, mas não sei. Alguém tem dicas para iniciantes?', '2024-04-23 14:41:00', 1),
+(6, 5, 6, 'Tenho dúvidas sobre a instalação do visual studio. Alguém sabe?', '2024-04-23 14:42:00', 5),
+(7, 5, 2, 'Posso levar o meu tio ao workshop?', '2024-04-23 14:43:00', 2),
+(8, 3, 4, 'Parabéns pelo jogo! Foi bem emocionante!', '2024-04-23 14:44:00', 3),
+(9, 1, 5, 'Estou com dúvidas sobre o percurso da maratona. Alguém sabe melhor para me informar?', '2024-04-23 14:45:00', 5),
+(10, 2, 3, 'Gostei muito da palestra sobre nutrição. Alguém tem a receita daquela salada que foi mencionada?', '2024-04-23 14:46:00', 2);
 
