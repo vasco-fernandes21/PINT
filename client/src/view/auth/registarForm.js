@@ -5,7 +5,6 @@ import logo from '../../assets/softinsa.svg';
 import '../../styles/login.css';
 import Swal from 'sweetalert2';
 
-
 function RegistarForm() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -14,32 +13,35 @@ function RegistarForm() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleRegistar = async () => {
-  try {
-    const response = await axios.post('http://localhost:3001/registar', {
-      nome,
-      email,
-      password,
-      confirmPassword,
-    });
-
-    if (response.data.success) {
-      console.log('Conta criada com sucesso:', response.data);
-      Swal.fire({
-        title: 'Conta criada!',
-        text: 'A sua conta foi criada com sucesso.',
-        icon: 'success',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#1D324F'
+    try {
+      const response = await axios.post('http://localhost:3001/registar', {
+        nome,
+        email,
+        password,
+        confirmPassword,
       });
-    } else {
-      console.error('Erro ao registar:', response.data.message);
-      setErrorMessage(response.data.message);
+
+      if (response.data.success) {
+        console.log('Conta criada com sucesso:', response.data);
+        Swal.fire({
+          title: 'Sucesso!',
+          text: 'Conta criada com sucesso',
+          icon: 'success',
+          confirmButtonColor: '#1D324F',
+          willClose: () => {
+            // Redirecionar para a página inicial quando o alerta for fechado
+            window.location.href = '/';
+          },
+        });
+      } else {
+        console.error('Erro ao registar:', response.data.message);
+        setErrorMessage(response.data.message);
+      }
+    } catch (error) {
+      console.error('Erro ao registar:', error);
+      setErrorMessage('Erro ao registar. Por favor, tente novamente.');
     }
-  } catch (error) {
-    console.error('Erro ao registar:', error);
-    setErrorMessage('Erro ao registar. Por favor, tente novamente.');
-  }
-};
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,7 +56,7 @@ function RegistarForm() {
   };
 
   return (
-    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '59vh' }}>
+    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '62vh' }}>
       <header className="header mb-1">
         <img src={logo} alt="Logo" className="logo" />
       </header>
@@ -117,6 +119,9 @@ function RegistarForm() {
         <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
         CRIAR CONTA
       </button> 
+      <Link to="/login" className="btn btn-outline-success mt-2" id='botaoEntrar'>
+        CANCELAR
+      </Link>
         {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
       </form>
     </div>

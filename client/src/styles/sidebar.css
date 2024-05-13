@@ -1,0 +1,31 @@
+
+  .menu {
+    margin-top: 15px;
+  }
+
+.menu-item {
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem; 
+    transition: background-color 0.3s ease;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    padding: 10px;
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* muda a cor de fundo quando o mouse passa por cima */
+}
+
+.menu-item.active {
+  background-color: rgba(255, 255, 255, 0.2); /* muda a cor de fundo quando o item está selecionado */
+}
+
+.icone {
+    margin-right: 10px;
+    align-self: center;
+    font-size: 1.9rem;
+}

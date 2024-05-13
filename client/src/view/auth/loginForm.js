@@ -10,6 +10,8 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [rememberUser, setRememberUser] = useState(false);
   
   const handleLogin = async (email, password) => {
     try {
@@ -84,7 +86,7 @@ function Login() {
 }
 
   return (
-  <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{height:'65vh'}}>
+  <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{height:'75vh'}}>
     <header className="header mb-1">
       <img src={logo} alt="Logo" className="logo" />
     </header>
@@ -120,9 +122,29 @@ function Login() {
       <button type="submit" className="btn btn-outline-success" id='botaoEntrar'>
         ENTRAR
       </button>
-      <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
+      <Link to="/registar" className="btn btn-outline-success mt-2" id='botaoEntrar'>
         CRIAR CONTA
-      </button> 
+      </Link>
+      <div className="form-group mb-0 mt-2">
+  <input  
+    type="checkbox"
+    id="acceptTerms"
+    name="acceptTerms"
+    checked={acceptTerms}
+    onChange={(e) => setAcceptTerms(e.target.checked)}
+  />
+  <label htmlFor="acceptTerms" style={{ marginLeft: '6px' }}>Aceito os termos e condições</label>
+</div>
+<div className="form-group mb-0">
+  <input
+    type="checkbox"
+    id="rememberUser"
+    name="rememberUser"
+    checked={rememberUser}
+    onChange={(e) => setRememberUser(e.target.checked)}
+  />
+  <label htmlFor="rememberUser" style={{ marginLeft: '6px' }}>Lembrar de mim</label>
+</div>
       <hr/>
       <GoogleLogin
             clientId="946771932227-a38o98q56j3dqaubcqk9pho47u76u89n.apps.googleusercontent.com"
