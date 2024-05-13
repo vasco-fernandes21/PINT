@@ -72,7 +72,7 @@ INSERT INTO TABELA_COLABORADOR (ID_COLAB, ID_ADMIN, ID_UTILIZADOR) VALUES
 (4, 4, 4),
 (5, 5, 5);
 
-INSERT INTO Estabelecimentos (NOME, ID_AREA, ID_SUBAREA, ID_POSTO, LOCALIZACAO, DESCRICAO) VALUES
+INSERT INTO TABELA_ESTABELECIMENTOS (NOME, ID_AREA, ID_SUBAREA, ID_POSTO, LOCALIZACAO, DESCRICAO) VALUES
 (
   'Restaurante A Tasquinha', 4, 4, 1, 'Rua da Liberdade, 123 - Viseu', 'Restaurante tradicional com pratos portugueses deliciosos.'),
   ('Padaria do Sr. Manuel', 4, 4, 5, 'Avenida dos Combatentes, 456 - Tomar', 'Padaria artesanal com pães frescos e bolos caseiros.'),
