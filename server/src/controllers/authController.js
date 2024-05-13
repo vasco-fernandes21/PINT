@@ -42,6 +42,7 @@ exports.login = async (req, res) => {
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
+  
 
 exports.criarConta = async (req, res) => {
   try {
@@ -64,5 +65,33 @@ exports.criarConta = async (req, res) => {
   } catch (error) {
     console.error('Error during account creation:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    console.log('token recebido no backend', token);
+    console.log('corpo da requisição', req.body);
+
+    if (!token) {
+      return res.status(400).json({ error: 'Token não fornecido' });
+    }
+
+    console.log('token', token);
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const userId = payload['sub'];
+
+    const jwtToken = generateJWTToken(userId);
+    res.json({ token: jwtToken });
+  } catch (error) {
+    console.error('Erro ao autenticar com Google:', error);
+    res.status(500).json({ error: 'Erro ao autenticar com Google' });
   }
 };

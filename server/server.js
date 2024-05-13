@@ -20,12 +20,9 @@ app.use((req, res, next) => {
 });
 
 // Importação do módulo de roteamento para o login
-const loginRoutes = require('./src/routes/loginRoute');
-const registarRoutes = require('./src/routes/registarRoute');
-
+const authRoutes = require('./src/routes/authRoutes'); 
 // Rotas da API
-app.use('/login', loginRoutes);
-app.use('/registar', registarRoutes);
+app.use('/', authRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);
