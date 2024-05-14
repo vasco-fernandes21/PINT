@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
       return res.status(401).send({ error: 'Senha incorreta' });
     }
 
-    console.log('Gerando token...');
+    console.log('A gerar token...');
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
@@ -46,9 +46,9 @@ exports.login = async (req, res) => {
 
 exports.criarConta = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { nome, email, password } = req.body;
 
-    if (!email || !password) {
+    if (!nome || !email || !password) {
       return res.status(400).send({ error: 'Preencha todos os campos' });
     }
 
@@ -59,7 +59,7 @@ exports.criarConta = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await Utilizador.create({ email, palavra_passe: hashedPassword });
+    await Utilizador.create({ nome, email, palavra_passe: hashedPassword });
 
     res.send({ message: 'Conta criada com sucesso' });
   } catch (error) {

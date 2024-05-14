@@ -19,10 +19,16 @@ app.use((req, res, next) => {
   next();
 });
 
+{ /* Carregar automaticamente as tabelas com dados pré-feitos, apenas retirar comentário para ativar e adicionar comentário outra vez depois
+const carregarTabelas = require('./src/utils/carregarTabelas');
+carregarTabelas(); */ }
+
+
 // Importação do módulo de roteamento para o login
 const authRoutes = require('./src/routes/authRoutes'); 
 // Rotas da API
 app.use('/', authRoutes);
+app.use('/eventos', require('./src/routes/eventoRoutes'));
 
 app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);

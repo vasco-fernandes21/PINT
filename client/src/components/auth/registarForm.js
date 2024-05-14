@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../../assets/softinsa.svg';
-import '../../styles/login.css';
+import './login.css';
 import Swal from 'sweetalert2';
 
 function RegistarForm() {
@@ -12,48 +12,62 @@ function RegistarForm() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  const navigate = useNavigate();
+
   const handleRegistar = async () => {
-    try {
-      const response = await axios.post('http://localhost:3001/registar', {
-        nome,
-        email,
-        password,
-        confirmPassword,
+  try {
+    const response = await axios.post('http://localhost:3001/registar', {
+      nome,
+      email,
+      password,
+      confirmPassword,
+    });
+
+    if (response.data.success) {
+      console.log('Conta criada com sucesso:', response.data);
+      Swal.fire({
+        title: 'Sucesso!',
+        text: 'Conta criada com sucesso',
+        icon: 'success',
+        confirmButtonColor: '#1D324F',
+        willClose: () => {
+          // Redirecionar para a página inicial quando o alerta for fechado
+          navigate('/login');
+        },
       });
-
-      if (response.data.success) {
-        console.log('Conta criada com sucesso:', response.data);
-        Swal.fire({
-          title: 'Sucesso!',
-          text: 'Conta criada com sucesso',
-          icon: 'success',
-          confirmButtonColor: '#1D324F',
-          willClose: () => {
-            // Redirecionar para a página inicial quando o alerta for fechado
-            window.location.href = '/';
-          },
-        });
-      } else {
-        console.error('Erro ao registar:', response.data.message);
-        setErrorMessage(response.data.message);
-      }
-    } catch (error) {
-      console.error('Erro ao registar:', error);
-      setErrorMessage('Erro ao registar. Por favor, tente novamente.');
+    } else {
+      console.error('Erro ao registar:', response.data.message);
+      setErrorMessage(response.data.message);
     }
-  };
+  } catch (error) {
+    console.error('Erro ao registar:', error);
+    Swal.fire({
+      title: 'Erro!',
+      text: 'Erro ao registar. Por favor, tente novamente.',
+      icon: 'error',
+      confirmButtonColor: '#1D324F',
+    });
+    setErrorMessage('Erro ao registar. Por favor, tente novamente.');
+  }
+};
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setErrorMessage('');
+const handleSubmit = (e) => {
+  e.preventDefault();
+  setErrorMessage('');
 
-    if (password !== confirmPassword) {
-      setErrorMessage('As senhas não coincidem.');
-      return;
-    }
+  if (password !== confirmPassword) {
+    Swal.fire({
+      title: 'Erro!',
+      text: 'As palavras-passe não coincidem.',
+      icon: 'error',
+      confirmButtonColor: '#1D324F',
+    });
+    setErrorMessage('As palavras-passe não coincidem.');
+    return;
+  }
 
-    handleRegistar();
-  };
+  handleRegistar();
+};
 
   return (
     <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '62vh' }}>

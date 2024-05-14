@@ -21,22 +21,32 @@ const Utilizador = sequelize.define('Utilizador', {
     defaultValue: false
   },
   id_google: DataTypes.STRING,
-  token_google: DataTypes.STRING,
   id_facebook: DataTypes.STRING,
-  token_facebook: DataTypes.STRING,
   cargo: DataTypes.STRING,
-  tipo_utilizador: {
+  isAdmin: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  areas_interesse: DataTypes.TEXT
+  verificationToken: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  recoveryToken: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  adminId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'Utilizador', 
+      key: 'id',
+      defaultValue: null
+    }
+  },
 }, 
 {
-  freezeTableName: true
+  freezeTableName: true,
+  timestamps: false
 });
-
-Utilizador.sync({ force: false })
-  .then(() => console.log('Tabela "Utilizador" criada ou já existente'))
-  .catch(error => console.error('Erro ao criar a tabela "Utilizador":', error));
 
 module.exports = Utilizador;

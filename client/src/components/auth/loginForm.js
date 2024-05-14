@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import logo from '../../assets/softinsa.svg';
-import '../../styles/login.css';
-import {GoogleLogin} from 'react-google-login';
+import './login.css';
 import Swal from 'sweetalert2';
+import GoogleAuth from './googleAuth';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -12,6 +12,8 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState(''); // State for error message
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [rememberUser, setRememberUser] = useState(false);
+
+  const navigate = useNavigate();
   
   const handleLogin = async (email, password) => {
     try {
@@ -26,7 +28,7 @@ function Login() {
       confirmButtonColor: '#1D324F',
       willClose: () => {
         // Redirecionar para a página inicial quando o alerta for fechado
-        window.location.href = '/';
+        navigate('/home');
       },
     });
     } catch (error) {
@@ -58,33 +60,6 @@ function Login() {
     setErrorMessage(''); // Clear any previous error message before submitting
     handleLogin(email, password);
   };
-
-  const handleGoogleLogin = () => {
-    const googleLogin = new GoogleLogin({
-      clientId: "946771932227-a38o98q56j3dqaubcqk9pho47u76u89n.apps.googleusercontent.com",
-      onSuccess: responseGoogle,
-      onFailure: responseGoogle,
-    });
-  
-    googleLogin.signIn();
-  };
-
- const responseGoogle = (response) => {
-  console.log(response);
-  const token = response.tokenId; // O token do Google está disponível no campo tokenId da resposta
-
-  // Enviar o token para o seu servidor
-  axios.post('http://localhost:3000/google-login', { token })
-    .then(res => {
-      console.log(res.data);
-      // Aqui você pode lidar com a resposta do seu servidor
-      // Por exemplo, você pode armazenar o token JWT que o seu servidor retorna no localStorage
-    })
-    .catch(err => {
-      console.error('Erro ao enviar o token para o servidor:', err);
-    });
-}
-
   return (
   <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{height:'75vh'}}>
     <header className="header mb-1">
@@ -146,12 +121,7 @@ function Login() {
   <label htmlFor="rememberUser" style={{ marginLeft: '6px' }}>Lembrar de mim</label>
 </div>
       <hr/>
-      <GoogleLogin
-            clientId="946771932227-a38o98q56j3dqaubcqk9pho47u76u89n.apps.googleusercontent.com"
-            buttonText="Login com Google"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}  
-          />
+      <GoogleAuth />
     </div>
     <a href="#" className="text-muted mb-2 text-center" style={{ display: 'block', textAlign: 'center', fontSize:'13px'}}>
   Esqueceu a palavra-passe?

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import '../../styles/sidebar.css';
+import './sidebar.css';
 import logo from '../../assets/softinsabranco.svg';
 import { FaCalendarAlt, FaBell, FaHome } from "react-icons/fa";
 import { BsBuildings } from "react-icons/bs";

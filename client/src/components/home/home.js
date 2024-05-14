@@ -1,15 +1,13 @@
 import React from "react";
-import Sidebar from './sidebar'; // Ajuste o caminho conforme necessário
-import './Home.css'; // Importe o arquivo CSS
+import Sidebar from './sidebar'; 
+import './home.css'; 
 
 function Home() {
   return (
     <div className="home-container">
       <Sidebar />
-      <div className="content">
+      <div className="content ml-2">
         <h2>Próximos eventos</h2>
-   
-        {/* Restante do conteúdo */}
       </div>
     </div>
   );

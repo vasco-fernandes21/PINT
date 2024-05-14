@@ -2,9 +2,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Login from './view/auth/loginForm';
-import Registar from './view/auth/registarForm';
-import Home from './view/home/home';
+import Login from './components/auth/loginForm';
+import Registar from './components/auth/registarForm';
+import Home from './components/home/home';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
