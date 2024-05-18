@@ -26,9 +26,13 @@ carregarTabelas(); */ }
 
 // Importação do módulo de roteamento para o login
 const authRoutes = require('./src/routes/authRoutes'); 
+const eventoRoutes = require('./src/routes/eventoRoutes');
+const areaRoutes = require('./src/routes/areaRoutes');
 // Rotas da API
 app.use('/', authRoutes);
-app.use('/eventos', require('./src/routes/eventoRoutes'));
+app.use('/eventos', eventoRoutes);
+app.use('/areas', areaRoutes);
+
 
 app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);

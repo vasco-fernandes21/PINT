@@ -2,6 +2,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const Utilizador = require('../models/utilizadorModel');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+function generateJWTToken(userId) {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: '1h',
+  });
+}
 
 exports.login = async (req, res) => {
   try {
@@ -71,14 +79,9 @@ exports.criarConta = async (req, res) => {
 exports.googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
-    console.log('token recebido no backend', token);
-    console.log('corpo da requisição', req.body);
-
     if (!token) {
       return res.status(400).json({ error: 'Token não fornecido' });
     }
-
-    console.log('token', token);
 
     const ticket = await client.verifyIdToken({
       idToken: token,

@@ -1,14 +1,22 @@
-const { sequelize } = require('../utils/database');
 const Evento = require('../models/eventoModel');
 const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Utilizador = require('../models/utilizadorModel');
 
-sequelize.sync();
+exports.listarEventos = async (req, res) => {
+    const { areaId, subareaId } = req.query;
 
-exports.list = async (req, res) => {
+    let whereClause = {};
+    if (areaId) {
+        whereClause.idArea = areaId;
+    }
+    if (subareaId) {
+        whereClause.idSubarea = subareaId;
+    }
+
     try {
         const data = await Evento.findAll({
+            where: whereClause,
             include: [
                 { model: Area, as: 'area', attributes: ['nome'] },
                 { model: Subarea, as: 'subarea', attributes: ['nome'] },
@@ -27,6 +35,7 @@ exports.list = async (req, res) => {
         });
     }
 };
+
 
 exports.get = async (req, res) => {
     const { eventoId } = req.params;
