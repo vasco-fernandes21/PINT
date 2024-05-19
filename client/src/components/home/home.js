@@ -6,9 +6,9 @@ import ListEventos from '../eventos/listEventos';
 
 function Home() {
   return (
-    <div className="home-container">
+    <div  className="home-container">
       <Sidebar />
-      <div className="content ml-4" style={{marginLeft:"15px", marginTop:"15px"}}>
+      <div className="content ml-4" style={{marginLeft:"15px", marginTop:"30px"}}>
         <Routes>
           <Route path="eventos" element={<ListEventos />} />
           {/* Add more routes as needed */}
