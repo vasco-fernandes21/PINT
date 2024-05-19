@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import logo from '../../assets/softinsa.svg';
 import './login.css';
 import Swal from 'sweetalert2';
 import GoogleAuth from './googleauth';
+import api from '../api/api';
 
 
 function Login() {  
@@ -17,7 +17,7 @@ function Login() {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3001/login', { email, password });
+      const response = await api.post('/login', { email, password });
       const token = response.data.token; 
       console.log('Received token:', token); 
       localStorage.setItem('token', token);

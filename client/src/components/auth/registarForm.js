@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/api';
 import logo from '../../assets/softinsa.svg';
 import './login.css';
 import Swal from 'sweetalert2';
@@ -16,7 +16,7 @@ function RegistarForm() {
 
   const handleRegistar = async () => {
   try {
-    const response = await axios.post('http://localhost:3001/registar', {
+    const response = await api.post('/registar', {
       nome,
       email,
       password,
