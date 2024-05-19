@@ -4,7 +4,8 @@ import axios from 'axios';
 import logo from '../../assets/softinsa.svg';
 import './login.css';
 import Swal from 'sweetalert2';
-import GoogleAuth from './googleAuth';
+import GoogleAuth from './googleauth';
+
 
 function Login() {  
   const navigate = useNavigate();
