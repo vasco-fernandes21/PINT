@@ -3,6 +3,7 @@ const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
 const Evento = require('../models/eventoModel');
+const Estabelecimento = require('../models/estabelecimentoModel');
 const { sequelize } = require('./database');
 
 const utilizadores = [
@@ -55,7 +56,12 @@ const utilizadores = [
     estado: false,
     isAdmin: false,
     cargo: 'Gestor de Dados',
-  }
+  },
+  {
+    nome: 'Teste',
+    email: 'teste@email.com',
+    palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
+  },
 ];
 
 const areas = [
@@ -100,6 +106,90 @@ const eventos = [
   {idArea: 2, idSubarea: 4, idCriador: 4, idAdmin: 4, titulo: 'Corrida de Bicicleta', descricao: 'Corrida de Bicicleta na cidade de Portalegre', data: '2024-06-01', hora: '13:00:00', local: 'Portalegre', estado: true},
   {idArea: 3, idSubarea: 5, idCriador: 5, idAdmin: 5, titulo: 'Workshop de Programação', descricao: 'Workshop de Programação na cidade de Vila Real', data: '2024-07-01', hora: '14:00:00', local: 'Vila Real', estado: true}
 ];
+
+const estabelecimentos = [
+  {
+    nome: 'Restaurante A Tasquinha',
+    idArea: 4,
+    idSubarea: 4,
+    idPosto: 1,
+    local: 'Rua da Liberdade, 123 - Viseu',
+    descricao: 'Restaurante tradicional com pratos portugueses deliciosos.'
+  },
+  {
+    nome: 'Padaria do Sr. Manuel',
+    idArea: 4,
+    idSubarea: 4,
+    idPosto: 5,
+    local: 'Avenida dos Combatentes, 456 - Tomar',
+    descricao: 'Padaria artesanal com pães frescos e bolos caseiros.'
+  },
+  {
+    nome: 'Clínica Médica Dr. Silva',
+    idArea: 1,
+    idSubarea: 1,
+    idPosto: 3,
+    local: 'Rua Central, 789 - Fundão',
+    descricao: 'Clínica médica com atendimento geral e especialidades.'
+  },
+  {
+    nome: 'Loja de Desporto Sport Life',
+    idArea: 2,
+    idSubarea: 3,
+    idPosto: 2,
+    local: 'Centro Comercial ABC, Loja 10 - Portalegre',
+    descricao: 'Loja de artigos esportivos com as melhores marcas.'
+  },
+  {
+    nome: 'Escola de Informática TecnoStart',
+    idArea: 3,
+    idSubarea: 5,
+    idPosto: 4,
+    local: 'Praça da República, 234 - Vila Real',
+    descricao: 'Cursos de informática para todos os níveis e públicos.'
+  },
+  {
+    nome: 'Hotel Sol Nascente',
+    idArea: 5,
+    idSubarea: 5,
+    idPosto: 1,
+    local: 'Rua da Praia, 567 - Viseu',
+    descricao: 'Hotel com vista para o mar e piscina ao ar livre.'
+  },
+  {
+    nome: 'Táxi Rápido',
+    idArea: 6,
+    idSubarea: 6,
+    idPosto: 5,
+    local: 'Rua das Flores, 890 - Tomar',
+    descricao: 'Serviço de táxi rápido e confiável.'
+  },
+  {
+    nome: 'Cinema Sétimo Art',
+    idArea: 7,
+    idSubarea: 7,
+    idPosto: 2,
+    local: 'Avenida da Liberdade, 321 - Fundão',
+    descricao: 'Cinema com programação diversificada e preços acessíveis.'
+  },
+  {
+    nome: 'Museu de História Local',
+    idArea: 7,
+    idSubarea: 1,
+    idPosto: 3,
+    local: 'Praça da Matriz, 123 - Portalegre',
+    descricao: 'Museu com acervo sobre a história da região.'
+  },
+  {
+    nome: 'Livraria Bertrand',
+    idArea: 7,
+    idSubarea: 10,
+    idPosto: 4,
+    local: 'Rua dos Livros, 456 - Vila Real',
+    descricao: 'Livraria com grande variedade de livros e outros produtos culturais.'
+  }
+];
+
 const carregarTabelas = () => {
   sequelize.sync({ force: true })
     .then(() => {
@@ -125,6 +215,11 @@ const carregarTabelas = () => {
     })
     .then(() => {
       console.log('Eventos inseridos com sucesso');
+      return Estabelecimento.bulkCreate(estabelecimentos);
+    })
+    .then(() => {
+      console.log('Estabelecimentos inseridos com sucesso');
+      console.log('Dados carregados com sucesso');
     })
     .catch((error) => {
       console.error('Erro ao recriar tabelas e inserir dados:', error);

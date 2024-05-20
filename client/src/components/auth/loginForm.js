@@ -26,6 +26,7 @@ function Login() {
         text: 'Login realizado com sucesso',
         icon: 'success',
         confirmButtonColor: '#1D324F',
+        timer : 2000,
         willClose: () => {
           navigate('/');
         },

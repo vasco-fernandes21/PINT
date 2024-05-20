@@ -11,6 +11,7 @@ pids
 *.pid.lock
 
 # local configuration
+*.env 
 *.env.local
 *.env.development.local
 *.env.test.local

@@ -10,10 +10,8 @@ const GoogleAuth = () => {
 
   const handleSuccess = (response) => {
     const token = response.credential;
-    console.log('Google token:', token);
     api.post('/login/google', { token })
       .then(res => {
-        console.log(res.data);
         localStorage.setItem('token', res.data.token);
         setErrorMessage(null);
         Swal.fire({

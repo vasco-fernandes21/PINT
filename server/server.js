@@ -1,21 +1,20 @@
 const express = require('express');
 const port = 3001;
-require ('dotenv').config();
-
+const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors'); 
-const {ligarLocal} = require('./src/utils/localDatabase');
-
+require ('dotenv').config();
 app.use(cors({
   origin: ['http://localhost:3000', 'https://pint-softinsa.vercel.app'], 
   methods: ['GET', 'POST'], // Permitir métodos GET e POST
   allowedHeaders: ['Content-Type', 'Authorization'], // Permitir cabeçalhos específicos
 }));
 
-ligarLocal();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use((req, res, next) => {
   console.log(req.body);
@@ -23,18 +22,26 @@ app.use((req, res, next) => {
 });
 
 { /* Carregar automaticamente as tabelas com dados pré-feitos, apenas retirar comentário para ativar e adicionar comentário outra vez depois 
-const carregarTabelas = require('./src/utils/carregarTabelas');
+const carregarTabelas = require('./src/utils/carregarTabelas'); 
 carregarTabelas(); */ }
 
 
 // Importação do módulo de roteamento para o login
+const upload = require('./src/config/multer');
 const authRoutes = require('./src/routes/authRoutes'); 
 const eventoRoutes = require('./src/routes/eventoRoutes');
 const areaRoutes = require('./src/routes/areaRoutes');
+const estabelecimentoRoutes = require('./src/routes/estabelecimentoRoutes');
 // Rotas da API
 app.use('/', authRoutes);
 app.use('/eventos', eventoRoutes);
 app.use('/areas', areaRoutes);
+app.use('/estabelecimentos', estabelecimentoRoutes);
+
+app.post('/uploads', upload.single('file'), (req, res) => {
+  console.log(req.file);
+  res.send('File uploaded successfully');
+});
 
 
 app.listen(port, () => {
