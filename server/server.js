@@ -5,9 +5,9 @@ const app = express();
 const cors = require('cors'); 
 require ('dotenv').config();
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://pint-softinsa.vercel.app'], 
-  methods: ['GET', 'POST'], // Permitir métodos GET e POST
-  allowedHeaders: ['Content-Type', 'Authorization'], // Permitir cabeçalhos específicos
+  origin: ['http://localhost:3000', 'https://pint-softinsa.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 

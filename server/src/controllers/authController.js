@@ -30,6 +30,7 @@ exports.login = async (req, res) => {
     }
 
     console.log('A verificar a password...');
+    console.log(typeof password, typeof user.palavra_passe);
     const isPasswordValid = await bcrypt.compare(password, user.palavra_passe);
     if (!isPasswordValid) {
       console.log('Senha incorreta');
