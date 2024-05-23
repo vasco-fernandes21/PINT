@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/auth/loginForm';
 import Registar from './components/auth/registarForm';
-import Home from './components/home/home';
-import FileUpload from './components/teste';
+import Sidebar from './components/sidebar';
+import '../src/App.css';
 
 function App() {
   return (
@@ -12,8 +12,12 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/registar" element={<Registar />} />
-        <Route path="/*" element={<Home />} />
-        <Route path="/teste" element={<FileUpload />} />
+      <div  className="home-container">
+      <Sidebar />
+        <div className="content ml-4" style={{marginLeft:"15px", marginTop:"30px"}}>
+          <Route path="eventos" element={<ListEventos />} />
+         </div>
+      </div>
       </Routes>
     </Router>
   );

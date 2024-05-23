@@ -9,7 +9,7 @@ exports.listarEventos = async (req, res) => {
     let whereClause = {};
     if (areaId) {
         whereClause.idArea = areaId;
-    }
+    }   
     if (subareaId) {
         whereClause.idSubarea = subareaId;
     }
