@@ -130,6 +130,7 @@ exports.enviarEmail = async (req, res) => {
     text: options.message
   };
   await transporter.sendMail(mailOptions);
+}
 
     
 
