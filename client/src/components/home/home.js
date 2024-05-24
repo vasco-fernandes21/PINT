@@ -1,6 +1,5 @@
 import React from "react";
 import { Route, Routes, useLocation } from 'react-router-dom';
-import Sidebar from './sidebar'; 
 import './home.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Eventos from "../../views/eventos/evento";
