@@ -11,12 +11,7 @@ pids
 *.pid.lock
 
 # local configuration
-*.env 
-*.env.local
-*.env.production
-*.env.development.local
-*.env.test.local
-*.env.production.local
+.env*
 
 # misc
 .DS_Store
