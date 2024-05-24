@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import api from './api/api';
 function FileUpload() {
   const [file, setFile] = useState(null);
-
   const submitForm = async (e) => {
     e.preventDefault();
 

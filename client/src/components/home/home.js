@@ -1,20 +1,17 @@
 import React from "react";
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Sidebar from './sidebar'; 
 import './home.css'; 
-import ListEventos from '../eventos/listEventos';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Eventos from "../../views/eventos/evento";
 
 function Home() {
   return (
-    <div  className="home-container">
-      <Sidebar />
-      <div className="content ml-4" style={{marginLeft:"15px", marginTop:"30px"}}>
+      <div className="content ml-5" style={{marginTop:"30px"}}>
         <Routes>
-          <Route path="eventos" element={<ListEventos />} />
-          {/* Add more routes as needed */}
+          <Route path="eventos" element={<Eventos />} />
         </Routes>
       </div>
-    </div>
   );
 }
 
