@@ -1,8 +1,8 @@
 import React from "react";
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes} from 'react-router-dom';
 import './home.css'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Eventos from "../../views/eventos/evento";
+import Eventos from "../../views/eventos/eventos";
 
 function Home() {
   return (

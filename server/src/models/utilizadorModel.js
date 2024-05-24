@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../utils/database');
+const Posto = require('./postoModel');
 
 const Utilizador = sequelize.define('Utilizador', {
   id: {
@@ -43,10 +44,20 @@ const Utilizador = sequelize.define('Utilizador', {
       defaultValue: null
     }
   },
+  idPosto : {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'Posto',
+      key: 'id',
+      defaultValue: null
+    }
+  }
 }, 
 {
   freezeTableName: true,
   timestamps: false
 });
+
+Utilizador.belongsTo(Posto, {foreignKey: 'idPosto'});
 
 module.exports = Utilizador;

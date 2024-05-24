@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Grid, Card, CardContent, Typography, Select, MenuItem, makeStyles } from "@material-ui/core";
+import * as React from "react";
+import { useEffect } from "react";
+import { Grid, Card, CardContent, Typography, Select, MenuItem } from "@mui/material";
+import { styled } from "@mui/system";
 import api from "../api/api";
 
 function ListEventos() {
-  const [eventos, setEventos] = useState([]);
-  const [areas, setAreas] = useState([]);
-  const [subareas, setSubareas] = useState([]);
-  const [areaId, setAreaId] = useState("");
-  const [subareaId, setSubareaId] = useState("");
+  const [eventos, setEventos] = React.useState([]);
+  const [areas, setAreas] = React.useState([]);
+  const [subareas, setSubareas] = React.useState([]);
+  const [areaId, setAreaId] = React.useState("");
+  const [subareaId, setSubareaId] = React.useState("");
 
   useEffect(() => {
     const getAreas = async () => {
@@ -23,7 +25,7 @@ function ListEventos() {
       if (areaId) {
         const response = await api.get(`/areas/${areaId}`);
         setSubareas(response.data.data);
-        setSubareaId(""); // Reset subareaId when areaId changes
+        setSubareaId(""); 
       } else {
         setSubareas([]);
       }
@@ -60,56 +62,62 @@ function ListEventos() {
     setSubareaId(event.target.value);
   };
 
-  const useStyles = makeStyles((theme) => ({
-    container: {
-      padding: theme.spacing(2),
-    },
-    select: {
-      marginBottom: theme.spacing(2),
-      minWidth: 200,
-    },
-    card: {
-      height: "100%",
-    },
-    cardContent: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-    title: {
-      marginBottom: theme.spacing(1),
-      fontSize: 20,
-      fontWeight: 600,
-    },
-  }));
+  const StyledSelect = styled(Select)({
+    marginBottom: 2,
+    minWidth: 200,
+  });
 
+  const StyledCard = styled(Card)({
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  });
+
+  const StyledCardContent = styled(CardContent)({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  });
+
+  const StyledTypography = styled(Typography)({
+    marginBottom: 1,
+    fontSize: 20,
+    fontWeight: 600,
+  });
 
   return (
     <div>
       <h1>Eventos</h1>
-      <Select value={areaId} onChange={handleAreaChange} displayEmpty>
+      <StyledSelect value={areaId} onChange={handleAreaChange} displayEmpty>
         <MenuItem value="">Todas</MenuItem>
         {areas.map((area) => (
           <MenuItem value={area.id} key={area.id}>{area.nome}</MenuItem>
         ))}
-      </Select>
-      <Select value={subareaId} onChange={handleSubareaChange} displayEmpty disabled={!areaId}>
+      </StyledSelect>
+      <StyledSelect value={subareaId} onChange={handleSubareaChange} displayEmpty disabled={!areaId}>
         <MenuItem value="">Selecione uma subárea</MenuItem>
         {subareas.map((subarea) => (
           <MenuItem value={subarea.id} key={subarea.id}>{subarea.nome}</MenuItem>
         ))}
-      </Select>
+      </StyledSelect>
       <Grid container spacing={2}>
         {eventos.map((evento) => (
-          <Grid item xs={12} sm={6} md={6} key={evento.id}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5" component="h2">
+          <Grid item xs={12} sm={6} key={evento.id}>
+            <StyledCard>
+              <StyledCardContent>
+                <StyledTypography variant="h5" component="h2">
                   {evento.titulo}
+                </StyledTypography>
+                <Typography variant="body2" color="text.secondary">
+                  Data: {evento.data}
                 </Typography>
-                {/* Add more details about the event */}
-              </CardContent>
-            </Card>
+                <Typography variant="body2" color="text.secondary">
+                  Local: {evento.local}
+                </Typography>
+                {/* Adicione mais detalhes conforme necessário */}
+              </StyledCardContent>
+            </StyledCard>
           </Grid>
         ))}
       </Grid>

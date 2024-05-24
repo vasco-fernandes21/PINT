@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { FaCalendarAlt, FaBell, FaHome, FaBars } from "react-icons/fa";
 import { BsBuildings } from "react-icons/bs";
 import { MdEvent } from "react-icons/md";
-import { Drawer, IconButton, AppBar, Toolbar } from '@material-ui/core';
+import { Drawer, IconButton, AppBar, Toolbar } from '@mui/material';
 import logo from '../../assets/softinsabranco.svg';
 import './sidebar.css';
 

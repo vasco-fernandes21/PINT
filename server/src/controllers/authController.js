@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
-const Utilizador = require('../models/utilizadorModel');
 const { OAuth2Client } = require('google-auth-library');
+const nodemailer = require('nodemailer');
+const Utilizador = require('../models/utilizadorModel');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
+require('dotenv').config();
 function generateJWTToken(userId) {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: '1h',
@@ -52,7 +53,6 @@ exports.login = async (req, res) => {
   }
 };
   
-
 exports.criarConta = async (req, res) => {
   try {
     const { nome, email, password } = req.body;
@@ -68,14 +68,75 @@ exports.criarConta = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await Utilizador.create({ nome, email, palavra_passe: hashedPassword });
+    // Gere um token de verificação
+    const verificationToken = crypto.randomBytes(32).toString('hex');
 
-    res.send({ message: 'Conta criada com sucesso' });
+    await Utilizador.create({
+      nome,
+      email,
+      palavra_passe: hashedPassword,
+      verificationToken,
+      estado: false
+    });
+
+    // Envie um email com o link de verificação
+    const verificationUrl = `${process.env.REACT_APP_API_URL}/verify-email?token=${verificationToken}`;
+    await sendEmail({
+      email,
+      subject: 'Verifique seu email',
+      message: `Clique no link a seguir para verificar sua conta: ${verificationUrl}`
+    });
+
+    res.send({ message: 'Conta criada com sucesso. Verifique seu email para ativar sua conta.' });
   } catch (error) {
     console.error('Error during account creation:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
+
+exports.verificarEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    const user = await Utilizador.findOne({ where: { verificationToken: token } });
+    if (!user) {
+      return res.status(400).send({ error: 'Token de verificação inválido' });
+    }
+
+    user.estado = true;
+    user.verificationToken = null;
+    await user.save();
+
+    res.send({ message: 'Email verificado com sucesso. Pode seguir para o login' });
+  } catch (error) {
+    console.error('Error during email verification:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+exports.enviarEmail = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  });
+  const mailOptions = {
+    from: 'Hello <hello@example.com>',
+    to: options.email,
+    subject: options.subject,
+    text: options.message
+  };
+  await transporter.sendMail(mailOptions);
+
+    
+
+
+
+
+
 
 exports.googleLogin = async (req, res) => {
   try {

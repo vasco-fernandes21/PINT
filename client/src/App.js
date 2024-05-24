@@ -6,7 +6,7 @@ import Registar from './components/auth/registarForm';
 import Home from './components/home/home';
 import FileUpload from './components/teste';
 import Sidebar from './components/home/sidebar';
-import Eventos from './views/eventos/evento';
+import Eventos from './views/eventos/eventos';
 
 const AuthenticatedLayout = () => (
   <>
