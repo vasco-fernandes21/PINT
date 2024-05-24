@@ -1,5 +1,5 @@
 # dependencies
-/node_modules
+node_modules/
 
 # logs
 *.log
@@ -12,6 +12,7 @@ pids
 
 # local configuration
 .env*
+
 
 # misc
 .DS_Store
