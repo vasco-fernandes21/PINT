@@ -1,66 +1,91 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate} from 'react-router-dom';
 import logo from '../../assets/softinsa.svg';
 import './login.css';
 import Swal from 'sweetalert2';
 import GoogleAuth from './googleauth';
 import api from '../api/api';
 
-
-function Login() {  
+function Login({ setIsAuthenticated: setAuth }) {  
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [rememberUser, setRememberUser] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+
+  useEffect(() => {
+    if (token) {
+      setAuth(true);
+      navigate('/');
+    }
+  }, [token, navigate, setAuth]);
 
   const handleLogin = async (email, password) => {
-    try {
-      const response = await api.post('/login', { email, password });
-      const token = response.data.token; 
-      console.log('Received token:', token); 
-      localStorage.setItem('token', token);
-      Swal.fire({
-        title: 'Sucesso!',
-        text: 'Login realizado com sucesso',
-        icon: 'success',
-        confirmButtonColor: '#1D324F',
-        timer : 2000,
-        willClose: () => {
-          navigate('/');
-        },
-      });
-    } catch (error) {
-      console.error('Error during login:', error);
-      // Handle specific errors based on status code (if available)
-      if (error.response) {
-        const { status, data } = error.response;
-        switch (status) {
-          case 400:
-            setErrorMessage('Preencha todos os campos.');
-            break;
-          case 401:
+  let loginSuccessful = false;
+  try {
+    const response = await api.post('/login', { email, password });
+    const token = response.data.token; 
+    console.log('Received token:', token); 
+    localStorage.setItem('token', token); 
+    setToken(token);
+    loginSuccessful = true;
+    Swal.fire({
+      title: 'Sucesso!',
+      text: 'Login realizado com sucesso',
+      icon: 'success',
+      confirmButtonColor: '#1D324F',
+      timer: 2000,
+    });
+  } catch (error) {
+    console.error('Error during login:', error);
+    if (error.response) {
+      const { status, data } = error.response;
+      switch (status) {
+        case 400:
+          setErrorMessage('Preencha todos os campos.');
+          break;
+        case 401:
+          if (data.error === 'Conta não verificada. Verifique o seu email para ativar a sua conta.') {
+            Swal.fire({
+              title: 'Erro!',
+              text: data.error,
+              icon: 'error',
+              confirmButtonColor: '#1D324F',
+            });
+          } else if (data.error === 'Utilizador não encontrado') {
+            Swal.fire({
+              title: 'Erro!',
+              text: data.error,
+              icon: 'error',
+              confirmButtonColor: '#1D324F',
+            });
+          } else {
             setErrorMessage(data.error || 'Email ou senha incorretos.');
-            break;
-          case 500:
-            setErrorMessage('Erro interno do servidor. Tente novamente mais tarde.');
-            break;
-          default:
-            setErrorMessage('Erro desconhecido.');
-        }
-      } else {
-        setErrorMessage('Erro de rede. Verifique sua conexão.');
+          }
+          break;
+        case 500:
+          setErrorMessage('Erro interno do servidor. Tente novamente mais tarde.');
+          break;
+        default:
+          setErrorMessage('Erro desconhecido.');
       }
+    } else {
+      setErrorMessage('Erro de rede. Verifique sua conexão.');
     }
-  };
+  }
+  if (loginSuccessful) {
+    setAuth(true);
+  }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorMessage(''); 
+    setErrorMessage('');
     handleLogin(email, password);
   };
-
   return (
     <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '75vh' }}>
       <header className="header mb-1">
@@ -124,14 +149,14 @@ function Login() {
           <hr />
           <div className="d-flex flex-column align-items-center justify-content-center">
             <GoogleAuth />
-        <button
-          onClick={() => navigate('/esqueceu-senha')}
-          className="btn btn-link text-muted mb-2 text-center"
-          style={{ display: 'block', textAlign: 'center', fontSize: '13px' }}
-        >
-          Esqueceu a palavra-passe?
-        </button>
-        </div>
+            <button
+              onClick={() => navigate('/esqueceu-senha')}
+              className="btn btn-link text-muted mb-2 text-center"
+              style={{ display: 'block', textAlign: 'center', fontSize: '13px' }}
+            >
+              Esqueceu a palavra-passe?
+            </button>
+          </div>
         </div>
       </form>
       {errorMessage && <div className="alert alert-danger mt-2">{errorMessage}</div>}

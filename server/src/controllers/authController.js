@@ -21,64 +21,62 @@
   };
 
   exports.login = async (req, res) => {
-    try {
-      const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-      console.log('A verificar se o email e a senha foram fornecidos...');
-      if (!email || !password) {
-        console.log('Email ou senha não fornecidos');
-        return res.status(400).send({ error: 'Preencha todos os campos' });
-      }
-
-      console.log('A procurar o utilizador...');
-      const user = await Utilizador.findOne({ where: { email } });
-
-      if (!user) {
-        console.log('utilizador não encontrado');
-        return res.status(401).send({ error: 'Utilizador não encontrado' });
-      }
-
-      console.log('A verificar a password...');
-      console.log(typeof password, typeof user.palavra_passe);
-      const isPasswordValid = await bcrypt.compare(password, user.palavra_passe);
-      if (!isPasswordValid) {
-        console.log('Senha incorreta');
-        return res.status(401).send({ error: 'Senha incorreta' });
-      }
-
-      console.log('A gerar token...');
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: '1h',
-      });
-
-      console.log('Login realizado com sucesso');
-      console.log(`ID do utilizador: ${user.id}`);
-      console.log(`Email do utilizador: ${user.email}`);
-      res.send({ message: 'Login realizado com sucesso', token });
-    } catch (error) {
-      console.error('Erro durante o login:', error);
-      res.status(500).send({ error: 'Erro interno do servidor' });
+    if (!email || !password) {
+      return res.status(400).send({ error: 'Preencha todos os campos' });
     }
-  };
+
+    const user = await Utilizador.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(401).send({ error: 'Utilizador não encontrado' });
+    }
+
+    // Verificar se a conta do usuário foi verificada
+    if (!user.estado) {
+      return res.status(401).send({ error: 'Conta não verificada. Verifique o seu email para ativar a sua conta.' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.palavra_passe);
+    if (!isPasswordValid) {
+      return res.status(401).send({ error: 'Senha incorreta' });
+    }
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    res.send({ message: 'Login realizado com sucesso', token });
+  } catch (error) {
+    console.error('Erro durante o login:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+  
     
   exports.criarConta = async (req, res) => {
     try {
-      const { nome, email, password } = req.body;
-
-      if (!nome || !email || !password) {
+      const { nome, email, password, confirmPassword } = req.body;
+  
+      if (!nome || !email || !password || !confirmPassword) {
         return res.status(400).send({ error: 'Preencha todos os campos' });
       }
-
+  
+      if (password !== confirmPassword) {
+        return res.status(400).send({ error: 'As palavras-passe não coincidem.' });
+      }
+  
       const user = await Utilizador.findOne({ where: { email } });
       if (user) {
         return res.status(400).send({ error: 'Email já está em uso' });
       }
-
+  
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Gere um token de verificação
+  
       const verificationToken = crypto.randomBytes(32).toString('hex');
-
+  
       await Utilizador.create({
         nome,
         email,
@@ -86,20 +84,22 @@
         verificationToken,
         estado: false
       });
-
-      const verificationUrl = `${process.env.REACT_APP_API_URL}/verify-email?token=${verificationToken}`;
+  
+      const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
       await this.enviarEmail({
         email,
         subject: 'Verifique seu email',
-        message: `Clique no link a seguir para verificar sua conta: ${verificationUrl}`
+        message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}`
       });
-
-      res.send({ message: 'Conta criada com sucesso. Verifique seu email para ativar sua conta.' });
+  
+      res.status(201).send({ message: 'Conta criada com sucesso. Verifique o seu email para ativar sua conta.' });
     } catch (error) {
       console.error('Error during account creation:', error);
       res.status(500).send({ error: 'Erro interno do servidor' });
     }
   };
+  
+
 
   exports.verificarEmail = async (req, res) => {
     try {

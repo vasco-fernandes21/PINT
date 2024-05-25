@@ -10,64 +10,61 @@ function RegistarForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
   const handleRegistar = async () => {
-  try {
-    const response = await api.post('/registar', {
-      nome,
-      email,
-      password,
-      confirmPassword,
-    });
+    try {
+      const response = await api.post('/registar', {
+        nome,
+        email,
+        password,
+        confirmPassword,
+      });
 
-    if (response.data.success) {
-      console.log('Conta criada com sucesso:', response.data);
       Swal.fire({
         title: 'Sucesso!',
-        text: 'Conta criada com sucesso',
+        text: response.data.message,
         icon: 'success',
         confirmButtonColor: '#1D324F',
         willClose: () => {
-          // Redirecionar para a página inicial quando o alerta for fechado
           navigate('/login');
         },
       });
-    } else {
-      console.error('Erro ao registar:', response.data.message);
-      setErrorMessage(response.data.message);
+    } catch (error) {
+      if (error.response) {
+        Swal.fire({
+          title: 'Erro!',
+          text: error.response.data.error,
+          icon: 'error',
+          confirmButtonColor: '#1D324F',
+        });
+      } else {
+        Swal.fire({
+          title: 'Erro!',
+          text: 'Erro ao registar. Por favor, tente novamente.',
+          icon: 'error',
+          confirmButtonColor: '#1D324F',
+        });
+      }
     }
-  } catch (error) {
-    console.error('Erro ao registar:', error);
-    Swal.fire({
-      title: 'Erro!',
-      text: 'Erro ao registar. Por favor, tente novamente.',
-      icon: 'error',
-      confirmButtonColor: '#1D324F',
-    });
-    setErrorMessage('Erro ao registar. Por favor, tente novamente.');
-  }
-};
+  };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  setErrorMessage('');
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  if (password !== confirmPassword) {
-    Swal.fire({
-      title: 'Erro!',
-      text: 'As palavras-passe não coincidem.',
-      icon: 'error',
-      confirmButtonColor: '#1D324F',
-    });
-    setErrorMessage('As palavras-passe não coincidem.');
-    return;
-  }
+    if (password !== confirmPassword) {
+      Swal.fire({
+        title: 'Erro!',
+        text: 'As palavras-passe não coincidem.',
+        icon: 'error',
+        confirmButtonColor: '#1D324F',
+      });
+      return;
+    }
 
-  handleRegistar();
-};
+    handleRegistar();
+  };
 
   return (
     <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '62vh' }}>
@@ -131,12 +128,11 @@ const handleSubmit = (e) => {
           />
         </div>
         <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
-        CRIAR CONTA
-      </button> 
-      <Link to="/login" className="btn btn-outline-success mt-2" id='botaoEntrar'>
-        CANCELAR
-      </Link>
-        {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
+          CRIAR CONTA
+        </button> 
+        <Link to="/login" className="btn btn-outline-success mt-2" id='botaoEntrar'>
+          CANCELAR
+        </Link>
       </form>
     </div>
   );

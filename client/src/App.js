@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Login from './components/auth/loginForm';
 import Registar from './components/auth/registarForm';
-import Home from './components/home/home';
 import FileUpload from './components/teste';
 import Sidebar from './components/home/sidebar';
 import Eventos from './views/eventos/eventos';
@@ -29,7 +28,7 @@ function App() {
   useEffect(() => {
     const handleStorageChange = () => {
       setIsAuthenticated(!!localStorage.getItem('token'));
-    };
+    };  
 
     window.addEventListener('storage', handleStorageChange);
 
@@ -42,14 +41,13 @@ function App() {
     <Router>
       <Routes>
         <Route element={<UnauthenticatedLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/registar" element={<Registar />} />
+          <Route path="login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="registar" element={<Registar />} />
         </Route>
 
-        <Route element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/teste" element={<FileUpload />} />
-          <Route path="/eventos" element={<Eventos />} />
+        <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
+          <Route path="teste" element={<FileUpload />} />
+          <Route path="eventos" element={<Eventos />} />
         </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
