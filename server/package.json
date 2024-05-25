@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node -r dotenv/config server.js dotenv_config_path=.env.dev",
-    "build": "node -r dotenv/config server.js dotenv_config_path=.env",
+    "build": "node server.js",
     "dev": "nodemon -r dotenv/config server.js dotenv_config_path=.env.dev"
   },
   "dependencies": {
