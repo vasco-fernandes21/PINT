@@ -115,7 +115,6 @@ function ListEventos() {
                 <Typography variant="body2" color="text.secondary">
                   Local: {evento.local}
                 </Typography>
-                {/* Adicione mais detalhes conforme necessário */}
               </StyledCardContent>
             </StyledCard>
           </Grid>

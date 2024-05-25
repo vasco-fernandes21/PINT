@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "dotenv -e .env.dev node server.js",
-    "build": "dotenv -e .env node server.js"
+    "start": "node -r dotenv/config server.js dotenv_config_path=.env.dev",
+    "build": "node -r dotenv/config server.js dotenv_config_path=.env",
+    "dev": "nodemon -r dotenv/config server.js dotenv_config_path=.env.dev"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

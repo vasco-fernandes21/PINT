@@ -22,9 +22,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "start:local": "cross-env REACT_APP_API_URL=http://localhost:3001 react-scripts start",
+    "start:host": "cross-env REACT_APP_API_URL=https://pint-f1tf.onrender.com react-scripts start",
     "start": "react-scripts start",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -53,5 +53,8 @@
   "resolutions": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
