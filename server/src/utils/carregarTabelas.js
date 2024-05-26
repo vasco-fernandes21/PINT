@@ -61,6 +61,7 @@ const utilizadores = [
     nome: 'Teste',
     email: 'teste@email.com',
     palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
+    estado: true,
   },
 ];
 

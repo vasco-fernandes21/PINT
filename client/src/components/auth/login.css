@@ -162,3 +162,12 @@
   background-color: #001d35;
   opacity: 8%;
 }
+.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 0.875em;
+  margin-top: 0.25rem;
+}

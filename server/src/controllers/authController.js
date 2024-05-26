@@ -41,7 +41,7 @@
 
     const isPasswordValid = await bcrypt.compare(password, user.palavra_passe);
     if (!isPasswordValid) {
-      return res.status(401).send({ error: 'Senha incorreta' });
+      return res.status(401).send({ error: 'Palavra Passe incorreta' });
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
