@@ -221,13 +221,12 @@ function Login({ setIsAuthenticated: setAuth }) {
           <hr />
           <div className="d-flex flex-column align-items-center justify-content-center">
             <GoogleAuth />
-            <button
-              onClick={() => navigate('/esqueceu-senha')}
+            <Link
+              to="/recuperar-passe"
               className="btn btn-link text-muted mb-2 text-center"
-              style={{ display: 'block', textAlign: 'center', fontSize: '13px' }}
-            >
+              style={{ display: 'block', textAlign: 'center', fontSize: '13px' }}>
               Esqueceu a palavra-passe?
-            </button>
+          </Link>
           </div>
         </div>
       </form>

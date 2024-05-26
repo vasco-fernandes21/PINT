@@ -6,7 +6,8 @@ router.post('/login', authController.login);
 router.post('/registar', authController.criarConta);
 router.post('/login/google', authController.googleLogin);
 router.get('/verificar-conta', authController.verificarEmail);
-
+router.post('/recuperar-passe', authController.recuperarPasse);
+router.post('/reset-passe', authController.resetarPasse);
 
 
 module.exports = router;

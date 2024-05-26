@@ -1,16 +1,14 @@
-
-
 .menu-item {
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1.1rem; 
-    transition: background-color 0.3s ease;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease;
-    padding: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem; 
+  transition: background-color 0.3s ease;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  cursor: pointer;
 }
 
 .menu-item:hover {
@@ -22,8 +20,13 @@
 }
 
 .icone {
-    margin-right: 10px;
-    align-self: center;
-    font-size: 1.9rem;
+  margin-right: 10px;
+  align-self: center;
+  font-size: 1.9rem;
 }
 
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}

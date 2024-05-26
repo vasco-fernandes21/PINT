@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Login from './components/auth/loginForm';
 import Registar from './components/auth/registarForm';
+import RecuperarPasseForm from './components/auth/recuperarPasseForm';
+import NovaPasseForm from './components/auth/novaPasseForm';
 import FileUpload from './components/teste';
 import Sidebar from './components/home/sidebar';
 import Eventos from './views/eventos/eventos';
@@ -43,6 +45,8 @@ function App() {
         <Route element={<UnauthenticatedLayout />}>
           <Route path="login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="registar" element={<Registar />} />
+          <Route path="recuperar-passe" element={<RecuperarPasseForm />} />
+          <Route path="reset-passe" element={<NovaPasseForm />} />
         </Route>
 
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>

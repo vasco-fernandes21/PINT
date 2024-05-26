@@ -88,7 +88,7 @@
       const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
       await this.enviarEmail({  
         email,
-        subject: 'Verifique seu email',
+        subject: 'Verifique o seu email',
         message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}`
       });
   
@@ -98,8 +98,6 @@
       res.status(500).send({ error: 'Erro interno do servidor' });
     }
   };
-  
-
 
   exports.verificarEmail = async (req, res) => {
     try {
@@ -121,6 +119,54 @@
     }
   };
 
+  exports.recuperarPasse = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await Utilizador.findOne({ where: { email } });
+    if (!user) {
+      return res.status(400).send({ error: 'Utilizador não encontrado' });
+    }
+
+    const recoveryToken = crypto.randomBytes(32).toString('hex');
+    user.recoveryToken = recoveryToken; 
+    await user.save();
+
+    const resetUrl = `${process.env.REACT_APP_FRONTEND}/reset-passe?token=${recoveryToken}`;
+    await this.enviarEmail({
+      email,
+      subject: 'Recuperação de Palavra Passe',
+      message: `Clique no link a seguir para redefinir a sua palavra-passe: ${resetUrl}`
+    });
+
+    res.send({ message: 'Email enviado com sucesso. Verifique a sua caixa de entrada' });
+  } catch (error) {
+    console.error('Error during password recovery:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+}
+
+exports.resetarPasse = async (req, res) => {
+  try {
+    const { token, novaPass } = req.body;
+
+    const user = await Utilizador.findOne({ where: { recoveryToken: token } });
+    if (!user) {
+      return res.status(400).send({ error: 'Token inválido' });
+    }
+
+    const hashedPassword = await bcrypt.hash(novaPass, 12);
+    user.palavra_passe = hashedPassword;
+    user.recoveryToken = null;
+    await user.save();
+
+    res.send({ message: 'A sua password foi redefinida com sucesso' });
+  } catch (error) {
+    console.error('Error during password reset:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+}
+
   exports.enviarEmail = async (options) => {
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -132,7 +178,7 @@
       }
     });
     const mailOptions = {
-      from: 'Hello <hello@example.com>',
+      from: 'The Softshares <thesoftshares@gmail.com>',
       to: options.email,
       subject: options.subject,
       text: options.message
