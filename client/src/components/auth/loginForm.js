@@ -28,8 +28,14 @@ function Login({ setIsAuthenticated: setAuth }) {
   try {
     const response = await api.post('/login', { email, password });
     const token = response.data.token; 
-    console.log('Received token:', token); 
-    localStorage.setItem('token', token); 
+    console.log('Received token:', token);
+
+    if (rememberUser) {
+      localStorage.setItem('token', token);
+    } else {
+      sessionStorage.setItem('token', token);
+    }
+    
     setToken(token);
     loginSuccessful = true;
     Swal.fire({

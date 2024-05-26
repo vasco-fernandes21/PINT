@@ -86,7 +86,7 @@
       });
   
       const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
-      await this.enviarEmail({
+      await this.enviarEmail({  
         email,
         subject: 'Verifique seu email',
         message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}`
