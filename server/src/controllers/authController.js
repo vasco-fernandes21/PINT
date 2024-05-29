@@ -73,7 +73,7 @@
       await user.update({ recoveryToken, isPrimeiroLogin: false });
     }
 
-    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
+    res.send({ message: 'Login realizado com sucesso', token: token, recoveryToken: user.recoveryToken });
   } catch (error) {
     console.error('Erro durante o login:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
@@ -162,7 +162,7 @@ exports.login = async (req, res) => {
       await this.enviarEmail({  
         email,
         subject: 'Verifique o seu email',
-        message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}. A sua password temporária é: ${password}`
+        message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}.\n\nA sua password temporária é: ${password}`
       });
   
       res.status(201).send({ message: 'Conta criada com sucesso. Verifique o seu email para ativar sua conta.' });
@@ -222,6 +222,7 @@ exports.login = async (req, res) => {
 exports.resetarPasse = async (req, res) => {
   try {
     const { token, novaPass } = req.body;
+    
 
     const user = await Utilizador.findOne({ where: { recoveryToken: token } });
     if (!user) {
