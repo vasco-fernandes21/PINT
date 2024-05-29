@@ -1,8 +1,9 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { Grid, Card, CardContent, Typography, Select, MenuItem } from "@mui/material";
+import { Grid, Card, CardContent, Typography, Select, MenuItem, CardMedia} from "@mui/material";
 import { styled } from "@mui/system";
 import api from "../api/api";
+import {jwtDecode} from "jwt-decode";
 
 function ListEventos() {
   const [eventos, setEventos] = React.useState([]);
@@ -35,20 +36,27 @@ function ListEventos() {
   }, [areaId]);
 
   useEffect(() => {
-    const getEventos = async () => {
-      const params = {};
-      if (areaId) {
-        params.areaId = areaId;
-      }
-      if (subareaId) {
-        params.subareaId = subareaId;
-      }
-      const response = await api.get(`/eventos`, { params });
-      setEventos(response.data.data);
-    };
+  const getEventos = async () => {
+    let token = localStorage.getItem('token');
+    if (!token) {
+      token = sessionStorage.getItem('token');
+    }
+    const decodedToken = jwtDecode(token);
+    const idPosto = decodedToken.idPosto;
 
-    getEventos();
-  }, [areaId, subareaId]);
+    const params = { idPosto };
+    if (areaId) {
+      params.areaId = areaId;
+    }
+    if (subareaId) {
+      params.subareaId = subareaId;
+    }
+    const response = await api.get(`/eventos`, { params });
+    setEventos(response.data.data);
+  };
+
+  getEventos();
+}, [areaId, subareaId]);
 
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);
@@ -103,22 +111,28 @@ function ListEventos() {
       </StyledSelect>
       <Grid container spacing={2}>
         {eventos.map((evento) => (
-          <Grid item xs={12} sm={6} key={evento.id}>
-            <StyledCard>
-              <StyledCardContent>
-                <StyledTypography variant="h5" component="h2">
-                  {evento.titulo}
-                </StyledTypography>
-                <Typography variant="body2" color="text.secondary">
-                  Data: {evento.data}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Local: {evento.local}
-                </Typography>
-              </StyledCardContent>
-            </StyledCard>
-          </Grid>
-        ))}
+        <Grid item xs={12} sm={6} key={evento.id}>
+          <StyledCard>
+            <CardMedia
+              component="img"
+              height="140"
+              image={process.env.REACT_APP_API_URL + '/uploads/eventos/' + evento.foto}
+              alt={evento.titulo}
+            />
+            <StyledCardContent>
+              <StyledTypography variant="h5" component="h2">
+                {evento.titulo}
+              </StyledTypography>
+              <Typography variant="body2" color="text.secondary">
+                Data: {evento.data}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Local: {evento.local}
+              </Typography>
+            </StyledCardContent>
+          </StyledCard>
+        </Grid>
+))}
       </Grid>
     </div>
   );

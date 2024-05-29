@@ -8,8 +8,6 @@ import Swal from 'sweetalert2';
 function RegistarForm() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
 
   const navigate = useNavigate();
 
@@ -18,8 +16,6 @@ function RegistarForm() {
       const response = await api.post('/registar', {
         nome,
         email,
-        password,
-        confirmPassword,
       });
 
       Swal.fire({
@@ -52,17 +48,6 @@ function RegistarForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      Swal.fire({
-        title: 'Erro!',
-        text: 'As palavras-passe não coincidem.',
-        icon: 'error',
-        confirmButtonColor: '#1D324F',
-      });
-      return;
-    }
-
     handleRegistar();
   };
 
@@ -96,34 +81,6 @@ function RegistarForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            style={{ backgroundColor: '#DCDCDC' }}
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            name="password"
-            autoComplete="new-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Palavra-passe"
-            style={{ backgroundColor: '#DCDCDC' }}
-          />
-        </div>
-        <div className="form-group">
-          <input
-            type="password"
-            className="form-control"
-            id="confirmPassword"
-            name="confirmPassword"
-            autoComplete="new-password"
-            required
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirme a palavra-passe"
             style={{ backgroundColor: '#DCDCDC' }}
           />
         </div>

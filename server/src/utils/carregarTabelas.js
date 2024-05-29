@@ -62,6 +62,8 @@ const utilizadores = [
     email: 'teste@email.com',
     palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     estado: true,
+    isAdmin: true,
+    idPosto: 1,
   },
 ];
 
@@ -101,11 +103,11 @@ const subareas = [
   ];
 
 const eventos = [
-  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, titulo: 'Maratona de Saúde', descricao: 'Maratona de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', local: 'Viseu', estado: true},
-  {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', local: 'Tomar', estado: true},
-  {idArea: 2, idSubarea: 3, idCriador: 3, idAdmin: 3, titulo: 'Torneio de Futebol', descricao: 'Torneio de Futebol na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', local: 'Fundão', estado: true},
-  {idArea: 2, idSubarea: 4, idCriador: 4, idAdmin: 4, titulo: 'Corrida de Bicicleta', descricao: 'Corrida de Bicicleta na cidade de Portalegre', data: '2024-06-01', hora: '13:00:00', local: 'Portalegre', estado: true},
-  {idArea: 3, idSubarea: 5, idCriador: 5, idAdmin: 5, titulo: 'Workshop de Programação', descricao: 'Workshop de Programação na cidade de Vila Real', data: '2024-07-01', hora: '14:00:00', local: 'Vila Real', estado: true}
+  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, titulo: 'Maratona de Saúde', descricao: 'Maratona de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', local: 'Viseu', estado: true},
+  {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 1, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', local: 'Tomar', estado: true},
+  {idArea: 2, idSubarea: 3, idCriador: 3, idAdmin: 3, idPosto: 2, titulo: 'Torneio de Futebol', descricao: 'Torneio de Futebol na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', local: 'Fundão', estado: true},
+  {idArea: 2, idSubarea: 4, idCriador: 4, idAdmin: 4, idPosto: 2, titulo: 'Corrida de Bicicleta', descricao: 'Corrida de Bicicleta na cidade de Portalegre', data: '2024-06-01', hora: '13:00:00', local: 'Portalegre', estado: true},
+  {idArea: 3, idSubarea: 5, idCriador: 5, idAdmin: 5, idPosto: 3, titulo: 'Workshop de Programação', descricao: 'Workshop de Programação na cidade de Vila Real', data: '2024-07-01', hora: '14:00:00', local: 'Vila Real', estado: true}
 ];
 
 const estabelecimentos = [
@@ -196,6 +198,10 @@ const carregarTabelas = () => {
     .then(() => {
       console.log('Tabelas recriadas com sucesso');
 
+      return Posto.bulkCreate(postos);
+    })
+    .then(() => {
+      console.log('Postos inseridos com sucesso');
       return Utilizador.bulkCreate(utilizadores);
     })
     .then(() => {
@@ -208,10 +214,6 @@ const carregarTabelas = () => {
     })
     .then(() => {
       console.log('Subáreas inseridas com sucesso');
-      return Posto.bulkCreate(postos);
-    })
-    .then(() => {
-      console.log('Postos inseridos com sucesso');
       return Evento.bulkCreate(eventos);
     })
     .then(() => {
@@ -225,6 +227,6 @@ const carregarTabelas = () => {
     .catch((error) => {
       console.error('Erro ao recriar tabelas e inserir dados:', error);
     });
-  };
+};
 
 module.exports = carregarTabelas;

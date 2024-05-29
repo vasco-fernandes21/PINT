@@ -3,6 +3,7 @@ const { sequelize } = require('../utils/database');
 const Area = require('./areaModel');
 const Subarea = require('./subareaModel');
 const Utilizador = require('./utilizadorModel');
+const Posto = require('./postoModel');
 
 const Evento = sequelize.define('Evento', {
   id: {
@@ -42,6 +43,15 @@ const Evento = sequelize.define('Evento', {
       key: 'id'
     }
   },
+  idPosto: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Posto',
+      key: 'id'
+    }
+  },
+
   titulo: {
     type: DataTypes.STRING,
     allowNull: false
@@ -66,6 +76,10 @@ const Evento = sequelize.define('Evento', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
+  foto : {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 
 },
 {
@@ -77,5 +91,6 @@ Evento.belongsTo(Area, { as: 'area', foreignKey: 'idArea' });
 Evento.belongsTo(Subarea, { as: 'subarea', foreignKey: 'idSubarea' });
 Evento.belongsTo(Utilizador, { as: 'criador', foreignKey: 'idCriador' });
 Evento.belongsTo(Utilizador, { as: 'admin', foreignKey: 'idAdmin' });
+Evento.belongsTo(Posto, { as: 'posto', foreignKey: 'idPosto' });
 
 module.exports = Evento;

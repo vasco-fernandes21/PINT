@@ -34,13 +34,19 @@ function Login({ setIsAuthenticated: setAuth }) {
     let loginSuccessful = false;
     try {
       const response = await api.post('/login', { email, password });
-      const token = response.data.token;
+      const { token, recoveryToken } = response.data;
       console.log('Received token:', token);
 
       if (rememberUser) {
         localStorage.setItem('token', token);
+        if (recoveryToken) {
+          localStorage.setItem('recoveryToken', recoveryToken);
+        }
       } else {
         sessionStorage.setItem('token', token);
+        if (recoveryToken) {
+          sessionStorage.setItem('recoveryToken', recoveryToken);
+        }
       }
 
       setToken(token);
@@ -52,6 +58,10 @@ function Login({ setIsAuthenticated: setAuth }) {
         confirmButtonColor: '#1D324F',
         timer: 2000,
       });
+     if (recoveryToken) {
+        console.log('recovery:', recoveryToken);
+        navigate(`/reset-passe?token=${recoveryToken}`);
+      }
     } catch (error) {
       console.error('Error during login:', error);
       if (error.response) {
@@ -78,6 +88,13 @@ function Login({ setIsAuthenticated: setAuth }) {
               setIsPasswordInvalid(false);
               setEmailError(data.error);
               setPasswordError('');
+            } else if (data.error === 'Acesso negado') {
+              Swal.fire({
+                title: 'Erro!',
+                text: 'Login apenas permitido a administradores.',
+                icon: 'error',
+                confirmButtonColor: '#1D324F',
+              });
             } else {
               setErrorMessage(data.error || 'Email ou senha incorretos.');
               setIsEmailInvalid(false);
@@ -226,7 +243,7 @@ function Login({ setIsAuthenticated: setAuth }) {
               className="btn btn-link text-muted mb-2 text-center"
               style={{ display: 'block', textAlign: 'center', fontSize: '13px' }}>
               Esqueceu a palavra-passe?
-          </Link>
+            </Link>
           </div>
         </div>
       </form>

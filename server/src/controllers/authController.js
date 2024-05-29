@@ -20,7 +20,67 @@
     message: 'Isto é um teste'
   };
 
-  exports.login = async (req, res) => {
+  exports.listar_utilizadores = async (req, res) => {
+    try {
+      const utilizadores = await Utilizador.findAll();
+      res.send(utilizadores);
+    } catch (error) {
+      console.error('Erro ao listar utilizadores:', error);
+      res.status(500).send({ error: 'Erro interno do servidor' });
+    }
+  };
+
+
+  exports.loginMobile = async (req, res) => {
+  try {
+    const { email, password, isAdmin } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).send({ error: 'Preencha todos os campos' });
+    }
+
+    const user = await Utilizador.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(401).send({ error: 'Utilizador não encontrado' });
+    }
+
+    if (isAdmin && !user.isAdmin) {
+      return res.status(401).send({ error: 'Acesso negado' });
+    }
+
+    // Verificar se a conta do usuário foi verificada
+    if (!user.estado) {
+      return res.status(401).send({ error: 'Conta não verificada. Verifique o seu email para ativar a sua conta.' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.palavra_passe);
+    if (!isPasswordValid) {
+      return res.status(401).send({ error: 'Palavra Passe incorreta' });
+    }
+
+    const token = jwt.sign({ id: user.id, nome: user.nome}, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    // Se isPrimeiroLogin for verdadeiro, gere um recoveryToken
+    if (user.isPrimeiroLogin) {
+      const recoveryToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+
+      // Atualizar o recoveryToken no registro do usuário
+      await user.update({ recoveryToken, isPrimeiroLogin: false });
+    }
+
+    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
+  } catch (error) {
+    console.error('Erro durante o login:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -34,6 +94,11 @@
       return res.status(401).send({ error: 'Utilizador não encontrado' });
     }
 
+    // Verificar se o usuário é um administrador
+    if (!user.isAdmin) {
+      return res.status(401).send({ error: 'Acesso negado' });
+    }
+
     // Verificar se a conta do usuário foi verificada
     if (!user.estado) {
       return res.status(401).send({ error: 'Conta não verificada. Verifique o seu email para ativar a sua conta.' });
@@ -44,11 +109,21 @@
       return res.status(401).send({ error: 'Palavra Passe incorreta' });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, idPosto: user.idPosto}, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
-    res.send({ message: 'Login realizado com sucesso', token });
+    // Se isPrimeiroLogin for verdadeiro, gere um recoveryToken
+    if (user.isPrimeiroLogin) {
+      const recoveryToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+
+      // Atualizar o recoveryToken no registro do usuário
+      await user.update({ recoveryToken, isPrimeiroLogin: false });
+    }
+
+    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
   } catch (error) {
     console.error('Erro durante o login:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
@@ -58,14 +133,10 @@
     
   exports.criarConta = async (req, res) => {
     try {
-      const { nome, email, password, confirmPassword } = req.body;
+      const { nome, email } = req.body;
   
-      if (!nome || !email || !password || !confirmPassword) {
+      if (!nome || !email) {
         return res.status(400).send({ error: 'Preencha todos os campos' });
-      }
-  
-      if (password !== confirmPassword) {
-        return res.status(400).send({ error: 'As palavras-passe não coincidem.' });
       }
   
       const user = await Utilizador.findOne({ where: { email } });
@@ -73,10 +144,12 @@
         return res.status(400).send({ error: 'Email já está em uso' });
       }
   
+      // Generate a random password
+      const password = crypto.randomBytes(10).toString('hex');
       const hashedPassword = await bcrypt.hash(password, 10);
   
       const verificationToken = crypto.randomBytes(32).toString('hex');
-  
+   
       await Utilizador.create({
         nome,
         email,
@@ -89,7 +162,7 @@
       await this.enviarEmail({  
         email,
         subject: 'Verifique o seu email',
-        message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}`
+        message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}. A sua password temporária é: ${password}`
       });
   
       res.status(201).send({ message: 'Conta criada com sucesso. Verifique o seu email para ativar sua conta.' });
@@ -154,6 +227,8 @@ exports.resetarPasse = async (req, res) => {
     if (!user) {
       return res.status(400).send({ error: 'Token inválido' });
     }
+    user.isPrimeiroLogin = false;
+    await user.save();
 
     const hashedPassword = await bcrypt.hash(novaPass, 12);
     user.palavra_passe = hashedPassword;

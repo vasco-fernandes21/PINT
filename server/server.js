@@ -3,6 +3,7 @@ const port = 3001;
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors'); 
+const path = require('path');
 require ('dotenv').config();
 app.use(cors({
   origin: ['http://localhost:3000', 'https://pint-softinsa.vercel.app'],
@@ -32,16 +33,15 @@ const authRoutes = require('./src/routes/authRoutes');
 const eventoRoutes = require('./src/routes/eventoRoutes');
 const areaRoutes = require('./src/routes/areaRoutes');
 const estabelecimentoRoutes = require('./src/routes/estabelecimentoRoutes');
+const postoRoutes = require('./src/routes/postoRoutes');
+
 // Rotas da API
 app.use('/', authRoutes);
 app.use('/eventos', eventoRoutes);
 app.use('/areas', areaRoutes);
 app.use('/estabelecimentos', estabelecimentoRoutes);
-
-app.post('/uploads', upload.single('file'), (req, res) => {
-  console.log(req.file);
-  res.send('File uploaded successfully');
-});
+app.use('/postos', postoRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); 
 
 
 app.listen(port, () => {

@@ -8,6 +8,7 @@ import NovaPasseForm from './components/auth/novaPasseForm';
 import FileUpload from './components/teste';
 import Sidebar from './components/home/sidebar';
 import Eventos from './views/eventos/eventos';
+import CriarEvento from './components/eventos/criarEventos';
 
 const AuthenticatedLayout = () => (
   <>
@@ -52,6 +53,7 @@ function App() {
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
           <Route path="teste" element={<FileUpload />} />
           <Route path="eventos" element={<Eventos />} />
+          <Route path="criar-evento" element={<CriarEvento />} />
         </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />

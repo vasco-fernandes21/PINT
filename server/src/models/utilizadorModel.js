@@ -28,6 +28,10 @@ const Utilizador = sequelize.define('Utilizador', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
+  isPrimeiroLogin: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
   verificationToken: {
     type: DataTypes.STRING,
     allowNull: true

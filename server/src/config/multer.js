@@ -1,17 +1,30 @@
 const multer = require('multer');
 const path = require('path');
 
-// Configuração do Multer
-const storage = multer.diskStorage({
-    destination: './uploads',
+// Configuração do Multer para eventos
+const storageEventos = multer.diskStorage({
+    destination: './uploads/eventos',
     filename: (req, file, cb) => {
-        // Gera um nome de arquivo único para evitar conflitos
         const ext = path.extname(file.originalname);
         const filename = file.fieldname + '-' + Date.now() + '-' + path.basename(file.originalname, ext) + ext;
         cb(null, filename);
     }
 });
 
-const upload = multer({ storage });
+// Configuração do Multer para estabelecimentos
+const storageEstabelecimentos = multer.diskStorage({
+    destination: './uploads/estabelecimentos',
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const filename = file.fieldname + '-' + Date.now() + '-' + path.basename(file.originalname, ext) + ext;
+        cb(null, filename);
+    }
+});
 
-module.exports = upload;
+const uploadEventos = multer({ storage: storageEventos });
+const uploadEstabelecimentos = multer({ storage: storageEstabelecimentos });
+
+module.exports = {
+    uploadEventos,
+    uploadEstabelecimentos
+};

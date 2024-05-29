@@ -2,9 +2,11 @@ const Evento = require('../models/eventoModel');
 const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Utilizador = require('../models/utilizadorModel');
+const Posto = require('../models/postoModel');
+const { uploadEventos } = require('../config/multer');
 
 exports.listarEventos = async (req, res) => {
-    const { areaId, subareaId } = req.query;
+    const { areaId, subareaId, idPosto } = req.query;
 
     let whereClause = {};
     if (areaId) {
@@ -12,6 +14,9 @@ exports.listarEventos = async (req, res) => {
     }   
     if (subareaId) {
         whereClause.idSubarea = subareaId;
+    }
+    if (idPosto) {
+        whereClause.idPosto = idPosto;
     }
 
     try {
@@ -21,7 +26,8 @@ exports.listarEventos = async (req, res) => {
                 { model: Area, as: 'area', attributes: ['nome'] },
                 { model: Subarea, as: 'subarea', attributes: ['nome'] },
                 { model: Utilizador, as: 'criador', attributes: ['nome'] },
-                { model: Utilizador, as: 'admin', attributes: ['nome'] }
+                { model: Utilizador, as: 'admin', attributes: ['nome'] },
+                { model: Posto, as: 'posto', attributes: ['nome'] }
             ]
         });
         res.json({
@@ -35,7 +41,6 @@ exports.listarEventos = async (req, res) => {
         });
     }
 };
-
 
 exports.get = async (req, res) => {
     const { eventoId } = req.params;
@@ -70,43 +75,46 @@ exports.get = async (req, res) => {
     }
 };
 
-exports.create = async (req, res) => {
-    const {
-        titulo,
-        descricao,
-        data,
-        hora,
-        local,
-        idArea,
-        idSubarea,
-        idCriador,
-        idAdmin
-    } = req.body;
 
-    try {
-        const newEvento = await Evento.create({
-            titulo,
-            descricao,
-            data,
-            hora,
-            local,
-            estado: false, // assumindo que o evento é inicialmente inativo
-            idArea,
-            idSubarea,
-            idCriador,
-            idAdmin
-        });
+exports.create = uploadEventos.single('foto'), async (req, res) => {
+  const {
+    titulo,
+    descricao,
+    data,
+    hora,
+    local,
+    idArea,
+    idSubarea,
+    idCriador,
+    idAdmin
+  } = req.body;
 
-        res.status(200).json({
-            success: true,
-            message: 'Evento criado com sucesso!',
-            data: newEvento
-        });
-    } catch (error) {
-        console.log('Error: ', error);
-        res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
-    }
+  try {
+    const newEvento = await Evento.create({
+      titulo,
+      descricao,
+      data,
+      hora,
+      local,
+      foto: req.file.path, 
+      estado: false, 
+      idArea,
+      idSubarea,
+      idCriador,
+      idAdmin
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Evento criado com sucesso!',
+      data: newEvento
+    });
+  } catch (error) {
+    console.log('Error: ', error);
+    res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
+  }
 };
+
 exports.update = async (req, res) => {
     const { id } = req.params;
     const {

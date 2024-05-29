@@ -16,9 +16,6 @@ INSERT INTO TABELA_AREA (NOME_AREA) VALUES
 ('Habitação/Alojamento'),
 ('Transportes'),
 ('Lazer'),
-('Tecnologia'),
-('Arte'),
-('Negócios');
 
 -- Inserindo registros na tabela TABELA_SUBAREA
 INSERT INTO TABELA_SUBAREA (ID_AREA, NOME_SUBAREA) VALUES (1, 'Clinicas medicas e hospitais');

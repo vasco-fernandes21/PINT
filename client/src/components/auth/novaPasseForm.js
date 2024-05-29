@@ -86,7 +86,7 @@ function NovaPasseForm() {
                     />
                 </div>
                 <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
-                    RESETAR PALAVRA-PASSE
+                    ALTERAR PALAVRA-PASSE
                 </button>
             </form>
         </div>
