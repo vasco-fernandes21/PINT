@@ -6,7 +6,7 @@ import Registar from './components/auth/registarForm';
 import RecuperarPasseForm from './components/auth/recuperarPasseForm';
 import NovaPasseForm from './components/auth/novaPasseForm';
 import Sidebar from './components/home/sidebar';
-import Eventos from './views/eventos/Eventos';
+import Eventos from './views/eventos/eventos';
 import CriarEvento from './components/eventos/eventosCriar';
 
 const AuthenticatedLayout = () => (
