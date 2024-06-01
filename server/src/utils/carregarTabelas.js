@@ -94,139 +94,100 @@ const subareas = [
   {idArea: 7, nome: 'Parques'},
 ];
 
-  const postos = [
-    {nome: 'Viseu'},
-    {nome: 'Tomar'},
-    {nome: 'Fundão'},
-    {nome: 'Portalegre'},
-    {nome: 'Vila Real'},
-  ];
+const postos = [
+  {nome: 'Viseu'},
+  {nome: 'Tomar'},
+  {nome: 'Fundão'},
+  {nome: 'Portalegre'},
+  {nome: 'Vila Real'},
+];
 
 const eventos = [
-  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, titulo: 'Maratona de Saúde', descricao: 'Maratona de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', local: 'Viseu', estado: true},
-  {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 1, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', local: 'Tomar', estado: true},
-  {idArea: 2, idSubarea: 3, idCriador: 3, idAdmin: 3, idPosto: 2, titulo: 'Torneio de Futebol', descricao: 'Torneio de Futebol na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', local: 'Fundão', estado: true},
-  {idArea: 2, idSubarea: 4, idCriador: 4, idAdmin: 4, idPosto: 2, titulo: 'Corrida de Bicicleta', descricao: 'Corrida de Bicicleta na cidade de Portalegre', data: '2024-06-01', hora: '13:00:00', local: 'Portalegre', estado: true},
-  {idArea: 3, idSubarea: 5, idCriador: 5, idAdmin: 5, idPosto: 3, titulo: 'Workshop de Programação', descricao: 'Workshop de Programação na cidade de Vila Real', data: '2024-07-01', hora: '14:00:00', local: 'Vila Real', estado: true}
+  // Saúde
+  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', local: 'Viseu', estado: true},
+  {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, titulo: 'Check-up Dentário', descricao: 'Check-up Dentário na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', local: 'Tomar', estado: true},
+  {idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', local: 'Fundão', estado: true},
+
+  // Desporto
+  {idArea: 2, idSubarea: 3, idCriador: 4, idAdmin: 4, idPosto: 4, titulo: 'Competição de Ginástica', descricao: 'Competição de Ginástica na cidade de Portalegre', data: '2024-03-01', hora: '10:00:00', local: 'Portalegre', estado: true},
+  {idArea: 2, idSubarea: 4, idCriador: 5, idAdmin: 5, idPosto: 5, titulo: 'Atividades ao Ar Livre', descricao: 'Atividades ao Ar Livre na cidade de Vila Real', data: '2024-04-01', hora: '11:00:00', local: 'Vila Real', estado: true},
+  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Torneio de Futebol', descricao: 'Torneio de Futebol na cidade de Viseu', data: '2024-05-01', hora: '12:00:00', local: 'Viseu', estado: true},
+
+  // Formação
+  {idArea: 3, idSubarea: 5, idCriador: 2, idAdmin: 3, idPosto: 2, titulo: 'Workshop de Programação', descricao: 'Workshop de Programação na cidade de Tomar', data: '2024-03-01', hora: '10:00:00', local: 'Tomar', estado: true},
+  {idArea: 3, idSubarea: 6, idCriador: 3, idAdmin: 4, idPosto: 3, titulo: 'Feira Educacional', descricao: 'Feira Educacional na cidade de Fundão', data: '2024-04-01', hora: '11:00:00', local: 'Fundão', estado: true},
+  {idArea: 3, idSubarea: 5, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Seminário de Educação', descricao: 'Seminário de Educação na cidade de Portalegre', data: '2024-05-01', hora: '12:00:00', local: 'Portalegre', estado: true},
+
+  // Gastronomia
+  {idArea: 4, idSubarea: 7, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Festival de Gastronomia', descricao: 'Festival de Gastronomia na cidade de Vila Real', data: '2024-03-01', hora: '10:00:00', local: 'Vila Real', estado: true},
+  {idArea: 4, idSubarea: 8, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Feira de Shoppings', descricao: 'Feira de Shoppings na cidade de Viseu', data: '2024-04-01', hora: '11:00:00', local: 'Viseu', estado: true},
+  {idArea: 4, idSubarea: 7, idCriador: 2, idAdmin: 3, idPosto: 2, titulo: 'Degustação de Pratos', descricao: 'Degustação de Pratos na cidade de Tomar', data: '2024-05-01', hora: '12:00:00', local: 'Tomar', estado: true},
+
+  // Alojamento
+  {idArea: 5, idSubarea: 9, idCriador: 3, idAdmin: 4, idPosto: 3, titulo: 'Feira de Quartos', descricao: 'Feira de Quartos na cidade de Fundão', data: '2024-03-01', hora: '10:00:00', local: 'Fundão', estado: true},
+  {idArea: 5, idSubarea: 10, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Mostra de Casas para Alugar', descricao: 'Mostra de Casas para Alugar na cidade de Portalegre', data: '2024-04-01', hora: '11:00:00', local: 'Portalegre', estado: true},
+  {idArea: 5, idSubarea: 9, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Exposição de Alojamento', descricao: 'Exposição de Alojamento na cidade de Vila Real', data: '2024-05-01', hora: '12:00:00', local: 'Vila Real', estado: true},
+
+  // Transportes
+  {idArea: 6, idSubarea: 11, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Feira de Boleias', descricao: 'Feira de Boleias na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', local: 'Viseu', estado: true},
+  {idArea: 6, idSubarea: 12, idCriador: 2, idAdmin: 3, idPosto: 2, titulo: 'Exposição de Transportes Públicos', descricao: 'Exposição de Transportes Públicos na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', local: 'Tomar', estado: true},
+  {idArea: 6, idSubarea: 11, idCriador: 3, idAdmin: 4, idPosto: 3, titulo: 'Carpooling Meetup', descricao: 'Carpooling Meetup na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', local: 'Fundão', estado: true},
+
+  // Lazer
+  {idArea: 7, idSubarea: 13, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Festival de Cinema', descricao: 'Festival de Cinema na cidade de Portalegre', data: '2024-03-01', hora: '10:00:00', local: 'Portalegre', estado: true},
+  {idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Passeio no Parque', descricao: 'Passeio no Parque na cidade de Vila Real', data: '2024-04-01', hora: '11:00:00', local: 'Vila Real', estado: true},
+  {idArea: 7, idSubarea: 13, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Noite de Cinema ao Ar Livre', descricao: 'Noite de Cinema ao Ar Livre na cidade de Viseu', data: '2024-05-01', hora: '12:00:00', local: 'Viseu', estado: true},
 ];
 
 const estabelecimentos = [
-  {
-    nome: 'Restaurante A Tasquinha',
-    idArea: 4,
-    idSubarea: 4,
-    idPosto: 1,
-    local: 'Rua da Liberdade, 123 - Viseu',
-    descricao: 'Restaurante tradicional com pratos portugueses deliciosos.'
-  },
-  {
-    nome: 'Padaria do Sr. Manuel',
-    idArea: 4,
-    idSubarea: 4,
-    idPosto: 5,
-    local: 'Avenida dos Combatentes, 456 - Tomar',
-    descricao: 'Padaria artesanal com pães frescos e bolos caseiros.'
-  },
-  {
-    nome: 'Clínica Médica Dr. Silva',
-    idArea: 1,
-    idSubarea: 1,
-    idPosto: 3,
-    local: 'Rua Central, 789 - Fundão',
-    descricao: 'Clínica médica com atendimento geral e especialidades.'
-  },
-  {
-    nome: 'Loja de Desporto Sport Life',
-    idArea: 2,
-    idSubarea: 3,
-    idPosto: 2,
-    local: 'Centro Comercial ABC, Loja 10 - Portalegre',
-    descricao: 'Loja de artigos esportivos com as melhores marcas.'
-  },
-  {
-    nome: 'Escola de Informática TecnoStart',
-    idArea: 3,
-    idSubarea: 5,
-    idPosto: 4,
-    local: 'Praça da República, 234 - Vila Real',
-    descricao: 'Cursos de informática para todos os níveis e públicos.'
-  },
-  {
-    nome: 'Hotel Sol Nascente',
-    idArea: 5,
-    idSubarea: 5,
-    idPosto: 1,
-    local: 'Rua da Praia, 567 - Viseu',
-    descricao: 'Hotel com vista para o mar e piscina ao ar livre.'
-  },
-  {
-    nome: 'Táxi Rápido',
-    idArea: 6,
-    idSubarea: 6,
-    idPosto: 5,
-    local: 'Rua das Flores, 890 - Tomar',
-    descricao: 'Serviço de táxi rápido e confiável.'
-  },
-  {
-    nome: 'Cinema Sétimo Art',
-    idArea: 7,
-    idSubarea: 7,
-    idPosto: 2,
-    local: 'Avenida da Liberdade, 321 - Fundão',
-    descricao: 'Cinema com programação diversificada e preços acessíveis.'
-  },
-  {
-    nome: 'Museu de História Local',
-    idArea: 7,
-    idSubarea: 1,
-    idPosto: 3,
-    local: 'Praça da Matriz, 123 - Portalegre',
-    descricao: 'Museu com acervo sobre a história da região.'
-  },
-  {
-    nome: 'Livraria Bertrand',
-    idArea: 7,
-    idSubarea: 10,
-    idPosto: 4,
-    local: 'Rua dos Livros, 456 - Vila Real',
-    descricao: 'Livraria com grande variedade de livros e outros produtos culturais.'
-  }
+  // Saúde
+  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, nome: 'Clínica de Viseu', descricao: 'Clínica de Viseu, especializada em várias áreas médicas', local: 'Viseu', estado: true},
+  {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, nome: 'Clínica Dentária Tomar', descricao: 'Clínica Dentária Tomar, com atendimento especializado', local: 'Tomar', estado: true},
+  {idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, nome: 'Hospital do Fundão', descricao: 'Hospital do Fundão, oferecendo serviços de emergência', local: 'Fundão', estado: true},
+
+  // Desporto
+  {idArea: 2, idSubarea: 3, idCriador: 4, idAdmin: 4, idPosto: 4, nome: 'Ginásio Portalegre', descricao: 'Ginásio Portalegre, equipado com as melhores máquinas', local: 'Portalegre', estado: true},
+  {idArea: 2, idSubarea: 4, idCriador: 5, idAdmin: 5, idPosto: 5, nome: 'Centro de Atividades Vila Real', descricao: 'Centro de Atividades ao Ar Livre em Vila Real', local: 'Vila Real', estado: true},
+  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Fitness Club Viseu', descricao: 'Fitness Club Viseu, para um treino completo', local: 'Viseu', estado: true},
+
+  // Formação
+  {idArea: 3, idSubarea: 5, idCriador: 2, idAdmin: 3, idPosto: 2, nome: 'Centro de Formação Tomar', descricao: 'Centro de Formação Profissional em Tomar', local: 'Tomar', estado: true},
+  {idArea: 3, idSubarea: 6, idCriador: 3, idAdmin: 4, idPosto: 3, nome: 'Escola Secundária Fundão', descricao: 'Escola Secundária na cidade do Fundão', local: 'Fundão', estado: true},
+  {idArea: 3, idSubarea: 5, idCriador: 4, idAdmin: 5, idPosto: 4, nome: 'Centro Educacional Portalegre', descricao: 'Centro Educacional na cidade de Portalegre', local: 'Portalegre', estado: true},
+
+  // Gastronomia
+  {idArea: 4, idSubarea: 7, idCriador: 5, idAdmin: 1, idPosto: 5, nome: 'Restaurante Vila Real', descricao: 'Restaurante com pratos típicos em Vila Real', local: 'Vila Real', estado: true},
+  {idArea: 4, idSubarea: 8, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Shopping Viseu', descricao: 'Shopping em Viseu com diversas lojas', local: 'Viseu', estado: true},
+  {idArea: 4, idSubarea: 7, idCriador: 2, idAdmin: 3, idPosto: 2, nome: 'Gastronomia Tomar', descricao: 'Restaurante gourmet em Tomar', local: 'Tomar', estado: true},
+
+  // Alojamento
+  {idArea: 5, idSubarea: 9, idCriador: 3, idAdmin: 4, idPosto: 3, nome: 'Quartos Fundão', descricao: 'Quartos para arrendar na cidade de Fundão', local: 'Fundão', estado: true},
+  {idArea: 5, idSubarea: 10, idCriador: 4, idAdmin: 5, idPosto: 4, nome: 'Casas Portalegre', descricao: 'Casas para alugar na cidade de Portalegre', local: 'Portalegre', estado: true},
+  {idArea: 5, idSubarea: 9, idCriador: 5, idAdmin: 1, idPosto: 5, nome: 'Alojamento Vila Real', descricao: 'Quartos e alojamento na cidade de Vila Real', local: 'Vila Real', estado: true},
+
+  // Transportes
+  {idArea: 6, idSubarea: 11, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Boleias Viseu', descricao: 'Serviço de boleias na cidade de Viseu', local: 'Viseu', estado: true},
+  {idArea: 6, idSubarea: 12, idCriador: 2, idAdmin: 3, idPosto: 2, nome: 'Transportes Tomar', descricao: 'Transportes públicos na cidade de Tomar', local: 'Tomar', estado: true},
+  {idArea: 6, idSubarea: 11, idCriador: 3, idAdmin: 4, idPosto: 3, nome: 'Carpooling Fundão', descricao: 'Serviço de carpooling na cidade de Fundão', local: 'Fundão', estado: true},
+
+  // Lazer
+  {idArea: 7, idSubarea: 13, idCriador: 4, idAdmin: 5, idPosto: 4, nome: 'Cinema Portalegre', descricao: 'Cinema na cidade de Portalegre', local: 'Portalegre', estado: true},
+  {idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 1, idPosto: 5, nome: 'Parque Vila Real', descricao: 'Parque de lazer em Vila Real', local: 'Vila Real', estado: true},
+  {idArea: 7, idSubarea: 13, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Cinema Viseu', descricao: 'Cinema ao ar livre em Viseu', local: 'Viseu', estado: true},
 ];
 
 const carregarTabelas = () => {
-  sequelize.sync({ force: true })
-    .then(() => {
-      console.log('Tabelas recriadas com sucesso');
-
-      return Posto.bulkCreate(postos);
-    })
-    .then(() => {
-      console.log('Postos inseridos com sucesso');
-      return Utilizador.bulkCreate(utilizadores);
-    })
-    .then(() => {
-      console.log('Utilizadores inseridos com sucesso');
-      return Area.bulkCreate(areas);
-    })
-    .then(() => {
-      console.log('Áreas inseridas com sucesso');
-      return Subarea.bulkCreate(subareas);
-    })
-    .then(() => {
-      console.log('Subáreas inseridas com sucesso');
-      return Evento.bulkCreate(eventos);
-    })
-    .then(() => {
-      console.log('Eventos inseridos com sucesso');
-      return Estabelecimento.bulkCreate(estabelecimentos);
-    })
-    .then(() => {
-      console.log('Estabelecimentos inseridos com sucesso');
-      console.log('Dados carregados com sucesso');
-    })
-    .catch((error) => {
-      console.error('Erro ao recriar tabelas e inserir dados:', error);
-    });
-};
+sequelize.sync({ force: true }).then(() => {
+  Posto.bulkCreate(postos);
+  Utilizador.bulkCreate(utilizadores);
+  Area.bulkCreate(areas);
+  Subarea.bulkCreate(subareas);
+  Evento.bulkCreate(eventos);
+  Estabelecimento.bulkCreate(estabelecimentos);
+})
+.catch((error) => {
+  console.error('Erro ao carregar tabelas:', error);
+});
+}
 
 module.exports = carregarTabelas;

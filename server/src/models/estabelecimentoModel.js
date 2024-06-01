@@ -3,6 +3,7 @@ const { sequelize } = require('../utils/database');
 const Area = require('./areaModel');
 const Subarea = require('./subareaModel');
 const Posto = require('./postoModel');
+const Utilizador = require('./utilizadorModel');
 
 const Estabelecimento = sequelize.define('Estabelecimento', {
   id: {
@@ -46,15 +47,40 @@ const Estabelecimento = sequelize.define('Estabelecimento', {
     type: DataTypes.STRING,
     allowNull: false
   },
-
+  foto: { 
+    type: DataTypes.STRING,
+    allowNull: true
   },
-  {
-    freezeTableName: true,
-    timestamps: false
-  });
+  idAdmin: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Utilizador',
+      key: 'id'
+    }
+  },
+  idCriador: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Utilizador',
+      key: 'id'
+    }
+  },
+  estado: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+},
+{
+  freezeTableName: true,
+  timestamps: false
+});
 
 Estabelecimento.belongsTo(Area, {foreignKey: 'idArea'});
 Estabelecimento.belongsTo(Subarea, {foreignKey: 'idSubarea'});
 Estabelecimento.belongsTo(Posto, {foreignKey: 'idPosto'});
+Estabelecimento.belongsTo(Utilizador, { as: 'admin', foreignKey: 'idAdmin' });
+Estabelecimento.belongsTo(Utilizador, { as: 'criador', foreignKey: 'idCriador' });
 
 module.exports = Estabelecimento;

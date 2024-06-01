@@ -4,6 +4,7 @@ import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typo
 import {jwtDecode} from 'jwt-decode';
 import Swal from 'sweetalert2';
 import api from '../api/api';
+import { Link } from 'react-router-dom';
 
 function CriarEvento() {
   const { register, handleSubmit, watch, control } = useForm();
@@ -63,19 +64,29 @@ function CriarEvento() {
       const response = await api.post('/eventos/criar', formData);
 
       // Exibir alerta de sucesso
-     Swal("Sucesso", "Evento criado com sucesso!", "success");
+      Swal.fire({
+        title: "Sucesso",
+        text: "Evento criado com sucesso!",
+        icon: "success",
+        confirmButtonColor: '#1D324F',
+      });
   
       console.log('Evento criado:', response.data);
     } catch (error) {
       // Exibir alerta de erro
-      Swal("Erro", "Erro ao criar evento, tente mais tarde.", "error");
+      Swal.fire({
+        title: "Erro",
+        text: "Erro ao criar evento, tente mais tarde.",
+        icon: "error",
+        confirmButtonColor: '#1D324F',
+      });;
   
       console.error('Erro ao criar evento:', error);
     }
   };
 
   return (
-    <Box display="flex" justifyContent="center" mt={4}>
+    <Box display="flex" justifyContent="center" mt={3}>
       <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: '1000px'}}>
         <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', textAlign: 'center' }}>
           Criar Evento
@@ -187,6 +198,7 @@ function CriarEvento() {
             </Button>
             <Button 
               variant="outlined" 
+              component={Link} to = "/eventos"
               sx={{ 
                 borderRadius: 1, 
                 color: '#1D324F', 

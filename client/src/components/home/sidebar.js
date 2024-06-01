@@ -46,7 +46,7 @@ const Sidebar = () => {
           <NavLink className={location.pathname === "/about" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/about" onClick={handleDrawerClose}>
             <FaCalendarAlt className='icone' /> Calendário
           </NavLink>
-          <NavLink className={location.pathname === "/services" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/services" onClick={handleDrawerClose}>
+          <NavLink className={location.pathname === "/estabelecimentos" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/estabelecimentos" onClick={handleDrawerClose}>
             <BsBuildings className='icone' /> Estabelecimentos
           </NavLink>
           <NavLink className={location.pathname === "/eventos" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/eventos" onClick={handleDrawerClose}>

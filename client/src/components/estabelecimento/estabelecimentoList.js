@@ -7,10 +7,10 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Select from "@mui/material/Select";
 import api from "../api/api";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
-function EventosList() {
-  const [eventos, setEventos] = React.useState([]);
+function EstabelecimentoList() {
+  const [estabelecimentos, setEstabelecimentos] = React.useState([]);
   const [areas, setAreas] = React.useState([]);
   const [subareas, setSubareas] = React.useState([]);
   const [areaId, setAreaId] = React.useState("");
@@ -40,7 +40,7 @@ function EventosList() {
   }, [areaId]);
 
   useEffect(() => {
-    const getEventos = async () => {
+    const getEstabelecimentos = async () => {
       let token = localStorage.getItem('token');
       if (!token) {
         token = sessionStorage.getItem('token');
@@ -55,18 +55,18 @@ function EventosList() {
       if (subareaId) {
         params.subareaId = subareaId;
       }
-      const response = await api.get(`/eventos`, { params });
-      setEventos(response.data.data);
+      const response = await api.get(`/estabelecimentos`, { params });
+      setEstabelecimentos(response.data.data);
     };
 
-    getEventos();
+    getEstabelecimentos();
   }, [areaId, subareaId]);
 
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);
     if (event.target.value === "") {
       setSubareaId("");
-      setEventos([]);
+      setEstabelecimentos([]);
     }
   };
 
@@ -128,72 +128,66 @@ function EventosList() {
   });
 
   const StyledCardMedia = styled(CardMedia)({
-    height: 200,  // Fix the height of the image
-    objectFit: 'cover',  // Ensure the image covers the area
+    height: 200,  
+    objectFit: 'cover',  
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   });
 
   return (
-  <Box sx={{ padding: 2, paddingTop: 0 }}>
-   <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>Eventos</Typography>
-    <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }}>
+    <Box sx={{ padding: 2, paddingTop: 0 }}>
+      <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>Estabelecimentos</Typography>
+      <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }}>
         <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
-        <Grid item xs={12} sm={2}>
-          <StyledSelectArea value={areaId} onChange={handleAreaChange} displayEmpty fullWidth>
-            <MenuItem value="">Todas</MenuItem>
-            {areas.map((area) => (
-              <MenuItem value={area.id} key={area.id}>{area.nome}</MenuItem>
-            ))}
-          </StyledSelectArea>
+          <Grid item xs={12} sm={2}>
+            <StyledSelectArea value={areaId} onChange={handleAreaChange} displayEmpty fullWidth>
+              <MenuItem value="">Todas</MenuItem>
+              {areas.map((area) => (
+                <MenuItem value={area.id} key={area.id}>{area.nome}</MenuItem>
+              ))}
+            </StyledSelectArea>
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <StyledSelectSubarea value={subareaId} onChange={handleSubareaChange} displayEmpty disabled={!areaId} fullWidth>
+              <MenuItem value="">Todas</MenuItem>
+              {subareas.map((subarea) => (
+                <MenuItem value={subarea.id} key={subarea.id}>{subarea.nome}</MenuItem>
+              ))}
+            </StyledSelectSubarea>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={2}>
-          <StyledSelectSubarea value={subareaId} onChange={handleSubareaChange} displayEmpty disabled={!areaId} fullWidth>
-            <MenuItem value="">Todas</MenuItem>
-            {subareas.map((subarea) => (
-              <MenuItem value={subarea.id} key={subarea.id}>{subarea.nome}</MenuItem>
-            ))}
-          </StyledSelectSubarea>
-        </Grid>
-      </Grid>
       </Grid>
       <Grid container spacing={3}>
-        {eventos.map((evento) => {
-          const imageUrl = process.env.REACT_APP_API_URL + '/uploads/eventos/' + evento.foto;
-          return (
-            <Grid item xs={12} sm={6} md={4} key={evento.id}>
-              <StyledCard>
-                <StyledCardMedia
-                  component="img"
-                  image={imageUrl}
-                  alt={evento.titulo}
-                />
-                <StyledCardContent>
-                  <StyledTypography variant="h5" component="h2">
-                    {evento.titulo}
-                  </StyledTypography>
-                  <Typography variant="body2" color="text.secondary">
-                    Data: {evento.data}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Hora: {evento.hora}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Local: {evento.local}
-                  </Typography>
-                </StyledCardContent>
-              </StyledCard>
-            </Grid>
-          );
-        })}
+        {estabelecimentos.map((estabelecimento) => (
+          <Grid item xs={12} sm={6} md={4} key={estabelecimento.id}>
+            <StyledCard>
+              <StyledCardMedia
+                component="img"
+                image={`${process.env.REACT_APP_API_URL}/uploads/estabelecimentos/${estabelecimento.foto}`}
+                alt={estabelecimento.nome}
+              />
+              <StyledCardContent>
+                <StyledTypography variant="h5" component="h2">
+                  {estabelecimento.nome}
+                </StyledTypography>
+                <Typography variant="body2" color="text.secondary">
+                  Local: {estabelecimento.local}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Descrição: {estabelecimento.descricao}
+                </Typography>
+              </StyledCardContent>
+            </StyledCard>
+          </Grid>
+        ))}
       </Grid>
-    <Link to="/eventos/criar">
-      <Fab aria-label="add" style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
-        <AddIcon style={{ color: '#fff' }} />
-      </Fab>
-    </Link>
-  </Box>
-);
+      <Link to="/estabelecimentos/criar">
+        <Fab aria-label="add" style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
+          <AddIcon style={{ color: '#fff' }} />
+        </Fab>
+      </Link>
+    </Box>
+  );
 }
 
-export default EventosList;
+export default EstabelecimentoList;

@@ -8,6 +8,8 @@ import NovaPasseForm from './components/auth/novaPasseForm';
 import Sidebar from './components/home/sidebar';
 import Eventos from './views/eventos/eventos';
 import CriarEvento from './components/eventos/eventosCriar';
+import EstabelecimentoList from './components/estabelecimento/estabelecimentoList';
+import CriarEstabelecimento from './components/estabelecimento/estabelecimentoCriar';
 
 const AuthenticatedLayout = () => (
   <>
@@ -52,6 +54,10 @@ function App() {
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
           <Route path="eventos" element={<Eventos />} />
             <Route path="eventos/criar" element={<CriarEvento />} />
+         </Route>
+         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
+          <Route path="estabelecimentos" element={<EstabelecimentoList />} />
+            <Route path="estabelecimentos/criar" element={<CriarEstabelecimento />} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
