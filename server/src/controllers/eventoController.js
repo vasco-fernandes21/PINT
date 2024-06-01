@@ -3,7 +3,7 @@ const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
-const { uploadEventos } = require('../config/multer');
+const jwt = require('jsonwebtoken');
 
 exports.listarEventos = async (req, res) => {
     const { areaId, subareaId, idPosto } = req.query;
@@ -75,8 +75,7 @@ exports.get = async (req, res) => {
     }
 };
 
-
-exports.create = uploadEventos.single('foto'), async (req, res) => {
+exports.create = async (req, res) => {
   const {
     titulo,
     descricao,
@@ -86,8 +85,10 @@ exports.create = uploadEventos.single('foto'), async (req, res) => {
     idArea,
     idSubarea,
     idCriador,
-    idAdmin
+    idPosto
   } = req.body;
+
+  const foto = req.file ? req.file.filename : null; // Aqui você obtém apenas o nome do arquivo
 
   try {
     const newEvento = await Evento.create({
@@ -96,12 +97,12 @@ exports.create = uploadEventos.single('foto'), async (req, res) => {
       data,
       hora,
       local,
-      foto: req.file.path, 
-      estado: false, 
+      foto,
+      estado: false, // Estado inicial definido como falso
       idArea,
       idSubarea,
       idCriador,
-      idAdmin
+      idPosto
     });
 
     res.status(200).json({
@@ -114,6 +115,10 @@ exports.create = uploadEventos.single('foto'), async (req, res) => {
     res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
   }
 };
+
+
+
+
 
 exports.update = async (req, res) => {
     const { id } = req.params;

@@ -37,7 +37,7 @@ const Evento = sequelize.define('Evento', {
   },
   idAdmin: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'Utilizador',
       key: 'id'

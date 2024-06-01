@@ -5,10 +5,9 @@ import Login from './components/auth/loginForm';
 import Registar from './components/auth/registarForm';
 import RecuperarPasseForm from './components/auth/recuperarPasseForm';
 import NovaPasseForm from './components/auth/novaPasseForm';
-import FileUpload from './components/teste';
 import Sidebar from './components/home/sidebar';
-import Eventos from './views/eventos/eventos';
-import CriarEvento from './components/eventos/criarEventos';
+import Eventos from './views/eventos/Eventos';
+import CriarEvento from './components/eventos/eventosCriar';
 
 const AuthenticatedLayout = () => (
   <>
@@ -51,10 +50,9 @@ function App() {
         </Route>
 
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
-          <Route path="teste" element={<FileUpload />} />
           <Route path="eventos" element={<Eventos />} />
-          <Route path="criar-evento" element={<CriarEvento />} />
-        </Route>
+            <Route path="eventos/criar" element={<CriarEvento />} />
+         </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
       </Routes>

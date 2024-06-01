@@ -14,11 +14,6 @@
     });
   }
 
-  const emailOptions = {
-    email: 'vasconascimentofernandes@gmail.com',
-    subject: 'Teste',
-    message: 'Isto é um teste'
-  };
 
   exports.listar_utilizadores = async (req, res) => {
     try {
