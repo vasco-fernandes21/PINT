@@ -5,7 +5,6 @@ import './login.css';
 import Swal from 'sweetalert2';
 import GoogleAuth from './googleauth';
 import api from '../api/api';
-import Termos from './termos';
 
 function Login({ setIsAuthenticated: setAuth }) {
   const navigate = useNavigate();
@@ -17,15 +16,11 @@ function Login({ setIsAuthenticated: setAuth }) {
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [termos, setTermos] = useState(false);
-  const [acceptTerms, setAcceptTerms] = useState(false);
 
   useEffect(() => {
     if (token) {
       setAuth(true);
       navigate('/');
-    } else {
-      setAcceptTerms(false);
     }
   }, [token, navigate, setAuth]);
 
@@ -123,34 +118,7 @@ function Login({ setIsAuthenticated: setAuth }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!acceptTerms) {
-      Swal.fire({
-        title: 'Erro!',
-        text: 'Você deve aceitar os termos e condições para continuar.',
-        icon: 'error',
-        confirmButtonColor: '#1D324F',
-      });
-      return;
-    }
-
     handleLogin(email, password);
-  };
-
-  const handleTermosOpen = () => {
-    setTermos(true);
-  };
-
-  const handleTermosClose = () => {
-    setTermos(false);
-  };
-
-  const handleTermosAccept = () => {
-    setAcceptTerms(true);
-  };
-
-  const handleTermosReject = () => {
-    setAcceptTerms(false);
   };
 
   return (
@@ -206,18 +174,6 @@ function Login({ setIsAuthenticated: setAuth }) {
           <div className="form-group mb-0 mt-2">
             <input
               type="checkbox"
-              id="acceptTerms"
-              name="acceptTerms"
-              checked={acceptTerms}
-              disabled
-            />
-            <label htmlFor="acceptTerms" style={{ marginLeft: '6px', cursor: 'pointer' }} onClick={handleTermosOpen}>
-            Aceito os termos e condições
-            </label>
-          </div>
-          <div className="form-group mb-0">
-            <input
-              type="checkbox"
               id="rememberUser"
               name="rememberUser"
               checked={rememberUser}
@@ -237,10 +193,8 @@ function Login({ setIsAuthenticated: setAuth }) {
           </div>
         </div>
       </form>
-      <Termos open={termos} handleClose={handleTermosClose} onAccept={handleTermosAccept} onReject={handleTermosReject} />
     </div>
   );
 }
 
 export default Login;
-

@@ -4,10 +4,13 @@ import api from '../api/api';
 import logo from '../../assets/softinsa.svg';
 import './login.css';
 import Swal from 'sweetalert2';
+import Termos from './termos';
 
 function RegistarForm() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
+  const [termosAbertos, setTermosAbertos] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,13 +49,42 @@ function RegistarForm() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!acceptTerms) {
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Você deve aceitar os termos e condições para continuar.',
+        icon: 'error',
+        confirmButtonColor: '#1D324F',
+      });
+      return;
+    }
+
     handleRegistar();
   };
 
+  const handleTermosOpen = () => {
+    setTermosAbertos(true);
+  };
+
+  const handleTermosClose = () => {
+    setTermosAbertos(false);
+  };
+
+  const handleTermosAccept = () => {
+    setAcceptTerms(true);
+    setTermosAbertos(false);
+  };
+
+  const handleTermosReject = () => {
+    setAcceptTerms(false);
+    setTermosAbertos(false);
+  };
+
   return (
-    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '62vh' }}>
+    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '62.5vh' }}>
       <header className="header mb-1">
         <img src={logo} alt="Logo" className="logo" />
       </header>
@@ -84,14 +116,27 @@ function RegistarForm() {
             style={{ backgroundColor: '#DCDCDC' }}
           />
         </div>
-        <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
-          CRIAR CONTA
-        </button> 
-        <Link to="/login" className="btn btn-outline-success mt-2" id='botaoEntrar'>
-          CANCELAR
-        </Link>
+        <div className="form-group">
+        <input
+          type="checkbox"
+          id="acceptTerms"
+          name="acceptTerms"
+          checked={acceptTerms}
+          readOnly
+        />
+        <label htmlFor="acceptTerms" style={{ marginLeft: '6px' }} onClick={handleTermosOpen}>
+          Aceito os termos e condições
+        </label>
+      </div>
+      <button className="btn btn-outline-success mt-2" id='botaoEntrar'>
+        CRIAR CONTA
+      </button>
+      <Link to="/login" className="btn btn-outline-success mt-2" id='botaoEntrar'>
+        CANCELAR
+      </Link>
       </form>
-    </div>
+      <Termos open={termosAbertos} handleClose={handleTermosClose} onAccept={handleTermosAccept} onReject={handleTermosReject} />
+      </div>
   );
 }
 

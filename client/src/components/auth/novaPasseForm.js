@@ -99,4 +99,3 @@ function NovaPasseForm() {
 }
 
 export default NovaPasseForm;
-    
