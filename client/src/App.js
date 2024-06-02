@@ -7,7 +7,7 @@ import RecuperarPasseForm from './components/auth/recuperarPasseForm';
 import NovaPasseForm from './components/auth/novaPasseForm';
 import Sidebar from './components/home/sidebar';
 import Eventos from './views/eventos/eventos';
-import CriarEvento from './components/eventos/eventosCriar';
+import CriarEvento from './components/eventos/eventoCriar';
 import EstabelecimentoList from './components/estabelecimento/estabelecimentoList';
 import CriarEstabelecimento from './components/estabelecimento/estabelecimentoCriar';
 
@@ -27,11 +27,11 @@ const UnauthenticatedLayout = () => (
 );
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token') || !!sessionStorage.getItem('token'));
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setIsAuthenticated(!!localStorage.getItem('token'));
+      setIsAuthenticated(!!localStorage.getItem('token') || !!sessionStorage.getItem('token'));
     };  
 
     window.addEventListener('storage', handleStorageChange);
@@ -54,8 +54,6 @@ function App() {
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
           <Route path="eventos" element={<Eventos />} />
             <Route path="eventos/criar" element={<CriarEvento />} />
-         </Route>
-         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
           <Route path="estabelecimentos" element={<EstabelecimentoList />} />
             <Route path="estabelecimentos/criar" element={<CriarEstabelecimento />} />
          </Route>

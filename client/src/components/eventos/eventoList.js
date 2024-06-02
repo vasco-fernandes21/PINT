@@ -7,14 +7,14 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Select from "@mui/material/Select";
 import api from "../api/api";
-import {jwtDecode} from "jwt-decode";
 
-function EventosList() {
+function EventoList() {
   const [eventos, setEventos] = React.useState([]);
   const [areas, setAreas] = React.useState([]);
   const [subareas, setSubareas] = React.useState([]);
   const [areaId, setAreaId] = React.useState("");
   const [subareaId, setSubareaId] = React.useState("");
+
 
   useEffect(() => {
     const getAreas = async () => {
@@ -41,14 +41,7 @@ function EventosList() {
 
   useEffect(() => {
     const getEventos = async () => {
-      let token = localStorage.getItem('token');
-      if (!token) {
-        token = sessionStorage.getItem('token');
-      }
-      const decodedToken = jwtDecode(token);
-      const idPosto = decodedToken.idPosto;
-
-      const params = { idPosto };
+      const params = {};
       if (areaId) {
         params.areaId = areaId;
       }
@@ -60,7 +53,7 @@ function EventosList() {
     };
 
     getEventos();
-  }, [areaId, subareaId]);
+}, [areaId, subareaId]);
 
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);
@@ -196,4 +189,4 @@ function EventosList() {
 );
 }
 
-export default EventosList;
+export default EventoList;

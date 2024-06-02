@@ -1,10 +1,10 @@
   const bcrypt = require('bcryptjs');
   const crypto = require('crypto');
   const jwt = require('jsonwebtoken');
+  const gerarToken = require('../middlewares/gerarToken');
   const { OAuth2Client } = require('google-auth-library');
   const nodemailer = require('nodemailer');
   const Utilizador = require('../models/utilizadorModel');
-  const { info } = require('console');
   const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   require('dotenv').config();
 
@@ -14,6 +14,10 @@
     });
   }
 
+
+  exports.getUtilizador = (req, res) => {
+    res.send(req.user);
+  };
 
   exports.listar_utilizadores = async (req, res) => {
     try {
@@ -25,8 +29,7 @@
     }
   };
 
-
-  exports.loginMobile = async (req, res) => {
+exports.loginMobile = async (req, res) => {
   try {
     const { email, password, isAdmin } = req.body;
 
@@ -54,9 +57,7 @@
       return res.status(401).send({ error: 'Palavra Passe incorreta' });
     }
 
-    const token = jwt.sign({ id: user.id, nome: user.nome}, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = gerarToken(user);
 
     // Se isPrimeiroLogin for verdadeiro, gere um recoveryToken
     if (user.isPrimeiroLogin) {
@@ -68,7 +69,7 @@
       await user.update({ recoveryToken, isPrimeiroLogin: false });
     }
 
-    res.send({ message: 'Login realizado com sucesso', token: token, recoveryToken: user.recoveryToken });
+    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
   } catch (error) {
     console.error('Erro durante o login:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
@@ -104,9 +105,7 @@ exports.login = async (req, res) => {
       return res.status(401).send({ error: 'Palavra Passe incorreta' });
     }
 
-    const token = jwt.sign({ id: user.id, idPosto: user.idPosto}, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = gerarToken(user);
 
     // Se isPrimeiroLogin for verdadeiro, gere um recoveryToken
     if (user.isPrimeiroLogin) {

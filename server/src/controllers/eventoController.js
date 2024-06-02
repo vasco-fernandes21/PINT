@@ -3,10 +3,13 @@ const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
-const jwt = require('jsonwebtoken');
 
 exports.listarEventos = async (req, res) => {
-    const { areaId, subareaId, idPosto } = req.query;
+    const { areaId, subareaId } = req.query;
+    let idPosto;
+    if (req.user) {
+        idPosto = req.user.idPosto;
+    }
 
     let whereClause = {};
     if (areaId) {
@@ -85,8 +88,9 @@ exports.create = async (req, res) => {
     idArea,
     idSubarea,
     idCriador,
-    idPosto
   } = req.body;
+
+  const idPosto = req.user.idPosto; // Use idPosto from req.user
 
   const foto = req.file ? req.file.filename : null; // Aqui você obtém apenas o nome do arquivo
 
@@ -115,7 +119,6 @@ exports.create = async (req, res) => {
     res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
   }
 };
-
 
 
 
@@ -205,3 +208,127 @@ exports.delete = async (req, res) => {
     }
 };
 
+exports.porVerificar = async (req, res) => {
+    try {
+        const idPosto = req.user.idPosto; 
+        const data = await Evento.findAll({
+            where: { 
+                estado: false,
+                idPosto: idPosto 
+            },
+            include: [
+                { model: Area, as: 'area', attributes: ['nome'] },
+                { model: Subarea, as: 'subarea', attributes: ['nome'] },
+                { model: Utilizador, as: 'criador', attributes: ['nome'] },
+                { model: Utilizador, as: 'admin', attributes: ['nome'] }
+            ]
+        });
+
+        res.status(200).json({
+            success: true,
+            data: data
+        });
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+};
+
+exports.countPorVerificar = async (req, res) => {
+    try {
+        const idPosto = req.user.idPosto; // Use idPosto from req.user
+        const count = await Evento.count({ 
+            where: { 
+                estado: false,
+                idPosto: idPosto // Use idPosto in the where clause
+            } 
+        });
+
+        res.status(200).json({
+            success: true,
+            count: count
+        });
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+};
+
+exports.aprovar = async (req, res) => {
+    const { eventoId } = req.body;
+    try {
+        const evento = await Evento.findOne({ where: { id: eventoId } });
+        if (!evento) {
+            return res.status(404).json({
+                success: false,
+                message: 'Evento não encontrado!'
+            });
+        }
+
+        evento.estado = true;
+        await evento.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Evento aprovado com sucesso!'
+        });
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+};
+
+exports.rejeitar = async (req, res) => {
+    const { eventoId } = req.body;
+    try {
+        const evento = await Evento.findOne({ where: { id: eventoId } });
+        if (!evento) {
+            return res.status(404).json({
+                success: false,
+                message: 'Evento não encontrado!'
+            });
+        }
+
+        await evento.destroy();
+
+        res.status(200).json({
+            success: true,
+            message: 'Evento rejeitado com sucesso!'
+        });
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+};
+
+exports.proximosEventos = async (req, res) => {
+    const { inicio, fim } = req.body;
+    const nestabelecimento = req.params.nestabelecimento;
+
+    try {
+
+        const eventos = await Evento.find({
+            nestabelecimento: nestabelecimento,
+            data: {
+                $gte: new Date(inicio),
+                $lte: new Date(fim)
+            }
+        });
+
+        res.json({ data: eventos });
+    } catch (error) {
+        res.status(500).json({ error: error.toString() });
+    }
+};

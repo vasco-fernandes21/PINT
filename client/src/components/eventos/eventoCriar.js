@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography, Paper } from '@mui/material';
-import {jwtDecode} from 'jwt-decode';
 import Swal from 'sweetalert2';
 import api from '../api/api';
 import { Link } from 'react-router-dom';
@@ -44,46 +43,59 @@ function CriarEvento() {
 
   const onSubmit = async (data) => {
     try {
-      const token = localStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const idCriador = decodedToken.id;
-      const idPosto = decodedToken.idPosto;
-
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
       });
-
+  
       // Append additional fields to formData
       formData.append('estado', false);
       formData.append('idArea', selectedArea);
       formData.append('idSubarea', data.subarea);
-      formData.append('idCriador', idCriador);
-      formData.append('idPosto', idPosto);
-
-      const response = await api.post('/eventos/criar', formData);
-
-      // Exibir alerta de sucesso
-      Swal.fire({
-        title: "Sucesso",
-        text: "Evento criado com sucesso!",
-        icon: "success",
-        confirmButtonColor: '#1D324F',
+  
+      // Get token from local storage or other secure place
+      let token = localStorage.getItem('token');
+      if (!token) {
+        token = sessionStorage.getItem('token');
+      }
+  
+      // Get user data
+      const userResponse = await api.get('/utilizador', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
       });
   
-      console.log('Evento criado:', response.data);
-    } catch (error) {
-      // Exibir alerta de erro
-      Swal.fire({
-        title: "Erro",
-        text: "Erro ao criar evento, tente mais tarde.",
-        icon: "error",
-        confirmButtonColor: '#1D324F',
-      });;
+      // Append idCriador to formData
+      formData.append('idCriador', userResponse.data.id);
   
-      console.error('Erro ao criar evento:', error);
-    }
-  };
+      const response = await api.post('/eventos/criar', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+    });
+
+    // Exibir alerta de sucesso
+    Swal.fire({
+      title: "Sucesso",
+      text: "Evento criado com sucesso!",
+      icon: "success",
+      confirmButtonColor: '#1D324F',
+    });
+
+    console.log('Evento criado:', response.data);
+  } catch (error) {
+    // Exibir alerta de erro
+    Swal.fire({
+      title: "Erro",
+      text: "Erro ao criar evento, tente mais tarde.",
+      icon: "error",
+      confirmButtonColor: '#1D324F',
+    });
+
+    console.error('Erro ao criar evento:', error);
+  }
+};
 
   return (
     <Box display="flex" justifyContent="center" mt={3}>

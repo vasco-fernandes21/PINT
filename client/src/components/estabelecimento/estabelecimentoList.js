@@ -7,7 +7,6 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Select from "@mui/material/Select";
 import api from "../api/api";
-import { jwtDecode } from "jwt-decode";
 
 function EstabelecimentoList() {
   const [estabelecimentos, setEstabelecimentos] = React.useState([]);
@@ -40,27 +39,25 @@ function EstabelecimentoList() {
   }, [areaId]);
 
   useEffect(() => {
-    const getEstabelecimentos = async () => {
-      let token = localStorage.getItem('token');
-      if (!token) {
-        token = sessionStorage.getItem('token');
-      }
-      const decodedToken = jwtDecode(token);
-      const idPosto = decodedToken.idPosto;
+  const getEstabelecimentos = async () => {
+    let token = localStorage.getItem('token');
+    if (!token) {
+      token = sessionStorage.getItem('token');
+    }
 
-      const params = { idPosto };
-      if (areaId) {
-        params.areaId = areaId;
-      }
-      if (subareaId) {
-        params.subareaId = subareaId;
-      }
-      const response = await api.get(`/estabelecimentos`, { params });
-      setEstabelecimentos(response.data.data);
-    };
+    const params = { idPosto: token };
+    if (areaId) {
+      params.areaId = areaId;
+    }
+    if (subareaId) {
+      params.subareaId = subareaId;
+    }
+    const response = await api.get(`/estabelecimentos`, { params });
+    setEstabelecimentos(response.data.data);
+  };
 
-    getEstabelecimentos();
-  }, [areaId, subareaId]);
+  getEstabelecimentos();
+}, [areaId, subareaId]);
 
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);

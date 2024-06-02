@@ -18,17 +18,15 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use((req, res, next) => {
-  console.log(req.body);
   next();
 });
 
-{ /* Carregar automaticamente as tabelas com dados pré-feitos, apenas retirar comentário para ativar e adicionar comentário outra vez depois */ }
+{ /* Carregar automaticamente as tabelas com dados pré-feitos, apenas retirar comentário para ativar e adicionar comentário outra vez depois 
 const carregarTabelas = require('./src/utils/carregarTabelas'); 
-carregarTabelas(); 
+carregarTabelas(); */ }
 
 
 // Importação do módulo de roteamento para o login
-const upload = require('./src/config/multer');
 const authRoutes = require('./src/routes/authRoutes'); 
 const eventoRoutes = require('./src/routes/eventoRoutes');
 const areaRoutes = require('./src/routes/areaRoutes');

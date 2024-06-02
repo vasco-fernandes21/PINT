@@ -11,7 +11,6 @@ function Login({ setIsAuthenticated: setAuth }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [rememberUser, setRememberUser] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isEmailInvalid, setIsEmailInvalid] = useState(false);
@@ -35,7 +34,6 @@ function Login({ setIsAuthenticated: setAuth }) {
     try {
       const response = await api.post('/login', { email, password });
       const { token, recoveryToken } = response.data;
-      console.log('Received token:', token);
 
       if (rememberUser) {
         localStorage.setItem('token', token);
@@ -58,8 +56,7 @@ function Login({ setIsAuthenticated: setAuth }) {
         confirmButtonColor: '#1D324F',
         timer: 2000,
       });
-     if (recoveryToken) {
-        console.log('recovery:', recoveryToken);
+      if (recoveryToken) {
         navigate(`/reset-passe?token=${recoveryToken}`);
       }
     } catch (error) {
@@ -68,7 +65,6 @@ function Login({ setIsAuthenticated: setAuth }) {
         const { status, data } = error.response;
         switch (status) {
           case 400:
-            setErrorMessage('Preencha todos os campos.');
             setIsEmailInvalid(true);
             setIsPasswordInvalid(true);
             setEmailError('Preencha todos os campos.');
@@ -83,7 +79,6 @@ function Login({ setIsAuthenticated: setAuth }) {
                 confirmButtonColor: '#1D324F',
               });
             } else if (data.error === 'Utilizador não encontrado') {
-              setErrorMessage(data.error);
               setIsEmailInvalid(true);
               setIsPasswordInvalid(false);
               setEmailError(data.error);
@@ -96,7 +91,6 @@ function Login({ setIsAuthenticated: setAuth }) {
                 confirmButtonColor: '#1D324F',
               });
             } else {
-              setErrorMessage(data.error || 'Email ou senha incorretos.');
               setIsEmailInvalid(false);
               setIsPasswordInvalid(true);
               setEmailError('');
@@ -104,21 +98,18 @@ function Login({ setIsAuthenticated: setAuth }) {
             }
             break;
           case 500:
-            setErrorMessage('Erro interno do servidor. Tente novamente mais tarde.');
             setIsEmailInvalid(false);
             setIsPasswordInvalid(false);
             setEmailError('');
             setPasswordError('');
             break;
           default:
-            setErrorMessage('Erro desconhecido.');
             setIsEmailInvalid(false);
             setIsPasswordInvalid(false);
             setEmailError('');
             setPasswordError('');
         }
       } else {
-        setErrorMessage('Erro de rede. Verifique sua conexão.');
         setIsEmailInvalid(false);
         setIsPasswordInvalid(false);
         setEmailError('');
@@ -132,7 +123,6 @@ function Login({ setIsAuthenticated: setAuth }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorMessage('');
 
     if (!acceptTerms) {
       Swal.fire({
@@ -222,7 +212,7 @@ function Login({ setIsAuthenticated: setAuth }) {
               disabled
             />
             <label htmlFor="acceptTerms" style={{ marginLeft: '6px', cursor: 'pointer' }} onClick={handleTermosOpen}>
-              Aceito os termos e condições
+            Aceito os termos e condições
             </label>
           </div>
           <div className="form-group mb-0">
@@ -253,3 +243,4 @@ function Login({ setIsAuthenticated: setAuth }) {
 }
 
 export default Login;
+

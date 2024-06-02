@@ -1,10 +1,10 @@
 import React from 'react';
-import EventosList from '../../components/eventos/eventosList';
+import EventoList from '../../components/eventos/eventoList';
 
 const Eventos = () => {
     return (
         <div>
-            <EventosList />
+            <EventoList />
         </div>
     );
 };
