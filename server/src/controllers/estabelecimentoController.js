@@ -80,3 +80,35 @@ exports.create = async (req, res) => {
       res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
     }
 };
+
+exports.estabelecimento_id = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const data = await Estabelecimento.findOne({
+            where: { id: id },
+            include: [
+                { model: Area, attributes: ['nome'] },
+                { model: Subarea, attributes: ['nome'] },
+                { model: Posto, attributes: ['nome'] },
+            ]
+        });
+
+        if (data) {
+            res.status(200).json({
+                success: true,
+                data: data,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'O estabelecimento com o ID ' + id + ' não foi encontrado!',
+            });
+        }
+    } catch (err) {
+        console.log("Error: " + err);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
