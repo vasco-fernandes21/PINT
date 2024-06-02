@@ -5,6 +5,9 @@ const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
 
 exports.listarEventos = async (req, res) => {
+    console.log('Query Params:', req.query); // Adicionado log de depuração
+    console.log('User:', req.user); // Adicionado log de depuração
+
     const { areaId, subareaId } = req.query;
     let idPosto;
     if (req.user) {
@@ -38,12 +41,14 @@ exports.listarEventos = async (req, res) => {
             data: data,
         });
     } catch (err) {
+        console.error('Erro ao listar eventos:', err.message); // Adicionado log de erro detalhado
         res.status(500).json({
             success: false,
             error: 'Erro: ' + err.message,
         });
     }
 };
+
 
 exports.get = async (req, res) => {
     const { eventoId } = req.params;

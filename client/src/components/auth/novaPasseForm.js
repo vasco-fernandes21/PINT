@@ -33,6 +33,11 @@ function NovaPasseForm() {
                 confirmButtonColor: '#1D324F',
                 willClose: () => {
                     navigate('/login');
+                    const verificationToken = localStorage.getItem('verificationToken') || sessionStorage.getItem('verificationToken');
+                    if (verificationToken) {
+                        localStorage.removeItem('verificationToken');
+                        sessionStorage.removeItem('verificationToken');
+                    }
                 },
             });
         } catch (error) {

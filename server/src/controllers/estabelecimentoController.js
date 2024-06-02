@@ -4,7 +4,11 @@ const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
 
 exports.listarEstabelecimentos = async (req, res) => {
-    const { areaId, subareaId, postoId } = req.query;
+    const { areaId, subareaId } = req.query;
+    let idPosto;
+    if (req.user) {
+        idPosto = req.user.idPosto;
+    }
 
     let whereClause = {};
     if (areaId) {
@@ -13,8 +17,8 @@ exports.listarEstabelecimentos = async (req, res) => {
     if (subareaId) {
         whereClause.idSubarea = subareaId;
     }
-    if (postoId) {
-        whereClause.idPosto = postoId;
+    if (idPosto) {
+        whereClause.idPosto = idPosto;
     }
     try {
         const data = await Estabelecimento.findAll({
@@ -31,6 +35,7 @@ exports.listarEstabelecimentos = async (req, res) => {
         });
     }
     catch (err) {
+        console.error('Erro ao listar estabelecimentos:', err.message); // Adicionado log de erro detalhado
         res.status(500).json({
             success: false,
             error: 'Erro: ' + err.message,

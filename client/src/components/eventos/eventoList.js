@@ -14,7 +14,7 @@ function EventoList() {
   const [subareas, setSubareas] = React.useState([]);
   const [areaId, setAreaId] = React.useState("");
   const [subareaId, setSubareaId] = React.useState("");
-
+  const [idPosto, setIdPosto] = React.useState(null);
 
   useEffect(() => {
     const getAreas = async () => {
@@ -40,6 +40,15 @@ function EventoList() {
   }, [areaId]);
 
   useEffect(() => {
+    const getIdPosto = async () => {
+      const response = await api.get('/utilizador');
+      setIdPosto(response.data.idPosto);
+    };
+  
+    getIdPosto();
+  }, []);
+
+  useEffect(() => {
     const getEventos = async () => {
       const params = {};
       if (areaId) {
@@ -48,12 +57,23 @@ function EventoList() {
       if (subareaId) {
         params.subareaId = subareaId;
       }
-      const response = await api.get(`/eventos`, { params });
-      setEventos(response.data.data);
+      if (idPosto) {
+        params.idPosto = idPosto;
+      }
+      console.log('Sending request with params:', params);
+      try {
+        const response = await api.get(`/eventos`, { params });
+        console.log('Received response:', response);
+        setEventos(response.data.data);
+      } catch (error) {
+        console.error('Error fetching eventos:', error.response || error.message);
+      }
     };
 
-    getEventos();
-}, [areaId, subareaId]);
+    if (idPosto !== null) {
+      getEventos();
+    }
+  }, [areaId, subareaId, idPosto]);
 
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);
@@ -128,27 +148,27 @@ function EventoList() {
   });
 
   return (
-  <Box sx={{ padding: 2, paddingTop: 0 }}>
-   <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>Eventos</Typography>
-    <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }}>
+    <Box sx={{ padding: 2, paddingTop: 0 }}>
+      <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>Eventos</Typography>
+      <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }}>
         <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
-        <Grid item xs={12} sm={2}>
-          <StyledSelectArea value={areaId} onChange={handleAreaChange} displayEmpty fullWidth>
-            <MenuItem value="">Todas</MenuItem>
-            {areas.map((area) => (
-              <MenuItem value={area.id} key={area.id}>{area.nome}</MenuItem>
-            ))}
-          </StyledSelectArea>
+          <Grid item xs={12} sm={2}>
+            <StyledSelectArea value={areaId} onChange={handleAreaChange} displayEmpty fullWidth>
+              <MenuItem value="">Todas</MenuItem>
+              {areas.map((area) => (
+                <MenuItem value={area.id} key={area.id}>{area.nome}</MenuItem>
+              ))}
+            </StyledSelectArea>
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <StyledSelectSubarea value={subareaId} onChange={handleSubareaChange} displayEmpty disabled={!areaId} fullWidth>
+              <MenuItem value="">Todas</MenuItem>
+              {subareas.map((subarea) => (
+                <MenuItem value={subarea.id} key={subarea.id}>{subarea.nome}</MenuItem>
+              ))}
+            </StyledSelectSubarea>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={2}>
-          <StyledSelectSubarea value={subareaId} onChange={handleSubareaChange} displayEmpty disabled={!areaId} fullWidth>
-            <MenuItem value="">Todas</MenuItem>
-            {subareas.map((subarea) => (
-              <MenuItem value={subarea.id} key={subarea.id}>{subarea.nome}</MenuItem>
-            ))}
-          </StyledSelectSubarea>
-        </Grid>
-      </Grid>
       </Grid>
       <Grid container spacing={3}>
         {eventos.map((evento) => {
@@ -180,13 +200,13 @@ function EventoList() {
           );
         })}
       </Grid>
-    <Link to="/eventos/criar">
-      <Fab aria-label="add" style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
-        <AddIcon style={{ color: '#fff' }} />
-      </Fab>
-    </Link>
-  </Box>
-);
+      <Link to="/eventos/criar">
+        <Fab aria-label="add" style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
+          <AddIcon style={{ color: '#fff' }} />
+        </Fab>
+      </Link>
+    </Box>
+  );
 }
 
 export default EventoList;

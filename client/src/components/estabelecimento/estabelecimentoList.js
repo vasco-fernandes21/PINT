@@ -14,6 +14,8 @@ function EstabelecimentoList() {
   const [subareas, setSubareas] = React.useState([]);
   const [areaId, setAreaId] = React.useState("");
   const [subareaId, setSubareaId] = React.useState("");
+  const [idPosto, setIdPosto] = React.useState(null);
+
 
   useEffect(() => {
     const getAreas = async () => {
@@ -39,25 +41,40 @@ function EstabelecimentoList() {
   }, [areaId]);
 
   useEffect(() => {
-  const getEstabelecimentos = async () => {
-    let token = localStorage.getItem('token');
-    if (!token) {
-      token = sessionStorage.getItem('token');
-    }
+    const getIdPosto = async () => {
+      const response = await api.get('/utilizador');
+      setIdPosto(response.data.idPosto);
+    };
+  
+    getIdPosto();
+  }, []);
 
-    const params = { idPosto: token };
-    if (areaId) {
-      params.areaId = areaId;
-    }
-    if (subareaId) {
-      params.subareaId = subareaId;
-    }
-    const response = await api.get(`/estabelecimentos`, { params });
-    setEstabelecimentos(response.data.data);
-  };
+  useEffect(() => {
+    const getEstabelecimentos = async () => {
+      const params = {};
+      if (areaId) {
+        params.areaId = areaId;
+      }
+      if (subareaId) {
+        params.subareaId = subareaId;
+      }
+      if (idPosto) {
+        params.idPosto = idPosto;
+      }
+      console.log('Sending request with params:', params);
+      try {
+        const response = await api.get(`/estabelecimentos`, { params });
+        console.log('Received response:', response);
+        setEstabelecimentos(response.data.data);
+      } catch (error) {
+        console.error('Error fetching estabelecimentos:', error.response || error.message);
+      }
+    };
 
-  getEstabelecimentos();
-}, [areaId, subareaId]);
+    if (idPosto !== null) {
+      getEstabelecimentos();
+    }
+  }, [areaId, subareaId, idPosto]);
 
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);

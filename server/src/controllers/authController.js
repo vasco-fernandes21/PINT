@@ -69,7 +69,7 @@ exports.loginMobile = async (req, res) => {
       await user.update({ recoveryToken, isPrimeiroLogin: false });
     }
 
-    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
+    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken});
   } catch (error) {
     console.error('Erro durante o login:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
@@ -124,47 +124,49 @@ exports.login = async (req, res) => {
   }
 };
   
-    
-  exports.criarConta = async (req, res) => {
-    try {
-      const { nome, email } = req.body;
   
-      if (!nome || !email) {
-        return res.status(400).send({ error: 'Preencha todos os campos' });
-      }
-  
-      const user = await Utilizador.findOne({ where: { email } });
-      if (user) {
-        return res.status(400).send({ error: 'Email já está em uso' });
-      }
-  
-      // Generate a random password
-      const password = crypto.randomBytes(10).toString('hex');
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      const verificationToken = crypto.randomBytes(32).toString('hex');
-   
-      await Utilizador.create({
-        nome,
-        email,
-        palavra_passe: hashedPassword,
-        verificationToken,
-        estado: false
-      });
-  
-      const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
-      await this.enviarEmail({  
-        email,
-        subject: 'Verifique o seu email',
-        message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}.\n\nA sua password temporária é: ${password}`
-      });
-  
-      res.status(201).send({ message: 'Conta criada com sucesso. Verifique o seu email para ativar sua conta.' });
-    } catch (error) {
-      console.error('Error during account creation:', error);
-      res.status(500).send({ error: 'Erro interno do servidor' });
+exports.criarConta = async (req, res) => {
+  try {
+    const { nome, email } = req.body;
+
+    if (!nome || !email) {
+      return res.status(400).send({ error: 'Preencha todos os campos' });
     }
-  };
+
+    const user = await Utilizador.findOne({ where: { email } });
+    if (user) {
+      return res.status(400).send({ error: 'Email já está em uso' });
+    }
+
+    // Generate a random password
+    const password = crypto.randomBytes(10).toString('hex');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+ 
+    const newUser = await Utilizador.create({
+      nome,
+      email,
+      palavra_passe: hashedPassword,
+      verificationToken,
+      estado: false
+    });
+
+    const token = gerarToken(newUser);
+
+    const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
+    await this.enviarEmail({  
+      email,
+      subject: 'Verifique o seu email',
+      message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}.\n\nA sua password temporária é: ${password}`
+    });
+
+    res.status(201).send({ message: 'Conta criada com sucesso. Verifique o seu email para ativar sua conta.', token });
+  } catch (error) {
+    console.error('Error during account creation:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
 
   exports.verificarEmail = async (req, res) => {
     try {
@@ -285,3 +287,5 @@ exports.resetarPasse = async (req, res) => {
       res.status(500).json({ error: 'Erro ao autenticar com Google' });
     }
   };
+
+
