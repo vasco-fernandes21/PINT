@@ -2,6 +2,7 @@ const Estabelecimento = require('../models/estabelecimentoModel');
 const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
+const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 
 exports.listarEstabelecimentos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -102,6 +103,33 @@ exports.estabelecimento_id = async (req, res) => {
             res.status(404).json({
                 success: false,
                 message: 'O estabelecimento com o ID ' + id + ' não foi encontrado!',
+            });
+        }
+    } catch (err) {
+        console.log("Error: " + err);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.getFotoEstabelecimento = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const fotos = await FotoEstabelecimento.findAll({
+            where: { idEstabelecimento: id },
+        });
+
+        if (fotos.length > 0) {
+            res.status(200).json({
+                success: true,
+                data: fotos,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Nenhuma foto encontrada para o estabelecimento com o ID ' + id,
             });
         }
     } catch (err) {
