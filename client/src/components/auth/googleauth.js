@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import api from '../api/api';
@@ -15,7 +15,7 @@ const GoogleAuth = () => {
         localStorage.setItem('token', res.data.token);
         setErrorMessage(null);
         Swal.fire({
-          title: 'Successo!',
+          title: 'Sucesso!',
           text: 'Login com a conta Google realizado com sucesso',
           icon: 'success',
           confirmButtonColor: '#1D324F',
@@ -36,7 +36,7 @@ const GoogleAuth = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId="946771932227-a38o98q56j3dqaubcqk9pho47u76u89n.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="104348306910-f5tbgkc3udd9jphc4i44vgdsv7jing48.apps.googleusercontent.com">
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={handleError}

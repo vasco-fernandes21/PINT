@@ -265,27 +265,88 @@ exports.resetarPasse = async (req, res) => {
   };
 
 
-  exports.googleLogin = async (req, res) => {
-    try {
-      const { token } = req.body;
-      if (!token) {
-        return res.status(400).json({ error: 'Token não fornecido' });
-      }
-
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-
-      const payload = ticket.getPayload();
-      const userId = payload['sub'];
-
-      const jwtToken = generateJWTToken(userId);
-      res.json({ token: jwtToken });
-    } catch (error) {
-      console.error('Erro ao autenticar com Google:', error);
-      res.status(500).json({ error: 'Erro ao autenticar com Google' });
+  exports.google = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ error: 'Token não fornecido' });
     }
-  };
 
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
 
+    const payload = ticket.getPayload();
+    const email = payload['email'];
+    const nome = payload['name'];
+
+    let user = await Utilizador.findOne({ where: { email } });
+
+    if (!user) {
+      // Se não existir, crie uma nova conta
+      req.body.nome = nome;
+      req.body.email = email;
+      await exports.criarContaGoogle(req, res);
+    } else {
+      // Se existir, faça login
+      req.body.email = email;
+      await exports.loginGoogle(req, res);
+    }
+  } catch (error) {
+    console.error('Erro ao autenticar com Google:', error);
+    res.status(500).json({ error: 'Erro ao autenticar com Google' });
+  }
+};
+
+exports.criarContaGoogle = async (req, res) => {
+  try {
+    const { nome, email } = req.body;
+    if (!nome || !email) {
+      return res.status(400).json({ error: 'Nome e email são necessários' });
+    }
+
+    const user = await Utilizador.findOne({ where: { email } });
+    if (user) {
+      return res.status(400).json({ error: 'Email já está em uso' });
+    }
+
+    // Generate a random password
+    const password = crypto.randomBytes(10).toString('hex');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await Utilizador.create({
+      nome,
+      email,
+      palavra_passe: hashedPassword,
+      estado: true, // Conta verificada porque o usuário está se registrando com o Google
+      isPrimeiroLogin: true
+    });
+
+    const jwtToken = generateJWTToken(newUser.id);
+    res.json({ token: jwtToken, message: 'Conta criada com sucesso.' });
+  } catch (error) {
+    console.error('Erro ao criar conta com Google:', error);
+    res.status(500).json({ error: 'Erro ao criar conta com Google' });
+  }
+};
+
+exports.loginGoogle = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email é necessário' });
+    }
+
+    const user = await Utilizador.findOne({ where: { email } });
+    if (!user) {
+      return res.status(400).json({ error: 'Utilizador não encontrado' });
+    }
+
+    const jwtToken = generateJWTToken(user.id);
+    res.json({ token: jwtToken, message: 'Login realizado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao fazer login com Google:', error);
+    res.status(500).json({ error: 'Erro ao fazer login com Google' });
+  }
+};

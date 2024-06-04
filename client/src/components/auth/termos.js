@@ -6,7 +6,6 @@ const Termos = ({ open, handleClose, onAccept, onReject }) => {
 
   const handleAccept = () => {
     setTermsAccepted(true);
-    termsAccepted(true)
     onAccept();
     handleClose();
   };
