@@ -5,8 +5,13 @@ body {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f2f2f2;
 }
 
 code {
   font-family: 'Inter', monospace;
+}
+
+:root {
+  --bs-body-bg: #f2f2f2;
 }

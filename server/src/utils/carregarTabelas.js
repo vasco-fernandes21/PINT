@@ -141,14 +141,14 @@ const eventos = [
 
 const estabelecimentos = [
   // Saúde
-  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, nome: 'Clínica de Viseu', descricao: 'Clínica de Viseu, especializada em várias áreas médicas', local: 'Viseu', estado: true},
+  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, nome: 'Clínica de Viseu', descricao: 'Clínica de Viseu, especializada em várias áreas médicas', local: 'Viseu', estado: true, foto: 'foto-1717335916152-hospital.jpg'},
   {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, nome: 'Clínica Dentária Tomar', descricao: 'Clínica Dentária Tomar, com atendimento especializado', local: 'Tomar', estado: true},
   {idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, nome: 'Hospital do Fundão', descricao: 'Hospital do Fundão, oferecendo serviços de emergência', local: 'Fundão', estado: true},
 
   // Desporto
   {idArea: 2, idSubarea: 3, idCriador: 4, idAdmin: 4, idPosto: 4, nome: 'Ginásio Portalegre', descricao: 'Ginásio Portalegre, equipado com as melhores máquinas', local: 'Portalegre', estado: true},
   {idArea: 2, idSubarea: 4, idCriador: 5, idAdmin: 5, idPosto: 5, nome: 'Centro de Atividades Vila Real', descricao: 'Centro de Atividades ao Ar Livre em Vila Real', local: 'Vila Real', estado: true},
-  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Fitness Club Viseu', descricao: 'Fitness Club Viseu, para um treino completo', local: 'Viseu', estado: true},
+  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Fitness Club Viseu', descricao: 'Fitness Club Viseu, para um treino completo', local: 'Viseu', estado: true, foto:'ginasio.jpg'},
 
   // Formação
   {idArea: 3, idSubarea: 5, idCriador: 2, idAdmin: 3, idPosto: 2, nome: 'Centro de Formação Tomar', descricao: 'Centro de Formação Profissional em Tomar', local: 'Tomar', estado: true},
@@ -157,7 +157,7 @@ const estabelecimentos = [
 
   // Gastronomia
   {idArea: 4, idSubarea: 7, idCriador: 5, idAdmin: 1, idPosto: 5, nome: 'Restaurante Vila Real', descricao: 'Restaurante com pratos típicos em Vila Real', local: 'Vila Real', estado: true},
-  {idArea: 4, idSubarea: 8, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Shopping Viseu', descricao: 'Shopping em Viseu com diversas lojas', local: 'Viseu', estado: true},
+  {idArea: 4, idSubarea: 8, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Shopping Viseu', descricao: 'Shopping em Viseu com diversas lojas', local: 'Viseu', estado: true, foto:'palacio.jpg'},
   {idArea: 4, idSubarea: 7, idCriador: 2, idAdmin: 3, idPosto: 2, nome: 'Gastronomia Tomar', descricao: 'Restaurante gourmet em Tomar', local: 'Tomar', estado: true},
 
   // Alojamento

@@ -17,4 +17,4 @@ const Posto = sequelize.define('Posto', {
   timestamps: false
 });
 
-module.exports = Posto;
+module.exports = Posto; 
