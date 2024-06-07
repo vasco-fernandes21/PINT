@@ -1,8 +1,10 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Box, Typography, Card, CardContent, CardMedia } from "@mui/material";
+import Slider from "react-slick";
 import api from "../api/api";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function DetailEstabelecimento() {
   const { id } = useParams();
@@ -40,28 +42,58 @@ function DetailEstabelecimento() {
     return <div>Loading...</div>;
   }
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    arrows: false,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+    ],
+  };
+
   return (
-    <Box sx={{ padding: 30, paddingTop: 0 }}>
+    <Box sx={{ padding: 16, paddingTop: 0 }}>
       <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>{estabelecimento.nome}</Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2 }}>
+      <Box sx={{ marginBottom: 4 }}>
+        <Slider {...settings}>
         {fotos.map((foto, index) => (
-          <Card key={index} sx={{ maxWidth: 345 }}>
+          <Card key={index} sx={{ padding: 1, margin: 1, boxSizing: 'border-box'}}>
             <CardMedia
               component="img"
               image={foto}
               alt={estabelecimento.nome}
+              sx={{ height: 250}}
             />
           </Card>
         ))}
+      </Slider>
       </Box>
-      <CardContent>
+      <CardContent sx={{ padding: 0 }}>
+        <Typography variant="h4" sx={{ marginBottom: 1, fontWeight: 'bold' }}>Descrição</Typography>
         <Typography variant="body2" color="text.secondary">
-          Descrição: {estabelecimento.descricao}
+          {estabelecimento.descricao}
         </Typography>
         {/* Aqui você pode adicionar a seção de comentários e outras informações que você precisa */}
       </CardContent>
     </Box>
   );
 }
+
 
 export default DetailEstabelecimento;

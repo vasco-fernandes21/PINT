@@ -4,6 +4,7 @@ const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
 const Evento = require('../models/eventoModel');
 const Estabelecimento = require('../models/estabelecimentoModel');
+const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const { sequelize } = require('./database');
 
 const utilizadores = [
@@ -176,6 +177,14 @@ const estabelecimentos = [
   {idArea: 7, idSubarea: 13, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Cinema Viseu', descricao: 'Cinema ao ar livre em Viseu', local: 'Viseu', estado: true},
 ];
 
+const AvaliacoesEstabelecimento = [
+  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5},
+  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4},
+  {idUtilizador: 3, idAdmin: 3, idEstabelecimento: 1, classificacao: 3},
+  {idUtilizador: 4, idAdmin: 4, idEstabelecimento: 1, classificacao: 2},
+  {idUtilizador: 5, idAdmin: 5, idEstabelecimento: 1, classificacao: 1},
+];
+
 const carregarTabelas = () => {
 sequelize.sync({ force: true }).then(() => {
   Posto.bulkCreate(postos);
@@ -184,6 +193,7 @@ sequelize.sync({ force: true }).then(() => {
   Subarea.bulkCreate(subareas);
   Evento.bulkCreate(eventos);
   Estabelecimento.bulkCreate(estabelecimentos);
+  AvaliacaoEstabelecimento.bulkCreate(AvaliacoesEstabelecimento);
 })
 .catch((error) => {
   console.error('Erro ao carregar tabelas:', error);
