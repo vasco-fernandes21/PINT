@@ -11,7 +11,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
                 { 
                     model: Utilizador, 
                     as: 'utilizador', 
-                    attributes: ['nome'] 
+                    attributes: ['nome', 'foto'] 
                 },
                 { 
                     model: Utilizador, 
