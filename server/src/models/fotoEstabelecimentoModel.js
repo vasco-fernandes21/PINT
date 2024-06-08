@@ -33,7 +33,7 @@ const FotoEstabelecimento = sequelize.define('FotoEstabelecimento', {
         key: 'id'
         }
     },
-    nome: {
+    foto: {
         type: DataTypes.STRING,
         allowNull: false
     },

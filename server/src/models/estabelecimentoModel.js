@@ -39,7 +39,7 @@ const Estabelecimento = sequelize.define('Estabelecimento', {
       key: 'id'
     }
   },
-  local: {
+  morada: {
     type: DataTypes.STRING,
     allowNull: false
   },

@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../utils/database');
+const {sequelize} = require('../utils/database');
 const Estabelecimento = require('./estabelecimentoModel');
 const Utilizador = require('./utilizadorModel');
 
@@ -43,6 +43,7 @@ const AvaliacaoEstabelecimento = sequelize.define('AvaliacaoEstabelecimento', {
 });
 
 AvaliacaoEstabelecimento.belongsTo(Utilizador, { foreignKey: 'idUtilizador', as: 'utilizador' });
+AvaliacaoEstabelecimento.belongsTo(Utilizador, { foreignKey: 'idAdmin', as: 'admin' });
 AvaliacaoEstabelecimento.belongsTo(Estabelecimento, { foreignKey: 'idEstabelecimento', as: 'estabelecimento' });
 
 module.exports = AvaliacaoEstabelecimento;

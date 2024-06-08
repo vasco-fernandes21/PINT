@@ -140,8 +140,8 @@ function CriarEvento() {
             />
           </Box>
           <TextField 
-            {...register('local')} 
-            label="Local" 
+            {...register('morada')} 
+            label="Morada" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
