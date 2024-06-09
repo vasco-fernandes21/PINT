@@ -1,13 +1,22 @@
+-- ================================
+-- Tabela: Posto
+-- ================================
 CREATE TABLE Posto (
     id INT PRIMARY KEY IDENTITY(1,1),
     nome VARCHAR(255) NOT NULL
 );
 
+-- ================================
+-- Tabela: Area
+-- ================================
 CREATE TABLE Area (
     id INT PRIMARY KEY IDENTITY(1,1),
     nome VARCHAR(255)
 );
 
+-- ================================
+-- Tabela: Utilizador
+-- ================================
 CREATE TABLE Utilizador (
     id INT PRIMARY KEY IDENTITY(1,1),
     nome VARCHAR(255),
@@ -29,12 +38,18 @@ CREATE TABLE Utilizador (
     idPosto INT FOREIGN KEY REFERENCES Posto(id)
 );
 
+-- ================================
+-- Tabela: Subarea
+-- ================================
 CREATE TABLE Subarea (
     id INT PRIMARY KEY IDENTITY(1,1),
     idArea INT NOT NULL FOREIGN KEY REFERENCES Area(id),
     nome VARCHAR(255) NOT NULL
 );
 
+-- ================================
+-- Tabela: Evento
+-- ================================
 CREATE TABLE Evento (
     id INT PRIMARY KEY IDENTITY(1,1),
     idArea INT NOT NULL FOREIGN KEY REFERENCES Area(id),
@@ -51,6 +66,9 @@ CREATE TABLE Evento (
     foto VARCHAR(255)
 );
 
+-- ================================
+-- Tabela: Estabelecimento
+-- ================================
 CREATE TABLE Estabelecimento (
     id INT PRIMARY KEY IDENTITY(1,1),
     nome VARCHAR(255) NOT NULL,
@@ -65,6 +83,9 @@ CREATE TABLE Estabelecimento (
     estado BIT DEFAULT 0
 );
 
+-- ================================
+-- Tabela: AvaliacaoEstabelecimento
+-- ================================
 CREATE TABLE AvaliacaoEstabelecimento (
     id INT PRIMARY KEY IDENTITY(1,1),
     idUtilizador INT NOT NULL FOREIGN KEY REFERENCES Utilizador(id),
@@ -73,6 +94,9 @@ CREATE TABLE AvaliacaoEstabelecimento (
     classificacao INT NOT NULL
 );
 
+-- ================================
+-- Tabela: Inscricao
+-- ================================
 CREATE TABLE Inscricao (
     id INT IDENTITY(1,1) PRIMARY KEY,
     idEvento INT NOT NULL,
@@ -83,6 +107,9 @@ CREATE TABLE Inscricao (
     FOREIGN KEY (idUtilizador) REFERENCES Utilizador(id)
 );
 
+-- ================================
+-- Tabela: AvaliacaoEvento
+-- ================================
 CREATE TABLE AvaliacaoEvento (
     id INT PRIMARY KEY IDENTITY(1,1),
     idUtilizador INT NOT NULL FOREIGN KEY REFERENCES Utilizador(id),
@@ -91,6 +118,9 @@ CREATE TABLE AvaliacaoEvento (
     comentario VARCHAR(MAX)
 );
 
+-- ================================
+-- Tabela: FotoEstabelecimento
+-- ================================
 CREATE TABLE FotoEstabelecimento (
     id INT PRIMARY KEY IDENTITY(1,1),
     idEstabelecimento INT NOT NULL FOREIGN KEY REFERENCES Estabelecimento(id),
@@ -99,6 +129,9 @@ CREATE TABLE FotoEstabelecimento (
     foto VARCHAR(MAX) NOT NULL
 );
 
+-- ================================
+-- Tabela: FotoEvento
+-- ================================
 CREATE TABLE FotoEvento (
     id INT PRIMARY KEY IDENTITY(1,1),
     idEvento INT NOT NULL FOREIGN KEY REFERENCES Evento(id),
@@ -107,6 +140,9 @@ CREATE TABLE FotoEvento (
     foto VARCHAR(MAX) NOT NULL
 );
 
+-- ================================
+-- Tabela: Denuncia
+-- ================================
 CREATE TABLE Denuncia (
     id INT PRIMARY KEY IDENTITY(1,1),
     idCriador INT NOT NULL FOREIGN KEY REFERENCES Utilizador(id),
@@ -115,12 +151,26 @@ CREATE TABLE Denuncia (
     estado BIT DEFAULT 0
 );
 
+-- ================================
+-- Tabela: Preferencia
+-- ================================
 CREATE TABLE Preferencia (
     id INT PRIMARY KEY IDENTITY(1,1),
     idUtilizador INT NOT NULL FOREIGN KEY REFERENCES Utilizador(id),
     idArea INT FOREIGN KEY REFERENCES Area(id),
     idSubarea INT FOREIGN KEY REFERENCES Subarea(id),
     CONSTRAINT UC_Preferencia UNIQUE (idUtilizador, idArea, idSubarea)
+);
+
+-- ================================
+-- Tabela: Notificacao
+-- ================================
+CREATE TABLE Notificacao (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    idUtilizador INT NOT NULL FOREIGN KEY REFERENCES Utilizador(id),
+    mensagem VARCHAR(255) NOT NULL,
+    data DATETIME DEFAULT GETDATE(),
+    estado BIT DEFAULT 0
 );
 
 -- Apagar tabelas
@@ -137,3 +187,4 @@ DROP TABLE IF EXISTS Utilizador;
 DROP TABLE IF EXISTS Area;
 DROP TABLE IF EXISTS Posto;
 DROP TABLE IF EXISTS Preferencia;
+DROP TABLE IF EXISTS Notificacao;
