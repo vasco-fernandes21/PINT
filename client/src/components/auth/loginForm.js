@@ -24,6 +24,10 @@ function Login({ setIsAuthenticated: setAuth }) {
     }
   }, [token, navigate, setAuth]);
 
+  useEffect(() => {
+  localStorage.setItem('rememberUser', rememberUser);
+}, [rememberUser]);
+
   const handleLogin = async (email, password) => {
     let loginSuccessful = false;
     try {
@@ -113,6 +117,14 @@ function Login({ setIsAuthenticated: setAuth }) {
     }
     if (loginSuccessful) {
       setAuth(true);
+      if (loginSuccessful) {
+        setAuth(true);
+        const response = await api.get('/utilizador');
+        const { idPosto } = response.data;
+        if (idPosto === null || idPosto === undefined) {
+        navigate('/posto');
+      }
+      }
     }
   };
 

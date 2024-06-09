@@ -1,33 +1,27 @@
-  const bcrypt = require('bcryptjs');
-  const crypto = require('crypto');
-  const jwt = require('jsonwebtoken');
-  const gerarToken = require('../middlewares/gerarToken');
-  const { OAuth2Client } = require('google-auth-library');
-  const nodemailer = require('nodemailer');
-  const Utilizador = require('../models/utilizadorModel');
-  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-  require('dotenv').config();
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+const nodemailer = require('nodemailer');
+const Utilizador = require('../models/utilizadorModel');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+require('dotenv').config();
+const gerarToken = require('../middlewares/gerarToken');
 
-  function generateJWTToken(userId) {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+
+exports.getUtilizador = (req, res) => {
+  res.send(req.user);
+};
+
+exports.listar_utilizadores = async (req, res) => {
+  try {
+    const utilizadores = await Utilizador.findAll();
+    res.send(utilizadores);
+  } catch (error) {
+    console.error('Erro ao listar utilizadores:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
   }
-
-
-  exports.getUtilizador = (req, res) => {
-    res.send(req.user);
-  };
-
-  exports.listar_utilizadores = async (req, res) => {
-    try {
-      const utilizadores = await Utilizador.findAll();
-      res.send(utilizadores);
-    } catch (error) {
-      console.error('Erro ao listar utilizadores:', error);
-      res.status(500).send({ error: 'Erro interno do servidor' });
-    }
-  };
+};
 
 exports.loginMobile = async (req, res) => {
   try {
@@ -47,7 +41,6 @@ exports.loginMobile = async (req, res) => {
       return res.status(401).send({ error: 'Acesso negado' });
     }
 
-    // Verificar se a conta do usuário foi verificada
     if (!user.estado) {
       return res.status(401).send({ error: 'Conta não verificada. Verifique o seu email para ativar a sua conta.' });
     }
@@ -59,17 +52,15 @@ exports.loginMobile = async (req, res) => {
 
     const token = gerarToken(user);
 
-    // Se isPrimeiroLogin for verdadeiro, gere um recoveryToken
     if (user.isPrimeiroLogin) {
       const recoveryToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
 
-      // Atualizar o recoveryToken no registro do usuário
       await user.update({ recoveryToken, isPrimeiroLogin: false });
     }
 
-    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken});
+    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
   } catch (error) {
     console.error('Erro durante o login:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
@@ -90,12 +81,10 @@ exports.login = async (req, res) => {
       return res.status(401).send({ error: 'Utilizador não encontrado' });
     }
 
-    // Verificar se o usuário é um administrador
     if (!user.isAdmin) {
       return res.status(401).send({ error: 'Acesso negado' });
     }
 
-    // Verificar se a conta do usuário foi verificada
     if (!user.estado) {
       return res.status(401).send({ error: 'Conta não verificada. Verifique o seu email para ativar a sua conta.' });
     }
@@ -107,13 +96,11 @@ exports.login = async (req, res) => {
 
     const token = gerarToken(user);
 
-    // Se isPrimeiroLogin for verdadeiro, gere um recoveryToken
     if (user.isPrimeiroLogin) {
       const recoveryToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
 
-      // Atualizar o recoveryToken no registro do usuário
       await user.update({ recoveryToken, isPrimeiroLogin: false });
     }
 
@@ -123,8 +110,7 @@ exports.login = async (req, res) => {
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
-  
-  
+
 exports.criarConta = async (req, res) => {
   try {
     const { nome, email } = req.body;
@@ -138,7 +124,6 @@ exports.criarConta = async (req, res) => {
       return res.status(400).send({ error: 'Email já está em uso' });
     }
 
-    // Generate a random password
     const password = crypto.randomBytes(10).toString('hex');
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -155,7 +140,7 @@ exports.criarConta = async (req, res) => {
     const token = gerarToken(newUser);
 
     const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
-    await this.enviarEmail({  
+    await enviarEmail({  
       email,
       subject: 'Verifique o seu email',
       message: `Clique no link a seguir para verificar a sua conta: ${verificationUrl}.\n\nA sua password temporária é: ${password}`
@@ -168,27 +153,27 @@ exports.criarConta = async (req, res) => {
   }
 };
 
-  exports.verificarEmail = async (req, res) => {
-    try {
-      const { token } = req.query;
+exports.verificarEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
 
-      const user = await Utilizador.findOne({ where: { verificationToken: token } });
-      if (!user) {
-        return res.status(400).send({ error: 'Token de verificação inválido' });
-      }
-
-      user.estado = true;
-      user.verificationToken = null;
-      await user.save();
-
-      res.send({ message: 'Email verificado com sucesso. Pode seguir para o login' });
-    } catch (error) {
-      console.error('Error during email verification:', error);
-      res.status(500).send({ error: 'Erro interno do servidor' });
+    const user = await Utilizador.findOne({ where: { verificationToken: token } });
+    if (!user) {
+      return res.status(400).send({ error: 'Token de verificação inválido' });
     }
-  };
 
-  exports.recuperarPasse = async (req, res) => {
+    user.estado = true;
+    user.verificationToken = null;
+    await user.save();
+
+    res.send({ message: 'Email verificado com sucesso. Pode seguir para o login' });
+  } catch (error) {
+    console.error('Error during email verification:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+exports.recuperarPasse = async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -202,7 +187,7 @@ exports.criarConta = async (req, res) => {
     await user.save();
 
     const resetUrl = `${process.env.REACT_APP_FRONTEND}/reset-passe?token=${recoveryToken}`;
-    await this.enviarEmail({
+    await enviarEmail({
       email,
       subject: 'Recuperação de Palavra Passe',
       message: `Clique no link a seguir para redefinir a sua palavra-passe: ${resetUrl}`
@@ -213,17 +198,17 @@ exports.criarConta = async (req, res) => {
     console.error('Error during password recovery:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
-}
+};
 
 exports.resetarPasse = async (req, res) => {
   try {
     const { token, novaPass } = req.body;
-    
 
     const user = await Utilizador.findOne({ where: { recoveryToken: token } });
     if (!user) {
       return res.status(400).send({ error: 'Token inválido' });
     }
+
     user.isPrimeiroLogin = false;
     await user.save();
 
@@ -237,35 +222,34 @@ exports.resetarPasse = async (req, res) => {
     console.error('Error during password reset:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
-}
+};
 
-  exports.enviarEmail = async (options) => {
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      host: "smtp.gmail.com",
-      port: 465,
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-    const mailOptions = {
-      from: 'The Softshares <thesoftshares@gmail.com>',
-      to: options.email,
-      subject: options.subject,
-      text: options.message
-    };
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log('Email enviado');
-    } catch (error) {
-      console.log(error);
-      throw new Error('Erro ao enviar email');
+const enviarEmail = async (options) => {
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
     }
+  });
+  const mailOptions = {
+    from: 'The Softshares <thesoftshares@gmail.com>',
+    to: options.email,
+    subject: options.subject,
+    text: options.message
   };
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email enviado');
+  } catch (error) {
+    console.log(error);
+    throw new Error('Erro ao enviar email');
+  }
+};
 
-
-  exports.google = async (req, res) => {
+exports.google = async (req, res) => {
   try {
     const { token } = req.body;
     if (!token) {
@@ -284,34 +268,41 @@ exports.resetarPasse = async (req, res) => {
     let user = await Utilizador.findOne({ where: { email } });
 
     if (!user) {
-      // Se não existir, crie uma nova conta
-      req.body.nome = nome;
-      req.body.email = email;
-      await exports.criarContaGoogle(req, res);
+      const accountCreationResponse = await criarContaGoogleHandler({ nome, email });
+      return res.json(accountCreationResponse);
     } else {
-      // Se existir, faça login
       req.body.email = email;
-      await exports.loginGoogle(req, res);
+      const loginResponse = await loginGoogleHandler(req);
+      return res.json(loginResponse);
     }
   } catch (error) {
     console.error('Erro ao autenticar com Google:', error);
-    res.status(500).json({ error: 'Erro ao autenticar com Google' });
+    return res.status(500).json({ error: 'Erro ao autenticar com Google' });
   }
 };
 
-exports.criarContaGoogle = async (req, res) => {
+const loginGoogleHandler = async (req) => {
   try {
-    const { nome, email } = req.body;
-    if (!nome || !email) {
-      return res.status(400).json({ error: 'Nome e email são necessários' });
-    }
-
+    const { email } = req.body;
     const user = await Utilizador.findOne({ where: { email } });
-    if (user) {
-      return res.status(400).json({ error: 'Email já está em uso' });
+    const token = gerarToken(user);
+    return { token, message: 'Login realizado com sucesso' };
+  } catch (error) {
+    throw new Error('Erro ao fazer login com Google');
+  }
+};
+
+const criarContaGoogleHandler = async ({ nome, email }) => {
+  try {
+    if (!nome || !email) {
+      throw new Error('Nome e email são necessários');
     }
 
-    // Generate a random password
+    const existingUser = await Utilizador.findOne({ where: { email } });
+    if (existingUser) {
+      throw new Error('Email já está em uso');
+    }
+
     const password = crypto.randomBytes(10).toString('hex');
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -319,34 +310,21 @@ exports.criarContaGoogle = async (req, res) => {
       nome,
       email,
       palavra_passe: hashedPassword,
-      estado: true, // Conta verificada porque o usuário está se registrando com o Google
+      estado: true,
       isPrimeiroLogin: true
     });
 
-    const jwtToken = generateJWTToken(newUser.id);
-    res.json({ token: jwtToken, message: 'Conta criada com sucesso.' });
+    const token = gerarToken(newUser);
+
+    await enviarEmail({
+      email,
+      subject: 'Bem-vindo ao Softshares',
+      message: `Sua conta foi criada com sucesso. Aqui está sua senha temporária: ${password}. Por favor, altere-a após o login.`
+    });
+
+    return { token, message: 'Conta criada com sucesso.' };
   } catch (error) {
     console.error('Erro ao criar conta com Google:', error);
-    res.status(500).json({ error: 'Erro ao criar conta com Google' });
-  }
-};
-
-exports.loginGoogle = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ error: 'Email é necessário' });
-    }
-
-    const user = await Utilizador.findOne({ where: { email } });
-    if (!user) {
-      return res.status(400).json({ error: 'Utilizador não encontrado' });
-    }
-
-    const jwtToken = generateJWTToken(user.id);
-    res.json({ token: jwtToken, message: 'Login realizado com sucesso' });
-  } catch (error) {
-    console.error('Erro ao fazer login com Google:', error);
-    res.status(500).json({ error: 'Erro ao fazer login com Google' });
+    throw new Error('Erro ao criar conta com Google');
   }
 };

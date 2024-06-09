@@ -33,6 +33,7 @@ const areaRoutes = require('./src/routes/areaRoutes');
 const estabelecimentoRoutes = require('./src/routes/estabelecimentoRoutes');
 const postoRoutes = require('./src/routes/postoRoutes');
 const avaliacaoRoutes = require('./src/routes/avaliacaoRoutes');
+const utilizadorRoutes = require('./src/routes/utilizadorRoutes');
 
 // Rotas da API
 app.use('/', authRoutes);
@@ -41,7 +42,8 @@ app.use('/areas', areaRoutes);
 app.use('/estabelecimentos', estabelecimentoRoutes);
 app.use('/postos', postoRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); 
-app.use('/avaliacao', require('./src/routes/avaliacaoRoutes'));
+app.use('/avaliacao', avaliacaoRoutes);
+app.use('/utilizador', utilizadorRoutes);
 
 
 app.listen(port, () => {
