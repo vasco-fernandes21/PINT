@@ -37,6 +37,10 @@ const FotoEstabelecimento = sequelize.define('FotoEstabelecimento', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    estado : {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    }
 }, {
     freezeTableName: true,
     timestamps: false

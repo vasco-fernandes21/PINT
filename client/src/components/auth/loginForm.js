@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/softinsa.svg';
-import './login.css';
 import Swal from 'sweetalert2';
 import GoogleAuth from './googleauth';
+import './login.css';
 import api from '../api/api';
 
 function Login({ setIsAuthenticated: setAuth }) {

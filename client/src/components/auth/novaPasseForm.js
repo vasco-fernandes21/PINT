@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/api';
 import logo from '../../assets/softinsa.svg';
-import './login.css';
 import Swal from 'sweetalert2';
+import './login.css';
 
 function NovaPasseForm() {
     const [password, setPassword] = useState('');

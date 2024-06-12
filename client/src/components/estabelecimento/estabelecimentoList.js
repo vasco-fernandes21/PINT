@@ -181,14 +181,13 @@ function EstabelecimentoList() {
                 alt={estabelecimento.nome}
               />
               <StyledCardContent>
-                <StyledTypography variant="h5" component="h2">
+              <StyledTypography variant="h5" component="h2">
+              <Link to={`/estabelecimentos/${estabelecimento.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   {estabelecimento.nome}
-                </StyledTypography>
+                </Link>
+              </StyledTypography>
                 <Typography variant="body2" color="text.secondary">
-                  Morada: {estabelecimento.morada}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Descrição: {estabelecimento.descricao}
+                {estabelecimento.morada}
                 </Typography>
               </StyledCardContent>
             </StyledCard>

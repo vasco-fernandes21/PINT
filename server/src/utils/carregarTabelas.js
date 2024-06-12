@@ -65,6 +65,7 @@ const utilizadores = [
     palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     estado: true,
     isAdmin: true,
+    isPrimeiroLogin: false, 
     idPosto: 1,
   },
 ];
@@ -143,14 +144,27 @@ const eventos = [
 
 const estabelecimentos = [
   // Saúde
-  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, nome: 'Clínica de Viseu', descricao: 'Clínica de Viseu, especializada em várias áreas médicas', morada: 'Viseu', estado: true, foto: 'foto-1717335916152-hospital.jpg'},
+  {
+  idArea: 1, 
+  idSubarea: 1, 
+  idCriador: 1, 
+  idAdmin: 1, 
+  idPosto: 1, 
+  nome: 'CUF Viseu', 
+  descricao: 'O Hospital CUF Viseu é a primeira unidade CUF na zona Centro do país, possibilitando o acesso a serviços de saúde de excelência por parte dos viseenses.\n\nEste hospital disponibiliza a tecnologia mais avançada para poder prestar um serviço de excelência aos seus clientes. Uma resposta global em termos de prestação de cuidados de saúde, incluindo uma gama de equipamentos que permitem responder a todas as necessidades, desde a prevenção, passando pelo diagnóstico e até ao tratamento.', 
+  morada: 'Viseu', 
+  estado: true, 
+  foto: 'foto-1717335916152-hospital.jpg', 
+  latitude: 40.64525311186517, 
+  longitude: -7.91139338898848
+},
   {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, nome: 'Clínica Dentária Tomar', descricao: 'Clínica Dentária Tomar, com atendimento especializado', morada: 'Tomar', estado: true},
   {idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, nome: 'Hospital do Fundão', descricao: 'Hospital do Fundão, oferecendo serviços de emergência', morada: 'Fundão', estado: true},
 
   // Desporto
   {idArea: 2, idSubarea: 3, idCriador: 4, idAdmin: 4, idPosto: 4, nome: 'Ginásio Portalegre', descricao: 'Ginásio Portalegre, equipado com as melhores máquinas', morada: 'Portalegre', estado: true},
   {idArea: 2, idSubarea: 4, idCriador: 5, idAdmin: 5, idPosto: 5, nome: 'Centro de Atividades Vila Real', descricao: 'Centro de Atividades ao Ar Livre em Vila Real', morada: 'Vila Real', estado: true},
-  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Fitness Club Viseu', descricao: 'Fitness Club Viseu, para um treino completo', morada: 'Viseu', estado: true, foto:'ginasio.jpg'},
+  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Fitness Club Viseu', descricao: 'Fitness Club Viseu, para um treino completo', morada: 'Viseu', estado: true, foto:'ginasio.jpg', latitude: 40.636309000123255, longitude: -7.931026006745427},
 
   // Formação
   {idArea: 3, idSubarea: 5, idCriador: 2, idAdmin: 3, idPosto: 2, nome: 'Centro de Formação Tomar', descricao: 'Centro de Formação Profissional em Tomar', morada: 'Tomar', estado: true},
@@ -187,9 +201,9 @@ const AvaliacoesEstabelecimento = [
 ];
 
 const FotosEstabelecimento = [
-  {idEstabelecimento: 1, foto: 'foto-1717335916152-hospital.jpg', idAdmin: 1, idCriador: 1},
-  {idEstabelecimento: 1, foto: 'ginasio.jpg', idAdmin: 1, idCriador: 1},
-  {idEstabelecimento: 1, foto: 'palacio.jpg', idAdmin: 1, idCriador: 1},
+  {idEstabelecimento: 1, foto: 'foto-1717335916152-hospital.jpg', idAdmin: 1, idCriador: 1, estado: 1},
+  {idEstabelecimento: 1, foto: 'ginasio.jpg', idAdmin: 1, idCriador: 1, estado: 1},
+  {idEstabelecimento: 1, foto: 'palacio.jpg', idAdmin: 1, idCriador: 1, estado: 0},
 ];
 
 const carregarTabelas = () => {

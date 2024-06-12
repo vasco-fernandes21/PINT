@@ -50,10 +50,12 @@ exports.create = async (req, res) => {
       idArea,
       idSubarea,
       idPosto,
-      local,
+      morada,
       descricao,
       idAdmin,
-      idCriador
+      idCriador,
+      latitude, 
+      longitude
     } = req.body;
 
     const foto = req.file ? req.file.filename : null; 
@@ -64,11 +66,13 @@ exports.create = async (req, res) => {
         idArea,
         idSubarea,
         idPosto,
-        local,
+        morada,
         descricao,
         idAdmin,
         idCriador,
-        foto 
+        foto, 
+        latitude,
+        longitude
       });
   
       res.status(200).json({

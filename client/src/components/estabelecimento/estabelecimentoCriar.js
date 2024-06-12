@@ -121,9 +121,25 @@ function CriarEstabelecimento() {
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
           <TextField 
-            {...register('local')} 
-            label="Local" 
+            {...register('morada')} 
+            label="Morada" 
             fullWidth 
+            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+          />
+          <TextField 
+            {...register('latitude')} 
+            label="Latitude" 
+            fullWidth 
+            multiline
+            rows={4}
+            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+          />
+          <TextField 
+            {...register('longitude')} 
+            label="Longitude" 
+            fullWidth 
+            multiline
+            rows={4}
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
           <FormControl fullWidth sx={{ mb: 2 }}>

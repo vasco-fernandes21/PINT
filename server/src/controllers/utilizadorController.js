@@ -18,6 +18,84 @@ exports.getUtilizadores = async (req, res) => {
     }
 };
 
+exports.utilizadorPorId = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    res.send(utilizador);
+  } catch (error) {
+    console.error('Erro ao buscar utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+}
+
+// Para adicionar um novo utilizador
+exports.criarUtilizador = async (req, res) => {
+  const { nome, email, estado, isAdmin, idPosto } = req.body;
+
+  try {
+    const newUtilizador = await Utilizador.create({ nome, email, estado, isAdmin, idPosto });
+    res.status(201).send({ message: 'Utilizador criado com sucesso', data: newUtilizador });
+  } catch (error) {
+    console.error('Erro ao criar utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+// Para apagar um utilizador
+exports.apagarUtilizador = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    await utilizador.destroy();
+    res.status(200).send({ message: 'Utilizador apagado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao apagar utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+
+
+
+exports.atualizarUtilizador = async (req, res) => {
+  const { id } = req.params;
+  const { nome, email, estado, isAdmin, idPosto } = req.body;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    if (nome !== undefined) utilizador.nome = nome;
+    if (email !== undefined) utilizador.email = email;
+    if (estado !== undefined) utilizador.estado = estado;
+    if (isAdmin !== undefined) utilizador.isAdmin = isAdmin;
+    if (idPosto !== undefined) utilizador.idPosto = idPosto;
+
+    await utilizador.save();
+
+    res.status(200).send({ message: 'Utilizador atualizado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao atualizar utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+
 exports.associarPosto = async (req, res) => {
   const { id, idPosto } = req.body;
 
