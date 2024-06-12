@@ -9,13 +9,20 @@ exports.getUtilizador = (req, res) => {
   };
 
 exports.getUtilizadores = async (req, res) => {
-    try {
-      const utilizadores = await Utilizador.findAll();
-      res.send(utilizadores);
-    } catch (error) {
-      console.error('Erro ao listar utilizadores:', error);
-      res.status(500).send({ error: 'Erro interno do servidor' });
+  const { idPosto } = req.query;
+
+  try {
+    let utilizadores;
+    if (idPosto) {
+      utilizadores = await Utilizador.findAll({ where: { idPosto } });
+    } else {
+      utilizadores = await Utilizador.findAll();
     }
+    res.send(utilizadores);
+  } catch (error) {
+    console.error('Erro ao listar utilizadores:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
 };
 
 exports.utilizadorPorId = async (req, res) => {

@@ -25,11 +25,10 @@ function Login({ setIsAuthenticated: setAuth }) {
   }, [token, navigate, setAuth]);
 
   useEffect(() => {
-  localStorage.setItem('rememberUser', rememberUser);
-}, [rememberUser]);
+    localStorage.setItem('rememberUser', rememberUser);
+  }, [rememberUser]);
 
   const handleLogin = async (email, password) => {
-    let loginSuccessful = false;
     try {
       const response = await api.post('/login', { email, password });
       const { token, recoveryToken } = response.data;
@@ -47,7 +46,6 @@ function Login({ setIsAuthenticated: setAuth }) {
       }
 
       setToken(token);
-      loginSuccessful = true;
       Swal.fire({
         title: 'Sucesso!',
         text: 'Login realizado com sucesso',
@@ -55,8 +53,19 @@ function Login({ setIsAuthenticated: setAuth }) {
         confirmButtonColor: '#1D324F',
         timer: 2000,
       });
+
+      setAuth(true);
+
       if (recoveryToken) {
         navigate(`/reset-passe?token=${recoveryToken}`);
+      } else {
+        const userResponse = await api.get('/utilizador');
+        const { idPosto } = userResponse.data;
+        if (idPosto === null || idPosto === undefined) {
+          navigate('/posto');
+        } else {
+          navigate('/');
+        }
       }
     } catch (error) {
       console.error('Error during login:', error);
@@ -113,17 +122,6 @@ function Login({ setIsAuthenticated: setAuth }) {
         setIsPasswordInvalid(false);
         setEmailError('');
         setPasswordError('');
-      }
-    }
-    if (loginSuccessful) {
-      setAuth(true);
-      if (loginSuccessful) {
-        setAuth(true);
-        const response = await api.get('/utilizador');
-        const { idPosto } = response.data;
-        if (idPosto === null || idPosto === undefined) {
-        navigate('/posto');
-      }
       }
     }
   };

@@ -12,14 +12,29 @@ const ListaUtilizadores = () => {
   const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
-    fetchUtilizadores();
+    fetchIdPostoAndUtilizadores();
     fetchPostos();
   }, []);
-
+  
+  
+  const fetchIdPostoAndUtilizadores = async () => {
+    try {
+      const response = await api.get('/utilizador');
+      const idPosto = response.data.idPosto;
+      console.log('idPosto:', idPosto);
+      fetchUtilizadores(idPosto);
+    } catch (error) {
+      console.error('Erro ao encontrar idPosto:', error);
+    }
+  };
+  
   const fetchUtilizadores = async () => {
     try {
+      const responsePosto = await api.get('/utilizador');
+      const idPosto = responsePosto.data.idPosto;
       const response = await api.get('/utilizador/todos');
-      setUtilizadores(response.data);
+      const utilizadores = response.data.filter(user => user.idPosto === idPosto || user.idPosto === undefined || user.idPosto === null);
+      setUtilizadores(utilizadores);
     } catch (error) {
       console.error('Erro ao encontrar utilizadores:', error);
     }

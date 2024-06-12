@@ -11,38 +11,41 @@ const GoogleAuth = () => {
 
   const handleSuccess = async (response) => {
   const token = response.credential;
-  api.post('/login/google', { token })
-    .then(async res => {
-      if (rememberUser) {
-        localStorage.setItem('token', res.data.token);
-      } else {
-        sessionStorage.setItem('token', res.data.token);
+  try {
+    const res = await api.post('/login/google', { token });
+    if (rememberUser) {
+      localStorage.setItem('token', res.data.token);
+    } else {
+      sessionStorage.setItem('token', res.data.token);
+    }
+    window.dispatchEvent(new Event('storage'));
+
+    setErrorMessage(null);
+
+    Swal.fire({
+      title: 'Sucesso!',
+      text: 'Login com a conta Google realizado com sucesso',
+      icon: 'success',
+      confirmButtonColor: '#1D324F',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const userResponse = await api.get('/utilizador');
+        if (userResponse && userResponse.data) {
+          const { idPosto } = userResponse.data;
+          if (idPosto === null || idPosto === undefined) {
+            navigate('/posto');
+          } else {
+            navigate('/');
+          }
+        } else {
+          console.error('Invalid user response:', userResponse);
+        }
       }
-      setErrorMessage(null);
-      
-      Swal.fire({
-        title: 'Sucesso!',
-        text: 'Login com a conta Google realizado com sucesso',
-        icon: 'success',
-        confirmButtonColor: '#1D324F',
-      });
-      const userResponse = await api.get('/utilizador');
-      if (userResponse && userResponse.data) {
-        const { idPosto } = userResponse.data;
-        console.log('User posto:', idPosto);
-        if (idPosto === null || idPosto === undefined) {
-        navigate('/posto');
-      } else {
-        navigate('/');
-      }
-      } else {
-        console.error('Invalid user response:', userResponse);
-      }
-    })
-    .catch(err => {
-      console.error('Server error:', err);
-      setErrorMessage('Server error. Please try again later.');
     });
+  } catch (err) {
+    console.error('Server error:', err);
+    setErrorMessage('Server error. Please try again later.');
+  }
 };
 
   const handleError = () => {

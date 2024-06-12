@@ -319,7 +319,7 @@ const criarContaGoogleHandler = async ({ nome, email }) => {
     await enviarEmail({
       email,
       subject: 'Bem-vindo ao Softshares',
-      message: `Sua conta foi criada com sucesso. Aqui está sua senha temporária: ${password}. Por favor, altere-a após o login.`
+      message: `A sua conta foi criada com sucesso. Aqui está a sua palavra-passe temporária: ${password}. Irá atualizá-la após o login.`
     });
 
     return { token, message: 'Conta criada com sucesso.' };
