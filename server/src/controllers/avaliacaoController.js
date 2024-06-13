@@ -6,20 +6,23 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
        const idEstabelecimento = req.params.id || req.query.idEstabelecimento;
        
         const data = await AvaliacaoEstabelecimento.findAll({
-            where: { idEstabelecimento },
-            include: [
-                { 
-                    model: Utilizador, 
-                    as: 'utilizador', 
-                    attributes: ['nome', 'foto'] 
+                where: { 
+                    idEstabelecimento,
+                    estado: 'aceite'
                 },
-                { 
-                    model: Utilizador, 
-                    as: 'admin', 
-                    attributes: ['nome'] 
-                },
-            ],
-        });
+                include: [
+                    { 
+                        model: Utilizador, 
+                        as: 'utilizador', 
+                        attributes: ['nome', 'foto'] 
+                    },
+                    { 
+                        model: Utilizador, 
+                        as: 'admin', 
+                        attributes: ['nome'] 
+                    },
+                ],
+            });
         res.json({
             success: true,
             data,

@@ -16,8 +16,8 @@ const Mapa = ({ latitude, longitude }) => {
     googleMapsApiKey: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8', 
   });
 
-  if (loadError) return <div>Error loading maps</div>;
-  if (!isLoaded) return <div>Loading maps...</div>;
+  if (loadError) return <div>Erro ao carregar mapas</div>;
+  if (!isLoaded) return <div>A carregar...</div>;
 
   return (
     <GoogleMap

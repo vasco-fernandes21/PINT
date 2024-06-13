@@ -193,11 +193,13 @@ const estabelecimentos = [
 ];
 
 const AvaliacoesEstabelecimento = [
-  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5},
-  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4},
-  {idUtilizador: 3, idAdmin: 3, idEstabelecimento: 1, classificacao: 3},
-  {idUtilizador: 4, idAdmin: 4, idEstabelecimento: 1, classificacao: 2},
-  {idUtilizador: 5, idAdmin: 5, idEstabelecimento: 1, classificacao: 1},
+  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: 'aceite'},
+  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: 'aceite'},
+  {idUtilizador: 3, idAdmin: 3, idEstabelecimento: 1, classificacao: 3, estado: 'aceite'},
+  {idUtilizador: 4, idAdmin: 4, idEstabelecimento: 1, classificacao: 2, estado: 'aceite'},
+  {idUtilizador: 5, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: 'aceite'},
+  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: 'aceite'},
+  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: 'aceite'},
 ];
 
 const FotosEstabelecimento = [

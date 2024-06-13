@@ -5,8 +5,8 @@ const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
 
 exports.listarEventos = async (req, res) => {
-    console.log('Query Params:', req.query); // Adicionado log de depuração
-    console.log('User:', req.user); // Adicionado log de depuração
+    console.log('Query Params:', req.query); 
+    console.log('User:', req.user); 
 
     const { areaId, subareaId } = req.query;
     let idPosto;
