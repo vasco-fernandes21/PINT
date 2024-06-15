@@ -2,8 +2,14 @@ const express = require('express');
 const router = express.Router();
 const avaliacaoController = require('../controllers/avaliacaoController');
 
-router.post('/estabelecimento/criar/:id', avaliacaoController.CriarAvaliacaoEstabelecimento)
-router.get('/estabelecimento/:id', avaliacaoController.listarAvaliacoesEstabelecimento)
-router.put('/estabelecimento/:id', avaliacaoController.editarAvaliacaoEstabelecimento)
+router.post('/estabelecimentos/criar/:id', avaliacaoController.CriarAvaliacaoEstabelecimento)
+router.get('/estabelecimentos/:id', avaliacaoController.listarAvaliacoesEstabelecimento)
+router.put('/estabelecimentos/:id', avaliacaoController.editarAvaliacaoEstabelecimento)
+router.delete('/estabelecimentos/:id', avaliacaoController.apagarAvaliacaoEstabelecimento)
+
+router.post('/eventos/criar/:id', avaliacaoController.CriarAvaliacaoEvento)
+router.get('/eventos/:id', avaliacaoController.listarAvaliacoesEvento)
+router.put('/eventos/:id', avaliacaoController.editarAvaliacaoEvento)
+router.delete('/eventos/:id', avaliacaoController.apagarAvaliacaoEvento)
 
 module.exports = router;

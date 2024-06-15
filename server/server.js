@@ -35,6 +35,7 @@ const postoRoutes = require('./src/routes/postoRoutes');
 const avaliacaoRoutes = require('./src/routes/avaliacaoRoutes');
 const utilizadorRoutes = require('./src/routes/utilizadorRoutes');
 const notificacaoRoutes = require('./src/routes/notificacaoRoutes');
+const fotoRoutes = require('./src/routes/fotoRoutes');
 
 // Rotas da API
 app.use('/', authRoutes);
@@ -45,7 +46,7 @@ app.use('/postos', postoRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));   
 app.use('/avaliacao', avaliacaoRoutes);
 app.use('/utilizador', utilizadorRoutes);
-app.use('/notificacao', notificacaoRoutes);
+app.use('/foto', fotoRoutes);
 
 
 

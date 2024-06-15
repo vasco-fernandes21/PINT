@@ -128,7 +128,7 @@ exports.create = async (req, res) => {
 
 
 
-exports.update = async (req, res) => {
+exports.atualizar = async (req, res) => {
     const { id } = req.params;
     const {
         titulo,
@@ -186,6 +186,7 @@ exports.update = async (req, res) => {
         });
     }
 };
+
 exports.delete = async (req, res) => {
     const { eventoId } = req.body;
 
@@ -213,127 +214,82 @@ exports.delete = async (req, res) => {
     }
 };
 
-exports.porVerificar = async (req, res) => {
+    exports.getFotoEvento = async (req, res) => {
+    const { id } = req.params;
     try {
-        const idPosto = req.user.idPosto; 
-        const data = await Evento.findAll({
+        const fotos = await FotoEvento.findAll({
             where: { 
-                estado: false,
-                idPosto: idPosto 
+                idEvento: id,
+                estado: true, 
             },
-            include: [
-                { model: Area, as: 'area', attributes: ['nome'] },
-                { model: Subarea, as: 'subarea', attributes: ['nome'] },
-                { model: Utilizador, as: 'criador', attributes: ['nome'] },
-                { model: Utilizador, as: 'admin', attributes: ['nome'] }
-            ]
         });
 
-        res.status(200).json({
-            success: true,
-            data: data
-        });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({
-            success: false,
-            error: err.message
-        });
-    }
-};
-
-exports.countPorVerificar = async (req, res) => {
-    try {
-        const idPosto = req.user.idPosto; // Use idPosto from req.user
-        const count = await Evento.count({ 
-            where: { 
-                estado: false,
-                idPosto: idPosto // Use idPosto in the where clause
-            } 
-        });
-
-        res.status(200).json({
-            success: true,
-            count: count
-        });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({
-            success: false,
-            error: err.message
-        });
-    }
-};
-
-exports.aprovar = async (req, res) => {
-    const { eventoId } = req.body;
-    try {
-        const evento = await Evento.findOne({ where: { id: eventoId } });
-        if (!evento) {
-            return res.status(404).json({
+        if (fotos.length > 0) {
+            res.status(200).json({
+                success: true,
+                data: fotos,
+            });
+        } else {
+            res.status(404).json({
                 success: false,
-                message: 'Evento não encontrado!'
+                message: 'Nenhuma foto encontrada para o evento com o ID ' + id,
             });
         }
+    } catch (err) {
+        console.log("Error: " + err);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
 
-        evento.estado = true;
-        await evento.save();
+exports.uploadFoto = async (req, res) => {
+    const { id } = req.params;
+    const { idUtilizador } = req.body;
+    const foto = req.file ? req.file.filename : null;
+
+    try {
+        const newFoto = await FotoEvento.create({
+            foto,
+            idEvento: id,
+            idUtilizador,
+        });
 
         res.status(200).json({
             success: true,
-            message: 'Evento aprovado com sucesso!'
+            message: 'Foto adicionada com sucesso!',
+            data: newFoto
         });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({
-            success: false,
-            error: err.message
-        });
-    }
-};
-
-exports.rejeitar = async (req, res) => {
-    const { eventoId } = req.body;
-    try {
-        const evento = await Evento.findOne({ where: { id: eventoId } });
-        if (!evento) {
-            return res.status(404).json({
-                success: false,
-                message: 'Evento não encontrado!'
-            });
-        }
-
-        await evento.destroy();
-
-        res.status(200).json({
-            success: true,
-            message: 'Evento rejeitado com sucesso!'
-        });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({
-            success: false,
-            error: err.message
-        });
-    }
-};
-
-exports.proximosEventos = async (req, res) => {
-    const { inicio, fim } = req.body;
-    const nestabelecimento = req.params.nestabelecimento;
-
-    try {
-
-        const eventos = await Evento.find({
-            nestabelecimento: nestabelecimento,
-            data: {
-                $gte: new Date(inicio),
-                $lte: new Date(fim)
-            }
-        });
-
-        res.json({ data: eventos });
     } catch (error) {
-        res.status(500).json({ error: error.toString() });
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao adicionar a foto!" });
+    }
+};
+
+exports.deleteFoto = async (req, res) => {
+    const { fotoId } = req.body;
+
+    try {
+        const del = await FotoEvento.destroy({ where: { id: fotoId } });
+
+        if (del > 0) {
+            res.status(200).json({
+                success: true,
+                deleted: del,
+                message: 'Foto removida!'
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Nenhuma foto encontrada com o ID fornecido!',
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            success: false,
+            message: 'Erro ao eliminar a foto!'
+        });
     }
 };

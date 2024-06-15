@@ -3,45 +3,77 @@ import { TextField, Button, Rating, Typography, Box } from "@mui/material";
 import Swal from "sweetalert2";
 import api from "../api/api";
 
-function NovaAvaliacao({ idEstabelecimento, idUtilizador, avaliacoes, setAvaliacoes }) {
+function NovaAvaliacao({ tipo, id, idUtilizador, handleUpdateAvaliacoes }) {
   const [rating, setRating] = useState(0);
   const [comentario, setComentario] = useState('');
 
   const handleSubmitAvaliacao = async () => {
-    if (!idUtilizador) {
-      Swal.fire({
-        text: "Utilizador não encontrado, por favor tente mais tarde.",
-        icon: "warning",
-        confirmButtonColor: "#1d324f"
-      });
-      return;
-    }
+    const result = await Swal.fire({
+      title: 'Pretende enviar o comentário?',
+      showDenyButton: true,
+      confirmButtonText: 'Sim',
+      denyButtonText: 'Não',
+      confirmButtonColor: '#1d234f',
+      denyButtonColor: '#6c757d',
+    });
 
-    if (!rating && !comentario) {
-      Swal.fire({
-        text: "Por favor, forneça uma classificação ou comentário.",
-        icon: "warning",
-        confirmButtonColor: "#1d324f"
-      });
-      return;
-    }
-
-    try {
-      const resposta = await api.post(`/avaliacao/estabelecimento/criar/${idEstabelecimento}`, {
-        idUtilizador: idUtilizador,
-        classificacao: rating,
-        comentario: comentario
-      });
-
-      if (resposta.data.success) {
-        setAvaliacoes([...avaliacoes, resposta.data.data]);
-        setRating(0);
-        setComentario('');
-      } else {
-        alert('Erro ao enviar avaliação');
+    if (result.isConfirmed) {
+      if (!idUtilizador) {
+        Swal.fire({
+          text: "Utilizador não encontrado, por favor tente mais tarde.",
+          icon: "warning",
+          confirmButtonColor: "#1d324f"
+        });
+        return;
       }
-    } catch (error) {
-      console.error('Error submitting review:', error);
+
+      if (!rating && !comentario) {
+        Swal.fire({
+          text: "Por favor, forneça uma classificação ou comentário.",
+          icon: "warning",
+          confirmButtonColor: "#1d324f"
+        });
+        return;
+      }
+
+      try {
+        const resposta = await api.post(`/avaliacao/${tipo}/criar/${id}`, {
+          idUtilizador: idUtilizador,
+          classificacao: rating,
+          comentario: comentario
+        });
+
+        if (resposta.data.success) {
+          handleUpdateAvaliacoes(); // Chama a função para atualizar as avaliações no componente pai
+          setRating(0);
+          setComentario('');
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Operação concluída',
+            text: 'O comentário foi enviado com sucesso.',
+            confirmButtonColor: '#1d234f',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao enviar avaliação',
+            text: 'Ocorreu um erro ao enviar a avaliação.',
+            confirmButtonColor: '#1d234f',
+          });
+        }
+      } catch (error) {
+        console.error('Error submitting review:', error);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro ao enviar avaliação',
+          text: 'Ocorreu um erro ao enviar a avaliação.',
+          confirmButtonColor: '#1d234f',
+        });
+      }
+    } else if (result.isDenied) {
+      Swal.fire('Operação Cancelada', '', 'info');
     }
   };
 

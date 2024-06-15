@@ -6,7 +6,6 @@ const auth = require('../middlewares/decodeJWT');
 
 router.get('/', auth, eventoController.listarEventos);
 router.post('/criar', auth, uploadEventos.single('foto'), eventoController.create);
-router.get('/naoverificados', auth, eventoController.porVerificar);
-router.get('/naoverificados/count', auth, eventoController.countPorVerificar);
+
 
 module.exports = router;

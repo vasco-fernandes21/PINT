@@ -10,7 +10,7 @@ import Eventos from './views/eventos/eventos';
 import CriarEvento from './components/eventos/eventoCriar';
 import EstabelecimentoList from './components/estabelecimento/estabelecimentoList';
 import CriarEstabelecimento from './components/estabelecimento/estabelecimentoCriar';
-import DetailEstabelecimento from './components/estabelecimento/estabelecimentoDetail';
+import EstabelecimentoPage from './components/estabelecimento/estabelecimentoPage';
 import ListaUtilizadores from './components/utilizador/utilizadorList';
 import SelecionarPosto from './components/posto/SelecionarPostoForm';
 import EditarEstabelecimento from './components/estabelecimento/estabelecimentoEdit';
@@ -61,7 +61,7 @@ function App() {
             <Route path="eventos/criar" element={<CriarEvento />} />
           <Route path="estabelecimentos" element={<EstabelecimentoList />} />
             <Route path="estabelecimentos/criar" element={<CriarEstabelecimento />} />
-            <Route path="estabelecimentos/:id" element={<DetailEstabelecimento />} />
+            <Route path="estabelecimentos/:id" element={<EstabelecimentoPage/>} />
             <Route path="estabelecimentos/:id/editar" element={<EditarEstabelecimento />} />
           <Route path="utilizadores" element={<ListaUtilizadores />} />
          </Route>

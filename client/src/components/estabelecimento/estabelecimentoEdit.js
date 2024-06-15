@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form'; 
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography, Paper } from '@mui/material';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography, Paper, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import Swal from 'sweetalert2';
 import api from '../api/api';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 function EditarEstabelecimento() {
+  const { id } = useParams(); // Obtém o ID do estabelecimento da URL
   const { register, handleSubmit, watch, control, setValue } = useForm();
   const [areas, setAreas] = useState([]);
   const [subareas, setSubareas] = useState([]);
-  const selectedArea = watch('area');
-  const { id } = useParams(); // get the id from the URL
+  const [open, setOpen] = useState(false); // Estado para controlar a abertura do diálogo
 
+  const selectedArea = watch('area');
+
+  // Busca das áreas disponíveis
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAreas = async () => {
       try {
         const response = await api.get('/areas');
         setAreas(response.data.data);
@@ -22,11 +25,12 @@ function EditarEstabelecimento() {
       }
     };
 
-    fetchData();
+    fetchAreas();
   }, []);
 
+  // Busca das subáreas baseadas na área selecionada
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSubareas = async () => {
       if (selectedArea) {
         try {
           const response = await api.get(`/areas/${selectedArea}`);
@@ -39,11 +43,12 @@ function EditarEstabelecimento() {
       }
     };
 
-    fetchData();
+    fetchSubareas();
   }, [selectedArea]);
 
+  // Busca dos dados do estabelecimento para pré-preenchimento do formulário
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchEstabelecimento = async () => {
       try {
         const response = await api.get(`/estabelecimentos/${id}`);
         const estabelecimento = response.data.data;
@@ -55,27 +60,13 @@ function EditarEstabelecimento() {
       }
     };
 
-    fetchData();
+    fetchEstabelecimento();
   }, [id, setValue]);
 
+  // Função para lidar com o envio do formulário de edição
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      Object.keys(data).forEach((key) => {
-        formData.append(key, data[key]);
-      });
-
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token de autenticação não encontrado.');
-      }
-
-      const response = await api.put(`/estabelecimentos/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`
-        },
-      });
+      const response = await api.put(`/estabelecimentos/${id}`, data);
 
       Swal.fire({
         title: "Sucesso",
@@ -85,6 +76,7 @@ function EditarEstabelecimento() {
       });
 
       console.log('Estabelecimento atualizado:', response.data);
+      handleClose(); // Fecha o diálogo após o sucesso
     } catch (error) {
       Swal.fire({
         title: "Erro",
@@ -97,19 +89,28 @@ function EditarEstabelecimento() {
     }
   };
 
+  // Funções para controlar a abertura e o fechamento do diálogo
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Box display="flex" justifyContent="center" mt={3}>
       <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: '1000px'}}>
-      <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', textAlign: 'center' }}>
-        Editar Estabelecimento
-      </Typography>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', textAlign: 'center' }}>
+          Editar Estabelecimento
+        </Typography>
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           noValidate
           sx={{ mt: 1}}
         >
-        <InputLabel htmlFor="nome">Nome do Estabelecimento</InputLabel>
+          <InputLabel htmlFor="nome">Nome do Estabelecimento</InputLabel>
           <TextField 
             {...register('nome')} 
             fullWidth 
@@ -133,16 +134,12 @@ function EditarEstabelecimento() {
           <TextField 
             {...register('latitude')} 
             fullWidth 
-            multiline
-            rows={4}
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
           <InputLabel htmlFor="longitude">Longitude</InputLabel>
           <TextField 
             {...register('longitude')} 
             fullWidth 
-            multiline
-            rows={4}
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
           <FormControl fullWidth sx={{ mb: 2 }}>
@@ -173,62 +170,39 @@ function EditarEstabelecimento() {
               ))}
             </Select>
           </FormControl>
-          <Controller
-            name="foto"
-            control={control}
-            render={({ field }) => (
-              <Button
-                variant="contained"
-                component="label"
-                fullWidth
-                sx={{ 
-                  mb: 2, 
-                  backgroundColor: '#1D324F', 
-                  color: '#ffffff',
-                  '&:hover': {
-                    backgroundColor: '#0b1a2d',
-                  },
-                }}
-              >
-                Inserir Anexo
-                <input
-                  type="file"
-                  hidden
-                  onChange={(e) => field.onChange(e.target.files[0])}
-                />
-              </Button>
-            )}
-          />
           <Button   
             type="submit" 
             variant="contained" 
             color="primary" 
             fullWidth 
             sx={{ backgroundColor: '#1D324F', color: '#ffffff', borderRadius: 1 }}
-            >
+          >
             Editar Estabelecimento
-            </Button>
+          </Button>
           <Button 
             variant="outlined" 
-            component={Link} 
-            to="/estabelecimentos"
+            onClick={handleClose} 
             fullWidth 
-            sx={{ 
-              mt: 2, 
-              borderRadius: 1, 
-              color: '#1D324F', 
-              backgroundColor: '#ffffff',
-              borderColor: '#1D324F', 
-              '&:hover': {
-                backgroundColor: '#f0f0f0',
-              },
-            }}
+            sx={{ mt: 2, borderRadius: 1, color: '#1D324F', borderColor: '#1D324F' }}
           >
             Cancelar
           </Button>
         </Box>
       </Paper>
+
+      {/* Diálogo para editar estabelecimento */}
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle>Editar Estabelecimento</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Button variant="contained" color="secondary" onClick={handleOpen}>
+              Editar Estabelecimento
+            </Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }
+
 export default EditarEstabelecimento;

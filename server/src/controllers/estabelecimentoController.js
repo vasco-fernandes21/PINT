@@ -3,6 +3,7 @@ const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
+const Utilizador = require('../models/utilizadorModel');
 
 exports.listarEstabelecimentos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -162,6 +163,18 @@ exports.getFotoEstabelecimento = async (req, res) => {
                 idEstabelecimento: id,
                 estado: true, 
             },
+            include: [
+                {
+                    model: Utilizador,
+                    as: 'criador',
+                    attributes: ['nome'],
+                },
+                {
+                    model: Utilizador,
+                    as: 'admin',
+                    attributes: ['nome'],
+                },
+            ],
         });
 
         if (fotos.length > 0) {
@@ -184,7 +197,7 @@ exports.getFotoEstabelecimento = async (req, res) => {
     }
 }
 
-exports.edit = async (req, res) => {
+exports.editar = async (req, res) => {
     const { id } = req.params;
     const {
         nome,
@@ -227,5 +240,49 @@ exports.edit = async (req, res) => {
     } catch (error) {
         console.log('Error: ', error);
         res.status(500).json({ success: false, message: "Erro ao atualizar o estabelecimento!" });
+    }
+};
+
+exports.uploadFoto = async (req, res) => {
+    const { id } = req.params;
+    const { idUtilizador } = req.body;
+    const foto = req.file ? req.file.filename : null;
+
+    try {
+        const newFoto = await FotoEstabelecimento.create({
+            foto,
+            idEstabelecimento: id,
+            idCriador: idUtilizador,
+            estado: true,
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Foto adicionada com sucesso!',
+            data: newFoto
+        });
+    } catch (error) {
+        console.error('Erro ao criar nova foto:', error); // Adicione essa linha para registrar o erro no console
+        res.status(500).json({ success: false, message: "Erro ao adicionar a foto!" });
+    }
+};
+
+exports.deleteFoto = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [deleted] = await FotoEstabelecimento.update({
+            estado: false,
+        }, {
+            where: { id: id }
+        });
+
+        if (deleted) {
+            res.status(200).json({ success: true, message: 'Foto removida com sucesso!' });
+        } else {
+            res.status(404).json({ success: false, message: 'Foto não encontrada.' });
+        }
+    } catch (error) {
+        console.error('Erro ao remover foto:', error); // Adicione essa linha para registrar o erro no console
+        res.status(500).json({ success: false, message: "Erro ao remover a foto!" });
     }
 };

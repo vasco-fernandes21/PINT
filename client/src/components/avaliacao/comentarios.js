@@ -1,34 +1,84 @@
-import { Box, Typography, Rating, Avatar, Stack, Pagination, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import IconButton from '@mui/material/IconButton';
 import React, { useState } from 'react';
+import { Box, Typography, Rating, Avatar, Stack, Pagination, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, IconButton } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import api from '../api/api';
+import Swal from 'sweetalert2';
 
-function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange }) {
+function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, fetchAvaliacoes, tipo }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAvaliacao, setSelectedAvaliacao] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
+  const handleClick = (event, avaliacao) => {
+    console.log('handleClick', avaliacao);
     setAnchorEl(event.currentTarget);
+    setSelectedAvaliacao(avaliacao);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(null);  
   };
 
-  const handleEdit = (avaliacao) => {
-    setSelectedAvaliacao(avaliacao);
+  const handleEdit = () => {
     setOpenDialog(true);
+    handleClose();
   };
 
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
 
-  const handleSave = () => {
-    // Add your update logic here
-    setOpenDialog(false);
+  const handleSave = async () => {
+    try {
+      await api.put(`/avaliacao/${tipo}/${selectedAvaliacao.id}`, selectedAvaliacao);
+      setOpenDialog(false);
+      await fetchAvaliacoes(); // Atualiza a lista de avaliações
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
+  };
+  
+  const handleDelete = async () => {
+    if (!selectedAvaliacao) {
+      console.error('Nenhuma avaliação selecionada para excluir');
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Pretende apagar o comentário?',
+      showDenyButton: true,
+      confirmButtonText: 'Sim',
+      denyButtonText: 'Não',
+      confirmButtonColor: '#1D324F',
+      denyButtonColor: '#6c757d',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/avaliacao/${tipo}/${selectedAvaliacao.id}`);
+        handleClose();
+        await fetchAvaliacoes(); // Atualiza a lista de avaliações
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Operação concluída',
+          text: 'O comentário foi apagado com sucesso.',
+          confirmButtonColor: '#1D324F',
+        });
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Operação Cancelada',
+          text: 'Ocorreu um erro ao apagar o comentário.',
+          confirmButtonColor: '#1D324F',
+        });
+      }
+    } else if (result.isDenied) {
+      Swal.fire('Operação Cancelada', '', 'info');
+    }
   };
 
   return (
@@ -39,7 +89,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange }
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {avaliacao.utilizador && avaliacao.utilizador.foto && (
                 <Avatar 
-                  src={`${process.env.REACT_APP_API_URL}/uploads/utilizador/${avaliacao.utilizador.foto}`} 
+                  src={`/uploads/utilizador/${avaliacao.utilizador.foto}`} 
                   alt={avaliacao.utilizador.nome} 
                   sx={{ marginRight: 2 }}
                 />
@@ -50,7 +100,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange }
                 <Typography variant="body2" color="text.secondary">Há {avaliacao.tempo}</Typography>
               </Box>
             </Box>
-            <IconButton onClick={handleClick}>
+            <IconButton onClick={(event) => handleClick(event, avaliacao)}>
               <MoreVertIcon />
             </IconButton>
             <Menu
@@ -70,8 +120,8 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange }
                 'aria-labelledby': 'basic-button',
               }}
             >
-              <MenuItem onClick={() => handleEdit(avaliacao)}>Editar Comentário</MenuItem>
-              <MenuItem onClick={handleClose}>Apagar Comentário</MenuItem>
+              <MenuItem onClick={handleEdit}>Editar Comentário</MenuItem>
+              <MenuItem onClick={handleDelete}>Apagar Comentário</MenuItem>
             </Menu>
           </Box>
           <Typography variant="body1" sx={{ marginTop: 1}}>{avaliacao.comentario}</Typography>
@@ -104,7 +154,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange }
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancelar</Button>
-          <Button onClick={handleSave}>Salvar</Button>
+          <Button onClick={handleSave}>Guardar</Button>
         </DialogActions>
       </Dialog>
     </div>
