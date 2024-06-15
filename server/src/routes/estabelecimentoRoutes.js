@@ -6,6 +6,7 @@ const auth = require('../middlewares/decodeJWT');
 
 router.get('/', auth, estabelecimentoController.listarEstabelecimentos);
 router.get('/:id', estabelecimentoController.estabelecimento_id);
+router.get('/mobile', estabelecimentoController.estabelecimentosMobile);
 router.post('/criar', auth, uploadEstabelecimentos.single('foto'), estabelecimentoController.create);
 router.get('/:id/fotos', estabelecimentoController.getFotoEstabelecimento);
 

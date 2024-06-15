@@ -13,6 +13,7 @@ import CriarEstabelecimento from './components/estabelecimento/estabelecimentoCr
 import DetailEstabelecimento from './components/estabelecimento/estabelecimentoDetail';
 import ListaUtilizadores from './components/utilizador/utilizadorList';
 import SelecionarPosto from './components/posto/SelecionarPostoForm';
+import EditarEstabelecimento from './components/estabelecimento/estabelecimentoEdit';
 
 const AuthenticatedLayout = () => (
   <>
@@ -61,6 +62,7 @@ function App() {
           <Route path="estabelecimentos" element={<EstabelecimentoList />} />
             <Route path="estabelecimentos/criar" element={<CriarEstabelecimento />} />
             <Route path="estabelecimentos/:id" element={<DetailEstabelecimento />} />
+            <Route path="estabelecimentos/:id/editar" element={<EditarEstabelecimento />} />
           <Route path="utilizadores" element={<ListaUtilizadores />} />
          </Route>
         

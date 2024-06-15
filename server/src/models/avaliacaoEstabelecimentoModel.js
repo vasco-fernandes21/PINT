@@ -45,8 +45,12 @@ const AvaliacaoEstabelecimento = sequelize.define('AvaliacaoEstabelecimento', {
     type: DataTypes.ENUM('pendente', 'aceite', 'recusada'),
     allowNull: false,
     defaultValue: 'pendente'
+  },
+  data: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   }
-    
 }, {
   freezeTableName: true,
   timestamps: false

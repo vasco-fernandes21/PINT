@@ -1,31 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Grid, Card, CardContent, Typography, CardMedia, Box, Avatar, Rating, IconButton, Divider} from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
-import Slider from "react-slick";
+import { Grid, CardContent, Typography, Box, Divider, Button } from "@mui/material";
 import api from "../api/api";
 import Mapa from "../utils/mapa";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { alpha } from '@mui/material/styles';
-import AvaliacoesDetalhadas from "../utils/avaliacoes";
+import AvaliacoesDetalhadas from "../avaliacao/avaliacoes";
+import FotoSlider from "../utils/fotoSlider";
+import Comentarios from "../avaliacao/comentários";
+import NovaAvaliacao from "../avaliacao/novaAvaliacao";
 
 function DetailEstabelecimento() {
   const { id } = useParams();
   const [estabelecimento, setEstabelecimento] = useState(null);
   const [fotos, setFotos] = useState([]);
   const [avaliacoes, setAvaliacoes] = useState([]);
+  const [utilizador, setUtilizador] = useState(null);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
+
 
   const handleChange = (event, value) => {
     setPage(value);
   };
 
-  const avgRating = avaliacoes.reduce((prev, curr) => prev + curr.classificacao, 0) / avaliacoes.length;
+  useEffect(() => {
+    const fetchIdUtilizador = async () => {
+      try {
+        const response = await api.get('/utilizador');
+        setUtilizador(response.data); 
+      } catch (error) {
+        console.error('Erro ao encontrar utilizador:', error);
+      }
+    };
+    fetchIdUtilizador();
+  }, []);
 
   useEffect(() => {
     const fetchEstabelecimento = async () => {
@@ -68,16 +79,7 @@ function DetailEstabelecimento() {
     return <div>Loading...</div>;
   }
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    arrows: false,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000, 
-  };
+
 
   return (
     <Grid container spacing={2} justifyContent="center" alignItems="center">
@@ -91,22 +93,15 @@ function DetailEstabelecimento() {
           zIndex: -1 
       }}>
       </Box>
-      <Grid item xs={12} sm={10} md={8} lg={6} xl={10}>
-        <Box sx={{ padding: 1, paddingTop: 0 }}>
-          <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>{estabelecimento.nome}</Typography>
-          <Box sx={{ marginBottom: { xs: 4, sm: 0 }, height: { xs: '300px', sm: '400px', md: '400px', lg: '400px', xl: '500px' } }}> {/* Adjust the height for different breakpoints */}
-            <Slider {...settings} style={{ width: '100%', height: { xs: '300px', sm: '400px', md: '400px', lg: '400px', xl: '500px' }}}>
-              {fotos.map((foto, index) => (
-                <Card key={index} sx={{ boxSizing: 'border-box', height: '100%' }}>
-                  <CardMedia
-                    component="img"
-                    image={foto}
-                    alt={estabelecimento.nome}
-                    sx={{ width: '100%', height: { xs: '300px', sm: '400px', md: '400px', lg: '400px', xl: '500px' } ,objectFit: 'cover' }}
-                  />
-                </Card>
-              ))}
-            </Slider>
+      <Grid item xs={12} sm={10} md={8} lg={10} xl={10}>
+        <Box sx={{ padding: 1, paddingTop: 0}}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{estabelecimento.nome}</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant="contained" color="primary" sx={{ marginRight: 2 }}>Botão 1</Button>
+            <Button variant="contained" color="secondary">Botão 2</Button>
+          </Box>
+          <Box sx={{ marginBottom: { xs: 4, sm: 0 }, height: { xs: '300px', sm: '400px', md: '400px', lg: '400px', xl: '500px' } }}> 
+            <FotoSlider fotos={fotos} descricao={estabelecimento.nome} />
           </Box>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -122,39 +117,20 @@ function DetailEstabelecimento() {
                 <Typography variant="h5" sx={{ marginTop: 3, fontWeight: 'bold', marginBottom: 2}}>Avaliações</Typography>
                 <AvaliacoesDetalhadas avaliacoes={avaliacoes} />
               </Grid >
-              {avaliacoes.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((avaliacao, index) => (
-                <Box key={index} sx={{ display: 'flex', flexDirection: 'column', marginBottom: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Avatar 
-                        src={`${process.env.REACT_APP_API_URL}/uploads/utilizador/${avaliacao.utilizador.foto}`} 
-                        alt={avaliacao.utilizador.nome} 
-                        sx={{ marginRight: 2 }}
-                      />
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{avaliacao.utilizador.nome}</Typography>
-                        <Rating value={avaliacao.classificacao} readOnly />
-                        <Typography variant="body2" color="text.secondary">Há {avaliacao.tempo}</Typography>
-                      </Box>
-                    </Box>
-                    <IconButton>
-                      <MoreVertIcon />
-                    </IconButton>
-                  </Box>
-                  <Typography variant="body1" sx={{ marginTop: 1 }}>{avaliacao.comentario}</Typography>
-                  <Box sx={{ width: '100%', height: '1px', backgroundColor: 'lightgray', marginTop: 2, marginBottom: 2 }} />
-                </Box>
-              ))}
-              <Stack spacing={2}>
-                <Pagination count={noOfPages} page={page} onChange={handleChange} shape="rounded" />
-              </Stack>
+              <Comentarios avaliacoes={avaliacoes} page={page} itemsPerPage={itemsPerPage} noOfPages={noOfPages} handleChange={handleChange} />
+              <NovaAvaliacao 
+                idEstabelecimento={id} 
+                idUtilizador={utilizador ? utilizador.id : null} 
+                avaliacoes={avaliacoes} 
+                setAvaliacoes={setAvaliacoes} 
+              />
             </Grid>
-            <Grid item xs={12} sm={6} xl={12}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <Box sx={{ bgcolor: 'rgba(0, 0, 0, 0.03)', borderRadius: 2, p: 3, display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Informações de Contato</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Informações de Contacto</Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                   <Typography variant="body2" color="text.secondary">
-                    Morada: {estabelecimento.morada}
+                    Morada: {estabelecimento.morada}  
                   </Typography>
                   <Divider orientation="vertical" flexItem />
                   <Typography variant="body2" color="text.secondary">
@@ -167,11 +143,19 @@ function DetailEstabelecimento() {
                 </Box>
               </Box>
             </Grid>
-            <Grid item xs={12}>
-              <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2}}>
-                <Mapa latitude={estabelecimento.latitude} longitude={estabelecimento.longitude} />
-              </Box>
-            </Grid>
+          <Grid item xs={12}>
+            <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2}}>
+              {estabelecimento.latitude && estabelecimento.longitude ? (
+                <>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
+                  <Mapa latitude={estabelecimento.latitude} longitude={estabelecimento.longitude} />
+                  <Box sx={{ height: '50px' }} /> 
+                </>
+              ) : (
+                <Typography variant="body1">Localização não disponível</Typography>
+              )}
+            </Box>
+          </Grid>
           </Grid>
         </Box>
       </Grid>
