@@ -7,8 +7,11 @@ const Area = sequelize.define('Area', {
     autoIncrement: true,
     primaryKey: true
   },
-  nome: DataTypes.STRING
+  nome: DataTypes.STRING,
+  iconeId: DataTypes.INTEGER,
 }, 
+  
+  
 {
   freezeTableName: true,
   timestamps: false

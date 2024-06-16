@@ -71,13 +71,13 @@ const utilizadores = [
 ];
 
 const areas = [
-  {nome: 'Saúde'},
-  {nome: 'Desporto'},
-  {nome: 'Formação'},
-  {nome: 'Gastronomia'},
-  {nome: 'Alojamento'},
-  {nome: 'Transportes'},
-  {nome: 'Lazer'}
+  {nome: 'Saúde', iconeId: 1},
+  {nome: 'Desporto', iconeId: 2},
+  {nome: 'Formação', iconeId: 3},
+  {nome: 'Gastronomia', iconeId: 4},
+  {nome: 'Alojamento', iconeId: 5},
+  {nome: 'Transportes', iconeId: 6},
+  {nome: 'Lazer', iconeId: 7}
 ];
 
 const subareas = [
