@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form'; 
+import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography, Paper, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import Swal from 'sweetalert2';
 import api from '../api/api';
 import { useParams } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-function EditarEstabelecimento() {
-  const { id } = useParams(); // Obtém o ID do estabelecimento da URL
+
+function EditarEstabelecimento({ open, handleClose }) {
+  const { id } = useParams(); 
   const { register, handleSubmit, watch, control, setValue } = useForm();
   const [areas, setAreas] = useState([]);
   const [subareas, setSubareas] = useState([]);
-  const [open, setOpen] = useState(false); // Estado para controlar a abertura do diálogo
-
+  const [selectedFile, setSelectedFile] = useState();
+  
+  const navigate = useNavigate(); 
+  
   const selectedArea = watch('area');
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
 
   // Busca das áreas disponíveis
   useEffect(() => {
@@ -63,47 +72,130 @@ function EditarEstabelecimento() {
     fetchEstabelecimento();
   }, [id, setValue]);
 
-  // Função para lidar com o envio do formulário de edição
   const onSubmit = async (data) => {
-    try {
-      const response = await api.put(`/estabelecimentos/${id}`, data);
-
-      Swal.fire({
-        title: "Sucesso",
-        text: "Estabelecimento atualizado com sucesso!",
-        icon: "success",
-        confirmButtonColor: '#1D324F',
+  handleClose();
+  Swal.fire({
+    title: 'Tem certeza?',
+    text: "Você deseja editar este estabelecimento?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#1d324f',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sim, editar!',
+    cancelButtonText: 'Não, cancelar!'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        formData.append(key, data[key]);
       });
+      if (selectedFile) {
+        formData.append('foto', selectedFile);
+      } else {
+        delete formData['foto'];
+      }
 
-      console.log('Estabelecimento atualizado:', response.data);
-      handleClose(); // Fecha o diálogo após o sucesso
-    } catch (error) {
+      try {
+        const response = await api.put(`/estabelecimentos/${id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        Swal.fire({
+          title: "Sucesso",
+          text: "Estabelecimento atualizado com sucesso!",
+          icon: "success",
+          confirmButtonColor: '#1D324F',
+        });
+
+        console.log('Estabelecimento atualizado:', response.data);
+        handleClose(); 
+        window.location.reload(); // Recarrega a página para exibir as alterações
+      } catch (error) {
+        Swal.fire({
+          title: "Erro",
+          text: "Erro ao atualizar estabelecimento, tente mais tarde.",
+          icon: "error",
+          confirmButtonColor: '#1D324F',
+        });
+
+        console.error('Erro ao atualizar estabelecimento:', error);
+      }
+    } else {
       Swal.fire({
-        title: "Erro",
-        text: "Erro ao atualizar estabelecimento, tente mais tarde.",
-        icon: "error",
-        confirmButtonColor: '#1D324F',
-      });
-
-      console.error('Erro ao atualizar estabelecimento:', error);
+        title: 'Cancelado',
+        text: 'A edição do estabelecimento foi cancelada',
+        icon: 'error',
+        confirmButtonColor: '#1d324f', 
+      })
     }
-  };
+  });
+};
 
-  // Funções para controlar a abertura e o fechamento do diálogo
-  const handleOpen = () => {
-    setOpen(true);
-  };
+const apagarEstabelecimento = async (id) => {
+  handleClose();
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  Swal.fire({
+    title: 'Tem certeza?',
+    text: "Você deseja apagar este estabelecimento?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#1d324f',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sim, apagar!',
+    cancelButtonText: 'Não, cancelar!'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await api.delete(`/estabelecimentos/${id}`);
+        if (response.status === 200) {
+          Swal.fire({
+            title: "Sucesso",
+            text: "Estabelecimento apagado com sucesso!",
+            icon: "success",
+            confirmButtonColor: '#1D324F',
+          });
+          navigate('/estabelecimentos')
+        } else {
+          Swal.fire({
+            title: "Erro",
+            text: "Erro ao apagar estabelecimento, tente mais tarde.",
+            icon: "error",
+            confirmButtonColor: '#1D324F',
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          title: "Erro",
+          text: "Erro ao apagar estabelecimento, tente mais tarde.",
+          icon: "error",
+          confirmButtonColor: '#1D324F',
+        });
+        console.error('Erro ao apagar estabelecimento:', error);
+      }
+    } else {
+      Swal.fire({
+        title: 'Cancelado',
+        text: 'A operação de apagar o estabelecimento foi cancelada',
+        icon: 'error',
+        confirmButtonColor: '#1d324f', 
+      })
+    }
+  });
+};
 
   return (
-    <Box display="flex" justifyContent="center" mt={3}>
-      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: '1000px'}}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', textAlign: 'center' }}>
-          Editar Estabelecimento
-        </Typography>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth
+    PaperProps={{
+      style: {
+        height: '100vh', // 80% da altura da viewport
+        width: '100vw',  // 80% da largura da viewport
+      },
+    }}
+    >
+      <DialogTitle>Editar Estabelecimento</DialogTitle>
+      <DialogContent>
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
@@ -170,12 +262,43 @@ function EditarEstabelecimento() {
               ))}
             </Select>
           </FormControl>
+          <Button
+            variant="contained"
+            component="label"
+            fullWidth
+            sx={{ 
+              mb: 2, 
+              ml: 0,
+              backgroundColor: '#1D324F', 
+              color: '#ffffff',
+              '&:hover': {
+                backgroundColor: '#0b1a2d',
+              },
+            }}
+          >
+            Inserir Anexo
+            <input
+              type="file"
+              hidden
+              onChange={handleFileChange}
+            />
+          </Button>
+          <Button   
+            onClick={() => apagarEstabelecimento(id)} 
+            variant="contained" 
+            color="secondary" 
+            fullWidth 
+            sx={{ backgroundColor: '#1D324F', color: '#ffffff', borderRadius: 1 , ml: 0,}}
+            startIcon={<DeleteIcon />}
+          >
+            Eliminar Estabelecimento
+          </Button>
           <Button   
             type="submit" 
             variant="contained" 
             color="primary" 
             fullWidth 
-            sx={{ backgroundColor: '#1D324F', color: '#ffffff', borderRadius: 1 }}
+            sx={{ backgroundColor: '#1D324F', color: '#ffffff', borderRadius: 1 , ml: 0,}}
           >
             Editar Estabelecimento
           </Button>
@@ -183,25 +306,13 @@ function EditarEstabelecimento() {
             variant="outlined" 
             onClick={handleClose} 
             fullWidth 
-            sx={{ mt: 2, borderRadius: 1, color: '#1D324F', borderColor: '#1D324F' }}
+            sx={{ mt: 2, borderRadius: 1, color: '#1D324F', borderColor: '#1D324F', ml: 0,}}
           >
             Cancelar
           </Button>
         </Box>
-      </Paper>
-
-      {/* Diálogo para editar estabelecimento */}
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Editar Estabelecimento</DialogTitle>
-        <DialogContent>
-          <Box>
-            <Button variant="contained" color="secondary" onClick={handleOpen}>
-              Editar Estabelecimento
-            </Button>
-          </Box>
-        </DialogContent>
-      </Dialog>
-    </Box>
+      </DialogContent>
+    </Dialog>
   );
 }
 

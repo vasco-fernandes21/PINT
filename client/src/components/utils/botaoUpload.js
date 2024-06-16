@@ -2,13 +2,13 @@ import React from 'react';
 import { Button } from '@mui/material';
 import api from '../api/api';
 
-const BotaoUpload = ({ tipo, id, onUpload, idUtilizador }) => {
+const BotaoUpload = ({ tipo, id, idUtilizador, updateFotos }) => {
     const handleFileChange = async (event) => {
         const foto = event.target.files[0];
         if (foto) {
             const formData = new FormData();
             formData.append('foto', foto);
-            formData.append('idUtilizador', idUtilizador); 
+            formData.append('idUtilizador', idUtilizador);
 
             try {
                 const response = await api.post(`/foto/${tipo}/${id}`, formData, {
@@ -19,14 +19,13 @@ const BotaoUpload = ({ tipo, id, onUpload, idUtilizador }) => {
 
                 if (response.status === 200) {
                     console.log('Foto enviada com sucesso:', response.data);
-                    onUpload(); 
-                    window.location.reload(); // Adicionado para recarregar a página
+                    updateFotos();
+                    window.location.reload();
                 } else {
                     throw new Error('Falha ao enviar foto');
                 }
             } catch (error) {
                 console.error('Erro ao enviar foto:', error.message);
-                // Trate o erro de forma apropriada
             }
         }
     };
@@ -38,5 +37,6 @@ const BotaoUpload = ({ tipo, id, onUpload, idUtilizador }) => {
         </Button>
     );
 };
+
 
 export default BotaoUpload;

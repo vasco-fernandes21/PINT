@@ -7,7 +7,7 @@ const { uploadEstabelecimentos, uploadEventos} = require('../config/multer');
 
 router.get('/estabelecimentos/:id', estabelecimentoController.getFotoEstabelecimento);
 router.get('/eventos/:id', eventoController.getFotoEvento);
-router.post('/estabelecimento/:id', uploadEstabelecimentos.single('foto'), estabelecimentoController.uploadFoto);
+router.post('/estabelecimentos/:id', uploadEstabelecimentos.single('foto'), estabelecimentoController.uploadFoto);
 router.delete('/estabelecimentos/:id', estabelecimentoController.deleteFoto);
 router.post('/eventos/:id', uploadEventos.single('foto'), eventoController.uploadFoto);
 router.delete('/eventos/:id', eventoController.deleteFoto);

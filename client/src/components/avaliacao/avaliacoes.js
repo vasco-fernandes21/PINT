@@ -2,6 +2,11 @@ import React from 'react';
 import { Box, Typography, Rating, LinearProgress } from '@mui/material';
 
 const AvaliacoesDetalhadas = ({ avaliacoes }) => {
+  // Se não houver avaliações, não renderize o componente
+  if (!avaliacoes || avaliacoes.length === 0) {
+    return null;
+  }
+
   // Calcular a média das classificações
   const avgRating = avaliacoes.reduce((acc, curr) => acc + curr.classificacao, 0) / avaliacoes.length;
 

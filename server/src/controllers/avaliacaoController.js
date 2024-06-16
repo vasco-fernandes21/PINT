@@ -7,6 +7,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
        const idEstabelecimento = req.params.id || req.query.idEstabelecimento;
        
         const data = await AvaliacaoEstabelecimento.findAll({
+                where: { idEstabelecimento: idEstabelecimento }, 
                 include: [
                     { 
                         model: Utilizador, 

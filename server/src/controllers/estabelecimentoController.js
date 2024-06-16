@@ -5,6 +5,7 @@ const Posto = require('../models/postoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 
+
 exports.listarEstabelecimentos = async (req, res) => {
     const { areaId, subareaId } = req.query;
     let idPosto;
@@ -46,7 +47,9 @@ exports.listarEstabelecimentos = async (req, res) => {
 }
 
 exports.estabelecimentosMobile = async (req, res) => {
-    const { areaId, subareaId, idPosto } = req.body;
+    const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
+    const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
+    const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
     let whereClause = {};
     if (areaId) {
@@ -73,13 +76,14 @@ exports.estabelecimentosMobile = async (req, res) => {
         });
     }
     catch (err) {
-        console.error('Erro ao listar estabelecimentos:', err.message); // Adicionado log de erro detalhado
+        console.error('Erro ao listar estabelecimentos:', err.message);
         res.status(500).json({
             success: false,
             error: 'Erro: ' + err.message,
         });
     }
 }
+
 
 exports.create = async (req, res) => {
     const {
@@ -214,20 +218,22 @@ exports.editar = async (req, res) => {
 
     const foto = req.file ? req.file.filename : null; 
 
+    let updateData = {};
+
+    if (nome) updateData.nome = nome;
+    if (idArea) updateData.idArea = idArea;
+    if (idSubarea) updateData.idSubarea = idSubarea;
+    if (idPosto) updateData.idPosto = idPosto;
+    if (morada) updateData.morada = morada;
+    if (descricao) updateData.descricao = descricao;
+    if (idAdmin) updateData.idAdmin = idAdmin;
+    if (idCriador) updateData.idCriador = idCriador;
+    if (foto) updateData.foto = foto;
+    if (latitude) updateData.latitude = latitude;
+    if (longitude) updateData.longitude = longitude;
+
     try {
-        const [updated] = await Estabelecimento.update({
-            nome,
-            idArea,
-            idSubarea,
-            idPosto,
-            morada,
-            descricao,
-            idAdmin,
-            idCriador,
-            foto, 
-            latitude,
-            longitude
-        }, {
+        const [updated] = await Estabelecimento.update(updateData, {
             where: { id: id }
         });
 
@@ -284,5 +290,23 @@ exports.deleteFoto = async (req, res) => {
     } catch (error) {
         console.error('Erro ao remover foto:', error); // Adicione essa linha para registrar o erro no console
         res.status(500).json({ success: false, message: "Erro ao remover a foto!" });
+    }
+};
+
+exports.apagarEstabelecimento = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleted = await Estabelecimento.destroy({
+            where: { id: id }
+        });
+
+        if (deleted) {
+            res.status(200).json({ success: true, message: 'Estabelecimento apagado com sucesso!' });
+        } else {
+            res.status(404).json({ success: false, message: 'Estabelecimento não encontrado.' });
+        }
+    } catch (error) {
+        console.error('Erro ao apagar estabelecimento:', error); // Adicione essa linha para registrar o erro no console
+        res.status(500).json({ success: false, message: "Erro ao apagar o estabelecimento!" });
     }
 };

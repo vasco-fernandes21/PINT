@@ -182,9 +182,11 @@ function EventoList() {
                   alt={evento.titulo}
                 />
                 <StyledCardContent>
+                  <Link to={`/eventos/${evento.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <StyledTypography variant="h5" component="h2">
                     {evento.titulo}
                   </StyledTypography>
+                  </Link>
                   <Typography variant="body2" color="text.secondary">
                     Data: {evento.data}
                   </Typography>

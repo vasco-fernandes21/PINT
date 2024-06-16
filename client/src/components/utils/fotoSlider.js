@@ -99,7 +99,7 @@ function FotoSlider({ descricao, tipo, id }) {
           top: 0, 
           left: 0, 
           width: '100%', 
-          height: { xs: '52%', sm: '62%', md: '62%', lg: '72%', xl: '72%' }, 
+          height: { xs: '50%', sm: '60%', md: '60%', lg: '60%', xl: '72%' }, 
           backgroundColor: alpha('#808080', 0.1),
           zIndex: -1 
         }} />
