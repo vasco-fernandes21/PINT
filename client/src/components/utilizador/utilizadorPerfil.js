@@ -1,10 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Box, Grid, Avatar, Typography, Card, CardContent, Button, Tabs, Tab } from '@mui/material';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+import Comentarios from '../avaliacao/comentarios';
+import api from '../api/api';
 
 const Perfil = () => {
+  const { id } = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
+  const [avaliacoes, setAvaliacoes] = useState([]);
+  const [utilizador, setUtilizador] = useState(null);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
+  const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
+
+  useEffect(() => {
+    const fetchUtilizador = async () => {
+      try {
+        const response = await api.get('/utilizador');
+        setUtilizador(response.data);
+      } catch (error) {
+        console.error('Erro ao encontrar utilizador:', error);
+      }
+    };
+    fetchUtilizador();
+  }, []);
+  
+  useEffect(() => {
+    if (utilizador) {
+      console.log(utilizador.id);
+    }
+  }, [utilizador]);
+
 
   const StyledCard = styled(Card)({
     height: '100%',
@@ -28,7 +56,31 @@ const Perfil = () => {
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
+
+const fetchAvaliacoesEstabelecimentos = async () => {
+  if (utilizador) {
+    try {
+      const response = await api.get(`/avaliacao/utilizador/${utilizador.id}`);
+      setAvaliacoes(response.data.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching Avaliações:', error.response || error.message);
+    }
+  }
+};
+
+useEffect(() => {
+  fetchAvaliacoesEstabelecimentos();
+}, [id, utilizador]);
+
+useEffect(() => {
+  console.log(avaliacoes);
+}, [avaliacoes]);
   
+const handleChange = (event, value) => {
+  setPage(value);
+};
+
   const navigate = useNavigate();
 
   return (
@@ -74,30 +126,15 @@ const Perfil = () => {
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
             Avaliações:
           </Typography>
-          <Grid container spacing={2}>
-            {[
-              { title: 'teste6', projects: 'teste7' },
-              { title: 'teste8', projects: 'teste9' },
-              { title: 'teste10', projects: 'teste11' },
-              { title: 'teste12', projects: 'teste13' },
-              { title: 'teste14', projects: 'teste15' },
-              { title: 'teste16', projects: 'teste17' },
-              { title: 'teste18', projects: 'teste19' },
-            ].map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <StyledCard>
-                  <StyledCardContent>
-                    <StyledTypography variant="h6" component="h2">
-                      {item.title}
-                    </StyledTypography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.projects}
-                    </Typography>
-                  </StyledCardContent>
-                </StyledCard>
-              </Grid>
-            ))}
-          </Grid>
+          <Comentarios 
+            fetchAvaliacoes={fetchAvaliacoesEstabelecimentos} 
+            avaliacoes={avaliacoes} 
+            page={page} 
+            itemsPerPage={itemsPerPage} 
+            noOfPages={noOfPages} 
+            handleChange={handleChange} 
+            tipo="estabelecimentos"
+        />
         </Box>
       )}
 

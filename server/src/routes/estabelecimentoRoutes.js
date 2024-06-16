@@ -12,4 +12,5 @@ router.delete('/:id', estabelecimentoController.apagarEstabelecimento);
 router.post('/criar', auth, uploadEstabelecimentos.single('foto'), estabelecimentoController.create);
 
 
+
 module.exports = router;

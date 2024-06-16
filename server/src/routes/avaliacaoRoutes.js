@@ -12,4 +12,9 @@ router.get('/eventos/:id', avaliacaoController.listarAvaliacoesEvento)
 router.put('/eventos/:id', avaliacaoController.editarAvaliacaoEvento)
 router.delete('/eventos/:id', avaliacaoController.apagarAvaliacaoEvento)
 
+router.get('/utilizador/:idUtilizador', avaliacaoController.listarAvaliacoesUtilizador);
+
+
+
+
 module.exports = router;

@@ -270,3 +270,55 @@ exports.apagarAvaliacaoEvento = async (req, res) => {
         });
     }
 }
+
+exports.listarAvaliacoesUtilizador = async (req, res) => {
+    try {
+        const idUtilizador = req.params.idUtilizador;
+        
+        const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
+            where: { idUtilizador },
+            include: [
+                { 
+                    model: Utilizador, 
+                    as: 'utilizador', 
+                    attributes: ['nome', 'foto'] 
+                },
+                { 
+                    model: Utilizador, 
+                    as: 'admin', 
+                    attributes: ['nome'] 
+                },
+            ],
+        });
+
+        // Buscar avaliações de eventos
+        const avaliacoesEvento = await AvaliacaoEvento.findAll({
+            where: { idUtilizador },
+            include: [
+                { 
+                    model: Utilizador, 
+                    as: 'utilizador', 
+                    attributes: ['nome', 'foto'] 
+                },
+                { 
+                    model: Utilizador, 
+                    as: 'admin', 
+                    attributes: ['nome'] 
+                },
+            ],
+        });
+
+        // Combinar os resultados
+        const data = [...avaliacoesEstabelecimento, ...avaliacoesEvento];
+
+        res.json({
+            success: true,
+            data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
