@@ -11,6 +11,8 @@ import CriarEvento from './components/eventos/eventoCriar';
 import EstabelecimentoList from './components/estabelecimento/estabelecimentoList';
 import CriarEstabelecimento from './components/estabelecimento/estabelecimentoCriar';
 import DetailEstabelecimento from './components/estabelecimento/estabelecimentoDetail';
+import Perfil from './components/utilizador/Perfil';
+import PerfilEditar from './components/utilizador/PerfilEditar';
 
 const AuthenticatedLayout = () => (
   <>
@@ -61,6 +63,10 @@ function App() {
          </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
+
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path='/perfil/editar' element={<PerfilEditar />} />
+
       </Routes>
     </Router>
   );
