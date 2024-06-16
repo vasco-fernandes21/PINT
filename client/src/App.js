@@ -11,8 +11,6 @@ import CriarEvento from './components/eventos/eventoCriar';
 import EstabelecimentoList from './components/estabelecimento/estabelecimentoList';
 import CriarEstabelecimento from './components/estabelecimento/estabelecimentoCriar';
 import DetailEstabelecimento from './components/estabelecimento/estabelecimentoDetail';
-import Perfil from './components/utilizador/Perfil';
-import PerfilEditar from './components/utilizador/PerfilEditar';
 
 const AuthenticatedLayout = () => (
   <>
@@ -52,6 +50,7 @@ function App() {
           <Route path="registar" element={<Registar />} />
           <Route path="recuperar-passe" element={<RecuperarPasseForm />} />
           <Route path="reset-passe" element={<NovaPasseForm />} />
+          <Route path="posto" element={<SelecionarPosto />} />
         </Route>
 
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
@@ -59,7 +58,9 @@ function App() {
             <Route path="eventos/criar" element={<CriarEvento />} />
           <Route path="estabelecimentos" element={<EstabelecimentoList />} />
             <Route path="estabelecimentos/criar" element={<CriarEstabelecimento />} />
-            <Route path="estabelecimentos/:id" element={<DetailEstabelecimento />} />
+            <Route path="estabelecimentos/:id" element={<EstabelecimentoPage/>} />
+            <Route path="estabelecimentos/:id/editar" element={<EditarEstabelecimento />} />
+          <Route path="utilizadores" element={<ListaUtilizadores />} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />

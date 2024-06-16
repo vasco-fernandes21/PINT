@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, Link} from 'react-router-dom';
 import api from '../api/api';
 import logo from '../../assets/softinsa.svg';
-import './login.css';
 import Swal from 'sweetalert2';
+import './login.css';
+
 
 function RecuperarPasseForm() {
     const [email, setEmail] = useState('');

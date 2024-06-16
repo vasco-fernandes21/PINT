@@ -68,7 +68,7 @@ const Evento = sequelize.define('Evento', {
     type: DataTypes.TIME,
     allowNull: false
   },
-  local: {
+  morada: {
     type: DataTypes.STRING,
     allowNull: false
   },

@@ -21,9 +21,9 @@ app.use((req, res, next) => {
   next();
 });
 
-{ /* Carregar automaticamente as tabelas com dados pré-feitos, apenas retirar comentário para ativar e adicionar comentário outra vez depois
+{ /* Carregar automaticamente as tabelas com dados pré-feitos, apenas retirar comentário para ativar e adicionar comentário outra vez depois */ } 
 const carregarTabelas = require('./src/utils/carregarTabelas'); 
-carregarTabelas();   */ } 
+carregarTabelas();   
 
 
 // Importação do módulo de roteamento para o login
@@ -32,6 +32,10 @@ const eventoRoutes = require('./src/routes/eventoRoutes');
 const areaRoutes = require('./src/routes/areaRoutes');
 const estabelecimentoRoutes = require('./src/routes/estabelecimentoRoutes');
 const postoRoutes = require('./src/routes/postoRoutes');
+const avaliacaoRoutes = require('./src/routes/avaliacaoRoutes');
+const utilizadorRoutes = require('./src/routes/utilizadorRoutes');
+const notificacaoRoutes = require('./src/routes/notificacaoRoutes');
+const fotoRoutes = require('./src/routes/fotoRoutes');
 
 // Rotas da API
 app.use('/', authRoutes);
@@ -39,7 +43,11 @@ app.use('/eventos', eventoRoutes);
 app.use('/areas', areaRoutes);
 app.use('/estabelecimentos', estabelecimentoRoutes);
 app.use('/postos', postoRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));   
+app.use('/avaliacao', avaliacaoRoutes);
+app.use('/utilizador', utilizadorRoutes);
+app.use('/foto', fotoRoutes);
+
 
 
 app.listen(port, () => {

@@ -1,21 +1,21 @@
-import * as React from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Grid, Card, CardContent, Typography, MenuItem, CardMedia, Box } from "@mui/material";
+import { Grid, Card, CardContent, Typography, MenuItem, CardMedia, Box, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Button } from "@mui/material";
 import { styled } from "@mui/system";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Select from "@mui/material/Select";
 import api from "../api/api";
+import CriarEstabelecimento from './estabelecimentoCriar';
 
 function EstabelecimentoList() {
-  const [estabelecimentos, setEstabelecimentos] = React.useState([]);
-  const [areas, setAreas] = React.useState([]);
-  const [subareas, setSubareas] = React.useState([]);
-  const [areaId, setAreaId] = React.useState("");
-  const [subareaId, setSubareaId] = React.useState("");
-  const [idPosto, setIdPosto] = React.useState(null);
-
+  const [estabelecimentos, setEstabelecimentos] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [subareas, setSubareas] = useState([]);
+  const [areaId, setAreaId] = useState("");
+  const [subareaId, setSubareaId] = useState("");
+  const [idPosto, setIdPosto] = useState(null);
+  const [open, setOpen] = useState(false); // Estado para controlar o diálogo
 
   useEffect(() => {
     const getAreas = async () => {
@@ -88,6 +88,14 @@ function EstabelecimentoList() {
     setSubareaId(event.target.value);
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const StyledSelectArea = styled(Select)({
     marginBottom: 20,
     minWidth: 200,
@@ -149,10 +157,10 @@ function EstabelecimentoList() {
   });
 
   return (
-    <Box sx={{ padding: 2, paddingTop: 0 }}>
-      <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>Estabelecimentos</Typography>
-      <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }}>
-        <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
+    <Box sx={{ padding: 1, paddingTop: 0 }}>
+      <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>Estabelecimentos</Typography>
+      <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }}>
+        <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
           <Grid item xs={12} sm={2}>
             <StyledSelectArea value={areaId} onChange={handleAreaChange} displayEmpty fullWidth>
               <MenuItem value="">Todas</MenuItem>
@@ -182,24 +190,30 @@ function EstabelecimentoList() {
               />
               <StyledCardContent>
                 <StyledTypography variant="h5" component="h2">
-                  {estabelecimento.nome}
+                  <Link to={`/estabelecimentos/${estabelecimento.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    {estabelecimento.nome}
+                  </Link>
                 </StyledTypography>
                 <Typography variant="body2" color="text.secondary">
-                  Local: {estabelecimento.local}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Descrição: {estabelecimento.descricao}
+                  {estabelecimento.morada}
                 </Typography>
               </StyledCardContent>
             </StyledCard>
           </Grid>
         ))}
       </Grid>
-      <Link to="/estabelecimentos/criar">
-        <Fab aria-label="add" style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
-          <AddIcon style={{ color: '#fff' }} />
-        </Fab>
-      </Link>
+      <Fab aria-label="add" onClick={handleClickOpen} style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
+        <AddIcon style={{ color: '#fff' }} />
+      </Fab>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogTitle>Criar Estabelecimento</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Preencha os campos abaixo para criar um novo estabelecimento.
+          </DialogContentText>
+          <CriarEstabelecimento handleClose={handleClose} />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }

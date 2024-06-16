@@ -33,10 +33,15 @@ const FotoEstabelecimento = sequelize.define('FotoEstabelecimento', {
         key: 'id'
         }
     },
-    nome: {
+    foto: {
         type: DataTypes.STRING,
         allowNull: false
     },
+    estado : {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    }
 }, {
     freezeTableName: true,
     timestamps: false

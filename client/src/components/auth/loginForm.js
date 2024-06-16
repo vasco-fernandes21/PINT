@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/softinsa.svg';
-import './login.css';
 import Swal from 'sweetalert2';
 import GoogleAuth from './googleauth';
+import './login.css';
 import api from '../api/api';
 
 function Login({ setIsAuthenticated: setAuth }) {
@@ -24,8 +24,11 @@ function Login({ setIsAuthenticated: setAuth }) {
     }
   }, [token, navigate, setAuth]);
 
+  useEffect(() => {
+    localStorage.setItem('rememberUser', rememberUser);
+  }, [rememberUser]);
+
   const handleLogin = async (email, password) => {
-    let loginSuccessful = false;
     try {
       const response = await api.post('/login', { email, password });
       const { token, recoveryToken } = response.data;
@@ -43,7 +46,6 @@ function Login({ setIsAuthenticated: setAuth }) {
       }
 
       setToken(token);
-      loginSuccessful = true;
       Swal.fire({
         title: 'Sucesso!',
         text: 'Login realizado com sucesso',
@@ -51,8 +53,19 @@ function Login({ setIsAuthenticated: setAuth }) {
         confirmButtonColor: '#1D324F',
         timer: 2000,
       });
+
+      setAuth(true);
+
       if (recoveryToken) {
         navigate(`/reset-passe?token=${recoveryToken}`);
+      } else {
+        const userResponse = await api.get('/utilizador');
+        const { idPosto } = userResponse.data;
+        if (idPosto === null || idPosto === undefined) {
+          navigate('/posto');
+        } else {
+          navigate('/');
+        }
       }
     } catch (error) {
       console.error('Error during login:', error);
@@ -110,9 +123,6 @@ function Login({ setIsAuthenticated: setAuth }) {
         setEmailError('');
         setPasswordError('');
       }
-    }
-    if (loginSuccessful) {
-      setAuth(true);
     }
   };
 

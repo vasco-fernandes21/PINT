@@ -21,6 +21,7 @@ const Utilizador = sequelize.define('Utilizador', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
+  foto: DataTypes.STRING,
   id_google: DataTypes.STRING,
   id_facebook: DataTypes.STRING,
   cargo: DataTypes.STRING,

@@ -148,10 +148,10 @@ function EventoList() {
   });
 
   return (
-    <Box sx={{ padding: 2, paddingTop: 0 }}>
-      <Typography variant="h4" sx={{ marginBottom: 4, fontWeight: 'bold' }}>Eventos</Typography>
-      <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }}>
-        <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
+    <Box sx={{ padding: 1, paddingTop: 0 }}>
+      <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>Eventos</Typography>
+      <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }}>
+        <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
           <Grid item xs={12} sm={2}>
             <StyledSelectArea value={areaId} onChange={handleAreaChange} displayEmpty fullWidth>
               <MenuItem value="">Todas</MenuItem>
@@ -182,9 +182,11 @@ function EventoList() {
                   alt={evento.titulo}
                 />
                 <StyledCardContent>
+                  <Link to={`/eventos/${evento.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <StyledTypography variant="h5" component="h2">
                     {evento.titulo}
                   </StyledTypography>
+                  </Link>
                   <Typography variant="body2" color="text.secondary">
                     Data: {evento.data}
                   </Typography>
@@ -192,7 +194,7 @@ function EventoList() {
                     Hora: {evento.hora}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Local: {evento.local}
+                    Morada: {evento.morada}
                   </Typography>
                 </StyledCardContent>
               </StyledCard>

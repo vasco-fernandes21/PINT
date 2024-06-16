@@ -3,6 +3,8 @@ const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
+const Utilizador = require('../models/utilizadorModel');
+
 
 exports.listarEstabelecimentos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -44,16 +46,57 @@ exports.listarEstabelecimentos = async (req, res) => {
     }
 }
 
+exports.estabelecimentosMobile = async (req, res) => {
+    const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
+    const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
+    const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
+
+    let whereClause = {};
+    if (areaId) {
+        whereClause.idArea = areaId;
+    }
+    if (subareaId) {
+        whereClause.idSubarea = subareaId;
+    }
+    if (idPosto) {
+        whereClause.idPosto = idPosto;
+    }
+    try {
+        const data = await Estabelecimento.findAll({
+            where: whereClause,
+            include: [
+                { model: Area, attributes: ['nome'] },
+                { model: Subarea, attributes: ['nome'] },
+                { model: Posto, attributes: ['nome'] },
+            ],
+        });
+        res.json({
+            success: true,
+            data: data,
+        });
+    }
+    catch (err) {
+        console.error('Erro ao listar estabelecimentos:', err.message);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+
 exports.create = async (req, res) => {
     const {
       nome,
       idArea,
       idSubarea,
       idPosto,
-      local,
+      morada,
       descricao,
       idAdmin,
-      idCriador
+      idCriador,
+      latitude, 
+      longitude
     } = req.body;
 
     const foto = req.file ? req.file.filename : null; 
@@ -64,11 +107,13 @@ exports.create = async (req, res) => {
         idArea,
         idSubarea,
         idPosto,
-        local,
+        morada,
         descricao,
         idAdmin,
         idCriador,
-        foto 
+        foto, 
+        latitude,
+        longitude
       });
   
       res.status(200).json({
@@ -118,7 +163,22 @@ exports.getFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const fotos = await FotoEstabelecimento.findAll({
-            where: { idEstabelecimento: id },
+            where: { 
+                idEstabelecimento: id,
+                estado: true, 
+            },
+            include: [
+                {
+                    model: Utilizador,
+                    as: 'criador',
+                    attributes: ['nome'],
+                },
+                {
+                    model: Utilizador,
+                    as: 'admin',
+                    attributes: ['nome'],
+                },
+            ],
         });
 
         if (fotos.length > 0) {
@@ -140,3 +200,113 @@ exports.getFotoEstabelecimento = async (req, res) => {
         });
     }
 }
+
+exports.editar = async (req, res) => {
+    const { id } = req.params;
+    const {
+        nome,
+        idArea,
+        idSubarea,
+        idPosto,
+        morada,
+        descricao,
+        idAdmin,
+        idCriador,
+        latitude, 
+        longitude
+    } = req.body;
+
+    const foto = req.file ? req.file.filename : null; 
+
+    let updateData = {};
+
+    if (nome) updateData.nome = nome;
+    if (idArea) updateData.idArea = idArea;
+    if (idSubarea) updateData.idSubarea = idSubarea;
+    if (idPosto) updateData.idPosto = idPosto;
+    if (morada) updateData.morada = morada;
+    if (descricao) updateData.descricao = descricao;
+    if (idAdmin) updateData.idAdmin = idAdmin;
+    if (idCriador) updateData.idCriador = idCriador;
+    if (foto) updateData.foto = foto;
+    if (latitude) updateData.latitude = latitude;
+    if (longitude) updateData.longitude = longitude;
+
+    try {
+        const [updated] = await Estabelecimento.update(updateData, {
+            where: { id: id }
+        });
+
+        if (updated) {
+            const updatedEstabelecimento = await Estabelecimento.findOne({ where: { id: id } });
+            res.status(200).json({ success: true, message: 'Estabelecimento atualizado com sucesso!', data: updatedEstabelecimento });
+        } else {
+            res.status(404).json({ success: false, message: 'Não foi possível atualizar o estabelecimento.' });
+        }
+    } catch (error) {
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao atualizar o estabelecimento!" });
+    }
+};
+
+exports.uploadFoto = async (req, res) => {
+    const { id } = req.params;
+    const { idUtilizador } = req.body;
+    const foto = req.file ? req.file.filename : null;
+
+    try {
+        const newFoto = await FotoEstabelecimento.create({
+            foto,
+            idEstabelecimento: id,
+            idCriador: idUtilizador,
+            estado: true,
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Foto adicionada com sucesso!',
+            data: newFoto
+        });
+    } catch (error) {
+        console.error('Erro ao criar nova foto:', error); // Adicione essa linha para registrar o erro no console
+        res.status(500).json({ success: false, message: "Erro ao adicionar a foto!" });
+    }
+};
+
+exports.deleteFoto = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [deleted] = await FotoEstabelecimento.update({
+            estado: false,
+        }, {
+            where: { id: id }
+        });
+
+        if (deleted) {
+            res.status(200).json({ success: true, message: 'Foto removida com sucesso!' });
+        } else {
+            res.status(404).json({ success: false, message: 'Foto não encontrada.' });
+        }
+    } catch (error) {
+        console.error('Erro ao remover foto:', error); // Adicione essa linha para registrar o erro no console
+        res.status(500).json({ success: false, message: "Erro ao remover a foto!" });
+    }
+};
+
+exports.apagarEstabelecimento = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleted = await Estabelecimento.destroy({
+            where: { id: id }
+        });
+
+        if (deleted) {
+            res.status(200).json({ success: true, message: 'Estabelecimento apagado com sucesso!' });
+        } else {
+            res.status(404).json({ success: false, message: 'Estabelecimento não encontrado.' });
+        }
+    } catch (error) {
+        console.error('Erro ao apagar estabelecimento:', error); // Adicione essa linha para registrar o erro no console
+        res.status(500).json({ success: false, message: "Erro ao apagar o estabelecimento!" });
+    }
+};

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation} from 'react-router-dom';
-import { FaCalendarAlt, FaBell, FaHome, FaBars } from "react-icons/fa";
+import { FaCalendarAlt, FaBell, FaHome, FaBars, FaUser} from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsBuildings } from "react-icons/bs";
 import { MdEvent } from "react-icons/md";
 import { Drawer, IconButton, AppBar, Toolbar } from '@mui/material';
 import logo from '../../assets/softinsabranco.svg';
 import './sidebar.css';
+import Swal from 'sweetalert2';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -20,11 +21,27 @@ const Sidebar = () => {
     setOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    sessionStorage.removeItem('token');
-    window.location.href = '/login';
-  };
+
+const handleLogout = () => {
+  Swal.fire({
+    title: 'Pretende terminar a sua sessão?',
+    showDenyButton: true,
+    confirmButtonText: 'Sim',
+    denyButtonText: 'Não',
+    confirmButtonColor: '#1D324F', 
+    denyButtonColor: '#6c757d',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+      localStorage.removeItem('recoveryToken');
+      sessionStorage.removeItem('recoveryToken');
+      window.location.href = '/login';
+    } else if (result.isDenied) {
+      Swal.fire('Sessão não terminada', '', 'info')
+    }
+  });
+};
 
   return (
     <div>
@@ -45,6 +62,9 @@ const Sidebar = () => {
           </NavLink>
           <NavLink className={location.pathname === "/about" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/about" onClick={handleDrawerClose}>
             <FaCalendarAlt className='icone' /> Calendário
+          </NavLink>
+          <NavLink className={location.pathname === "/utilizadores" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/utilizadores" onClick={handleDrawerClose}>
+            <FaUser className='icone' /> Utilizadores
           </NavLink>
           <NavLink className={location.pathname === "/estabelecimentos" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/estabelecimentos" onClick={handleDrawerClose}>
             <BsBuildings className='icone' /> Estabelecimentos

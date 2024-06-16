@@ -39,12 +39,12 @@ const Estabelecimento = sequelize.define('Estabelecimento', {
       key: 'id'
     }
   },
-  local: {
+  morada: {
     type: DataTypes.STRING,
     allowNull: false
   },
   descricao: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(1000),
     allowNull: false
   },
   foto: { 
@@ -71,6 +71,14 @@ const Estabelecimento = sequelize.define('Estabelecimento', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
+  latitude : {
+    type: DataTypes.FLOAT,
+    allowNull: true
+  },
+  longitude : {
+    type: DataTypes.FLOAT,
+    allowNull: true
+  }
 },
 {
   freezeTableName: true,

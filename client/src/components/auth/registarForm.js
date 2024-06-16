@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/api';
 import logo from '../../assets/softinsa.svg';
-import './login.css';
 import Swal from 'sweetalert2';
 import Termos from './termos';
+import './login.css';
+
 
 function RegistarForm() {
   const [nome, setNome] = useState('');
