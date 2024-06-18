@@ -115,7 +115,7 @@ function EventoPage () {
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
                 <Box sx={{ padding: 0, paddingTop: 0}}>
                     <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0}}>{evento.titulo}</Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: -6, marginBottom: 3}}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3}}>
                         {utilizador && (
                             <>
                                 <BotaoUpload tipo="eventos" id={id} fotos={fotos} setFotos={setFotos} idUtilizador={utilizador.id} updateFotos={updateFotos} />

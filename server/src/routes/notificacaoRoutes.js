@@ -5,7 +5,8 @@ const auth = require('../middlewares/decodeJWT');
 
 router.get('/', auth, NotificacaoController.getNotificacoes);
 router.post('/', auth, NotificacaoController.criarNotificacao);
-router.delete('/:id', auth, NotificacaoController.apagarNotificacao);
+router.delete('/', auth, NotificacaoController.apagarNotificacoes);
 router.get('/contador', auth, NotificacaoController.contadorNotificacoes)
+router.put('/lido', auth, NotificacaoController.marcarComoLidas);
 
 module.exports = router;

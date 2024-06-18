@@ -1,12 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography, Paper } from '@mui/material';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import Swal from 'sweetalert2';
 import api from '../api/api';
-import { Link } from 'react-router-dom';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
-function CriarEvento() {
-  const { register, handleSubmit, watch, control } = useForm();
+const schema = yup.object().shape({
+  titulo: yup.string().required('Nome do Evento é obrigatório'),
+  descricao: yup.string().required('Descrição é obrigatória'),
+  data: yup.date().required('Data é obrigatória'),
+  hora: yup.string().required('Hora é obrigatória'),
+  morada: yup.string().required('Morada é obrigatória'),
+  latitude: yup.number().typeError('Latitude deve ser um número').required('Latitude é obrigatória'),
+  longitude: yup.number().typeError('Longitude deve ser um número').required('Longitude é obrigatória'),
+  area: yup.string().required('Tipo de Evento é obrigatório'),
+  subarea: yup.string().required('Subtipo é obrigatório'),
+});
+
+function CriarEvento({ open, handleClose }) {
+  const { register, handleSubmit, watch, control, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
   const [areas, setAreas] = useState([]);
   const [subareas, setSubareas] = useState([]);
   const selectedArea = watch('area');
@@ -45,75 +60,75 @@ function CriarEvento() {
     try {
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
-        formData.append(key, data[key]);
+        if (key === 'latitude' || key === 'longitude') {
+          formData.append(key, data[key] || null);
+        } else {
+          formData.append(key, data[key]);
+        }
       });
-  
-      // Append additional fields to formData
+
       formData.append('estado', false);
       formData.append('idArea', selectedArea);
       formData.append('idSubarea', data.subarea);
-  
-      // Get token from local storage or other secure place
-      let token = localStorage.getItem('token');
+
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (!token) {
-        token = sessionStorage.getItem('token');
+        throw new Error('Token de autenticação não encontrado.');
       }
-  
-      // Get user data
+
       const userResponse = await api.get('/utilizador', {
         headers: {
           'Authorization': `Bearer ${token}`
         },
       });
-  
-      // Append idCriador to formData
+
       formData.append('idCriador', userResponse.data.id);
-  
+
       const response = await api.post('/eventos', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
         },
-    });
+      });
 
-    // Exibir alerta de sucesso
-    Swal.fire({
-      title: "Sucesso",
-      text: "Evento criado com sucesso!",
-      icon: "success",
-      confirmButtonColor: '#1D324F',
-    });
+      Swal.fire({
+        title: "Sucesso",
+        text: "Evento criado com sucesso!",
+        icon: "success",
+        confirmButtonColor: '#1D324F',
+      });
 
-    console.log('Evento criado:', response.data);
-  } catch (error) {
-    // Exibir alerta de erro
-    Swal.fire({
-      title: "Erro",
-      text: "Erro ao criar evento, tente mais tarde.",
-      icon: "error",
-      confirmButtonColor: '#1D324F',
-    });
+      console.log('Evento criado:', response.data);
+      handleClose();
+    } catch (error) {
+      Swal.fire({
+        title: "Erro",
+        text: "Erro ao criar evento, tente mais tarde.",
+        icon: "error",
+        confirmButtonColor: '#1D324F',
+      });
 
-    console.error('Erro ao criar evento:', error);
-  }
-};
+      console.error('Erro ao criar evento:', error);
+    }
+  };
 
   return (
-    <Box display="flex" justifyContent="center" mt={3}>
-      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: '1000px'}}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', textAlign: 'center' }}>
-          Criar Evento
-        </Typography>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+      <DialogTitle>Criar Evento</DialogTitle>
+      <DialogContent>
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           noValidate
-          sx={{ mt: 1}}
+          sx={{ mt: 1 }}
         >
           <TextField 
             {...register('titulo')} 
             label="Nome do Evento" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+            error={!!errors.titulo}
+            helperText={errors.titulo ? errors.titulo.message : ''}
           />
           <TextField 
             {...register('descricao')} 
@@ -122,6 +137,8 @@ function CriarEvento() {
             multiline
             rows={4}
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+            error={!!errors.descricao}
+            helperText={errors.descricao ? errors.descricao.message : ''}
           />
           <Box display="flex" justifyContent="space-between" sx={{ mb: 2 }}>
             <TextField 
@@ -130,6 +147,8 @@ function CriarEvento() {
               label="Data" 
               InputLabelProps={{ shrink: true }} 
               sx={{ backgroundColor: '#f2f2f2', borderRadius: 1, width: '48%' }} 
+              error={!!errors.data}
+              helperText={errors.data ? errors.data.message : ''}
             />
             <TextField 
               {...register('hora')} 
@@ -137,6 +156,8 @@ function CriarEvento() {
               label="Hora" 
               InputLabelProps={{ shrink: true }} 
               sx={{ backgroundColor: '#f2f2f2', borderRadius: 1, width: '48%' }} 
+              error={!!errors.hora}
+              helperText={errors.hora ? errors.hora.message : ''}
             />
           </Box>
           <TextField 
@@ -144,8 +165,26 @@ function CriarEvento() {
             label="Morada" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+            error={!!errors.morada}
+            helperText={errors.morada ? errors.morada.message : ''}
           />
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <TextField 
+            {...register('latitude')} 
+            label="Latitude" 
+            fullWidth 
+            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+            error={!!errors.latitude}
+            helperText={errors.latitude ? errors.latitude.message : ''}
+          />
+          <TextField 
+            {...register('longitude')} 
+            label="Longitude" 
+            fullWidth 
+            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+            error={!!errors.longitude}
+            helperText={errors.longitude ? errors.longitude.message : ''}
+          />
+          <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.area}>
             <InputLabel id="area-label">Tipo de Evento</InputLabel>
             <Select 
               {...register('area')} 
@@ -158,8 +197,9 @@ function CriarEvento() {
                 </MenuItem>
               ))}
             </Select>
+            {errors.area && <p style={{ color: 'red' }}>{errors.area.message}</p>}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.subarea}>
             <InputLabel id="subarea-label">Subtipo</InputLabel>
             <Select 
               {...register('subarea')} 
@@ -172,62 +212,47 @@ function CriarEvento() {
                 </MenuItem>
               ))}
             </Select>
+            {errors.subarea && <p style={{ color: 'red' }}>{errors.subarea.message}</p>}
           </FormControl>
           <Controller
-          name="foto"
-          control={control}
-          render={({ field }) => (
-            <Button
-              variant="contained"
-              component="label"
-              fullWidth
-              sx={{ 
-                mb: 2, 
-                backgroundColor: '#1D324F', 
-                color: '#ffffff',
-                '&:hover': {
-                  backgroundColor: '#0b1a2d',
-                },
-              }}
-            >
-              Inserir Anexo
-              <input
-                type="file"
-                hidden
-                onChange={(e) => field.onChange(e.target.files[0])}
-              />
-            </Button>
-          )}
-        />
-          <Box display="flex" justifyContent="space-between" sx={{ mt: 2 }}>
-            <Button 
-              type="submit" 
-              variant="contained" 
-              color="primary" 
-              sx={{ backgroundColor: '#1D324F', color: '#ffffff', borderRadius: 1 }}
-            >
-              Criar Evento
-            </Button>
-            <Button 
-              variant="outlined" 
-              component={Link} to = "/eventos"
-              sx={{ 
-                borderRadius: 1, 
-                color: '#1D324F', 
-                backgroundColor: '#ffffff',
-                fontWeight: 'bold',
-                borderColor: '#1D324F', // Adicione esta linha
-                '&:hover': {
-                  backgroundColor: '#f0f0f0',
-                },
-              }}
-            >
-              Cancelar
-</Button>
-          </Box>
+            name="foto"
+            control={control}
+            render={({ field }) => (
+              <Button
+                variant="contained"
+                component="label"
+                fullWidth
+                sx={{ 
+                  mb: 2, 
+                  backgroundColor: '#1D324F', 
+                  color: '#ffffff',
+                  '&:hover': {
+                    backgroundColor: '#0b1a2d',
+                  },
+                }}
+                error={!!errors.foto}
+              >
+                Inserir Anexo
+                <input
+                  type="file"
+                  hidden
+                  onChange={(e) => field.onChange(e.target.files[0])}
+                />
+              </Button>
+            )}
+          />
+          {errors.foto && <p style={{ color: 'red' }}>{errors.foto.message}</p>}
         </Box>
-      </Paper>
-    </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Cancelar
+        </Button>
+        <Button type="submit" color="primary" onClick={handleSubmit(onSubmit)}>
+          Criar Evento
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 

@@ -5,6 +5,9 @@ const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
 const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
+const notificacaoController = require('./notificacaoController');
+const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
+const moment = require('moment');
 
 exports.listarEventos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -83,45 +86,67 @@ exports.getEvento = async (req, res) => {
 };
 
 exports.CriarEvento = async (req, res) => {
-  const {
-    titulo,
-    descricao,
-    data,
-    hora,
-    morada,
-    idArea,
-    idSubarea,
-    idCriador,
-  } = req.body;
+    const {
+        titulo,
+        descricao,
+        data,
+        hora,
+        morada,
+        idArea,
+        idSubarea,
+        idCriador,
+        latitude, 
+        longitude
+    } = req.body;
 
-  const idPosto = req.user.idPosto; // Use idPosto from req.user
+    const idPosto = req.user.idPosto; // Use idPosto from req.user
 
-  const foto = req.file ? req.file.filename : null; // Aqui você obtém apenas o nome do arquivo
+    const foto = req.file ? req.file.filename : null; // Aqui você obtém apenas o nome do arquivo
 
-  try {
-    const newEvento = await Evento.create({
-      titulo,
-      descricao,
-      data,
-      hora,
-      morada,
-      foto,
-      estado: false, // Estado inicial definido como falso
-      idArea,
-      idSubarea,
-      idCriador,
-      idPosto
-    });
+    try {
 
-    res.status(200).json({
-      success: true,
-      message: 'Evento criado com sucesso!',
-      data: newEvento
-    });
-  } catch (error) {
-    console.log('Error: ', error);
-    res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
-  }
+        const newEvento = await Evento.create({
+            titulo,
+            descricao,
+            data,
+            hora,
+            morada,
+            foto,
+            estado: false, // Estado inicial definido como falso
+            idArea,
+            idSubarea,
+            idCriador,
+            idPosto,
+            latitude,
+            longitude
+        });
+
+        // Criar notificação após a criação do evento
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => { return data; }
+        };
+
+        const notificacao = await notificacaoController.criarNotificacao({
+            body: {
+                titulo: 'Evento criado',
+                descricao: `O seu evento ${titulo} foi criado e enviado para validação!`
+            },
+            user: {
+                id: idCriador
+            }
+        }, mockRes);
+
+        res.status(200).json({
+            success: true,
+            message: 'Evento criado com sucesso!',
+            data: newEvento,
+            notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
+        });
+    } catch (error) {
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
+    }
 };
 
 
@@ -180,11 +205,27 @@ exports.editarEvento = async (req, res) => {
 exports.apagarEvento = async (req, res) => {
     const { id } = req.params;
     try {
-        const deleted = await Evento.destroy({
+        // Apagar todas as avaliações associadas ao evento
+        await AvaliacaoEvento.destroy({
+            where: { idEvento: id }
+        });
+
+        // Apagar todas as inscrições associadas ao evento
+        await Inscricao.destroy({
+            where: { idEvento: id }
+        });
+
+        // Apagar todas as fotos associadas ao evento
+        await FotoEvento.destroy({
+            where: { idEvento: id }
+        });
+
+        // Apagar o evento
+        const evento = await Evento.destroy({
             where: { id: id }
         });
 
-        if (deleted) {
+        if (evento) {
             res.status(200).json({ success: true, message: 'Evento apagado com sucesso!' });
         } else {
             res.status(404).json({ success: false, message: 'Evento não encontrado.' });
@@ -229,13 +270,13 @@ exports.apagarEvento = async (req, res) => {
 exports.deleteFotoEvento = async (req, res) => {
     const { id } = req.params;
     try {
-        const [deleted] = await FotoEvento.update({
+        const [evento] = await FotoEvento.update({
             estado: false,
         }, {
             where: { id: id }
         });
 
-        if (deleted) {
+        if (evento) {
             res.status(200).json({ success: true, message: 'Foto removida com sucesso!' });
         } else {
             res.status(404).json({ success: false, message: 'Foto não encontrada.' });

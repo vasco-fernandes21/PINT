@@ -97,16 +97,16 @@ function EstabelecimentoPage() {
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
                 <Box sx={{ padding: 0, paddingTop: 0}}>
                     <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0}}>{estabelecimento.nome}</Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: -6, marginBottom: 3}}>
-                        {utilizador && (
-                            <>
-                                <BotaoUpload tipo="estabelecimentos" id={id} fotos={fotos} setFotos={setFotos} idUtilizador={utilizador.id} updateFotos={updateFotos} />
-                                <Button variant="contained" color="secondary" onClick={handleOpen}>
-                                    Editar Estabelecimento
-                                </Button>
-                                <EditarEstabelecimento open={open} handleClose={handleClose} />
-                            </>
-                        )}
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3}}>
+                    {utilizador && (
+                        <>
+                        <BotaoUpload tipo="estabelecimentos" id={id} fotos={fotos} setFotos={setFotos} idUtilizador={utilizador.id} updateFotos={updateFotos} />
+                        <Button variant="contained" color="secondary" onClick={handleOpen}>
+                            Editar Estabelecimento
+                        </Button>
+                        <EditarEstabelecimento open={open} handleClose={handleClose} />
+                        </>
+                    )}
                     </Box>
                     <FotoSlider fotos={fotos} descricao={estabelecimento.nome} tipo="estabelecimentos" id={id} updateFotos={updateFotos} />
                     <Grid container spacing={2}>

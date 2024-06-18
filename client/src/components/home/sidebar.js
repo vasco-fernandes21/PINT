@@ -3,7 +3,7 @@ import { NavLink, useLocation} from 'react-router-dom';
 import { FaCalendarAlt, FaBell, FaHome, FaBars, FaUser} from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsBuildings } from "react-icons/bs";
-import { MdEvent } from "react-icons/md";
+import { MdEvent, MdAddCircle} from "react-icons/md";
 import { Drawer, IconButton, AppBar, Toolbar } from '@mui/material';
 import logo from '../../assets/softinsabranco.svg';
 import './sidebar.css';
@@ -75,6 +75,9 @@ const handleLogout = () => {
           </NavLink>
           <NavLink className={location.pathname === "/notificacoes" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/notificacoes" onClick={handleDrawerClose}>
             <ContadorNotificacoes className='icone' /> Notificações
+          </NavLink>
+          <NavLink className={location.pathname === "/validacao" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
+            <MdAddCircle  className='icone' /> Validações
           </NavLink>
           <div className="menu-item text-white mb-4 d-block text-start logout-button" onClick={handleLogout} role="button">
             <CiLogout className='icone' /> Logout

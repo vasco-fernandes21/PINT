@@ -19,8 +19,9 @@ import UtilizadorPerfil from './components/utilizador/utilizadorPerfil';
 import Calendario from './components/calendario/calendario';
 import EventoPage from './components/eventos/eventoPage';
 import Notificacoes from './components/notificacao/notificacaoPage';
+import Validacao from './components/validacao/validacao';
 
-const AuthenticatedLayout = () => (
+const Autenticado = () => (
   <>
     <Sidebar />
     <div style={{padding: '30px' }}> 
@@ -29,18 +30,18 @@ const AuthenticatedLayout = () => (
   </>
 );
 
-const UnauthenticatedLayout = () => (
+const NaoAutenticado = () => (
   <div>
     <Outlet />
   </div>
-);
+);  
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token') || !!sessionStorage.getItem('token'));
+  const [isAutenticado, setIsAutenticado] = useState(!!localStorage.getItem('token') || !!sessionStorage.getItem('token'));
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setIsAuthenticated(!!localStorage.getItem('token') || !!sessionStorage.getItem('token'));
+      setIsAutenticado(!!localStorage.getItem('token') || !!sessionStorage.getItem('token'));
     };  
 
     window.addEventListener('storage', handleStorageChange);
@@ -53,15 +54,15 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route element={<UnauthenticatedLayout />}>
-          <Route path="login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route element={<NaoAutenticado />}>
+          <Route path="login" element={<Login setIsAutenticado={setIsAutenticado} />} />
           <Route path="registar" element={<Registar />} />
           <Route path="recuperar-passe" element={<RecuperarPasseForm />} />
           <Route path="reset-passe" element={<NovaPasseForm />} />
           <Route path="posto" element={<SelecionarPosto />} />
         </Route>
 
-        <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
+        <Route path="/*" element={isAutenticado ? <Autenticado /> : <Navigate to="/login" replace />}>
           <Route path="eventos" element={<Eventos />} />
             <Route path="eventos/criar" element={<CriarEvento />} />
             <Route path="eventos/:id" element={<EventoPage />} />
@@ -74,9 +75,10 @@ function App() {
           <Route path="utilizador" element={<UtilizadorPerfil />} />
           <Route path="calendario" element={<Calendario />} />
           <Route path="notificacoes" element={<Notificacoes />} />
+          <Route path="validacao" element={<Validacao />} />
          </Route>
         
-        <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
+        <Route path="*" element={<Navigate to={isAutenticado ? "/" : "/login"} replace />} />
       </Routes>
     </Router>
   );
