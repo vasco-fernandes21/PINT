@@ -201,7 +201,7 @@ exports.getFotoEstabelecimento = async (req, res) => {
     }
 }
 
-exports.editar = async (req, res) => {
+exports.editarEstabelecimento = async (req, res) => {
     const { id } = req.params;
     const {
         nome,
@@ -249,7 +249,7 @@ exports.editar = async (req, res) => {
     }
 };
 
-exports.uploadFoto = async (req, res) => {
+exports.uploadFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     const { idUtilizador } = req.body;
     const foto = req.file ? req.file.filename : null;
@@ -273,7 +273,7 @@ exports.uploadFoto = async (req, res) => {
     }
 };
 
-exports.deleteFoto = async (req, res) => {
+exports.deleteFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const [deleted] = await FotoEstabelecimento.update({

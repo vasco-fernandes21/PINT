@@ -188,10 +188,10 @@ function EventoList() {
                   </StyledTypography>
                   </Link>
                   <Typography variant="body2" color="text.secondary">
-                    Data: {evento.data}
+                    Data: {new Date(evento.data).toLocaleDateString()}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Hora: {evento.hora}
+                    Hora: {evento.hora.split(':').slice(0, 2).join(':')}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Morada: {evento.morada}

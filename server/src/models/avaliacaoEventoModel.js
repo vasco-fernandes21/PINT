@@ -32,6 +32,15 @@ const AvaliacaoEvento = sequelize.define('AvaliacaoEvento', {
       key: 'id'
     }
   },
+  estado: {
+    type: DataTypes.ENUM('pendente', 'aceite', 'recusada'),
+    allowNull: false,
+    defaultValue: 'pendente'
+  },
+  classificacao: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   comentario: DataTypes.TEXT
 }, 
 {

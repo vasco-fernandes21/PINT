@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const avaliacaoController = require('../controllers/avaliacaoController');
 
+// /avaliacao
+
 router.post('/estabelecimentos/criar/:id', avaliacaoController.CriarAvaliacaoEstabelecimento)
 router.get('/estabelecimentos/:id', avaliacaoController.listarAvaliacoesEstabelecimento)
 router.put('/estabelecimentos/:id', avaliacaoController.editarAvaliacaoEstabelecimento)
