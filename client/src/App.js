@@ -16,6 +16,7 @@ import SelecionarPosto from './components/posto/SelecionarPostoForm';
 import EditarEstabelecimento from './components/estabelecimento/estabelecimentoEdit';
 import CreateAreaForm from './components/area/areaCriar';
 import UtilizadorPerfil from './components/utilizador/utilizadorPerfil';
+import Calendario from './components/calendario/calendario';
 
 const AuthenticatedLayout = () => (
   <>
@@ -68,6 +69,7 @@ function App() {
           <Route path="utilizadores" element={<ListaUtilizadores />} />
           <Route path="area" element={<CreateAreaForm />} />
           <Route path="utilizador" element={<UtilizadorPerfil />} />
+          <Route path="calendario" element={<Calendario/>} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
