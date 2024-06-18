@@ -17,6 +17,8 @@ import EditarEstabelecimento from './components/estabelecimento/estabelecimentoE
 import CreateAreaForm from './components/area/areaCriar';
 import UtilizadorPerfil from './components/utilizador/utilizadorPerfil';
 import Calendario from './components/calendario/calendario';
+import EventoPage from './components/eventos/eventoPage';
+import Notificacoes from './components/notificacao/notificacaoPage';
 
 const AuthenticatedLayout = () => (
   <>
@@ -62,6 +64,7 @@ function App() {
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
           <Route path="eventos" element={<Eventos />} />
             <Route path="eventos/criar" element={<CriarEvento />} />
+            <Route path="eventos/:id" element={<EventoPage />} />
           <Route path="estabelecimentos" element={<EstabelecimentoList />} />
             <Route path="estabelecimentos/criar" element={<CriarEstabelecimento />} />
             <Route path="estabelecimentos/:id" element={<EstabelecimentoPage/>} />
@@ -69,7 +72,8 @@ function App() {
           <Route path="utilizadores" element={<ListaUtilizadores />} />
           <Route path="area" element={<CreateAreaForm />} />
           <Route path="utilizador" element={<UtilizadorPerfil />} />
-          <Route path="calendario" element={<Calendario/>} />
+          <Route path="calendario" element={<Calendario />} />
+          <Route path="notificacoes" element={<Notificacoes />} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form'; 
+import { useForm} from 'react-hook-form'; 
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Typography, Paper, Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import Swal from 'sweetalert2';
 import api from '../api/api';
 import { useParams } from 'react-router-dom';
@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 function EditarEstabelecimento({ open, handleClose }) {
   const { id } = useParams(); 
-  const { register, handleSubmit, watch, control, setValue } = useForm();
+  const { register, handleSubmit, watch, setValue } = useForm();
   const [areas, setAreas] = useState([]);
   const [subareas, setSubareas] = useState([]);
   const [selectedFile, setSelectedFile] = useState();
@@ -284,16 +284,6 @@ const apagarEstabelecimento = async (id) => {
             />
           </Button>
           <Button   
-            onClick={() => apagarEstabelecimento(id)} 
-            variant="contained" 
-            color="secondary" 
-            fullWidth 
-            sx={{ backgroundColor: '#1D324F', color: '#ffffff', borderRadius: 1 , ml: 0,}}
-            startIcon={<DeleteIcon />}
-          >
-            Eliminar Estabelecimento
-          </Button>
-          <Button   
             type="submit" 
             variant="contained" 
             color="primary" 
@@ -301,6 +291,16 @@ const apagarEstabelecimento = async (id) => {
             sx={{ backgroundColor: '#1D324F', color: '#ffffff', borderRadius: 1 , ml: 0,}}
           >
             Editar Estabelecimento
+          </Button>
+          <Button   
+            onClick={() => apagarEstabelecimento(id)} 
+            variant="contained" 
+            color="secondary" 
+            fullWidth 
+            sx={{ backgroundColor: '#DC3545', '&:hover': { backgroundColor: '#C82333' }, color: '#ffffff', borderRadius: 1 , ml: 0,}}
+            startIcon={<DeleteIcon />}
+          >
+            Eliminar Estabelecimento
           </Button>
           <Button 
             variant="outlined" 

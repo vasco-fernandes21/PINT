@@ -8,6 +8,7 @@ import { Drawer, IconButton, AppBar, Toolbar } from '@mui/material';
 import logo from '../../assets/softinsabranco.svg';
 import './sidebar.css';
 import Swal from 'sweetalert2';
+import ContadorNotificacoes from '../utils/contadorNotificacoes';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -72,8 +73,8 @@ const handleLogout = () => {
           <NavLink className={location.pathname === "/eventos" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/eventos" onClick={handleDrawerClose}>
             <MdEvent className='icone' /> Eventos
           </NavLink>
-          <NavLink className={location.pathname === "/contact" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/contact" onClick={handleDrawerClose}>
-            <FaBell className='icone' /> Notificações
+          <NavLink className={location.pathname === "/notificacoes" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/notificacoes" onClick={handleDrawerClose}>
+            <ContadorNotificacoes className='icone' /> Notificações
           </NavLink>
           <div className="menu-item text-white mb-4 d-block text-start logout-button" onClick={handleLogout} role="button">
             <CiLogout className='icone' /> Logout

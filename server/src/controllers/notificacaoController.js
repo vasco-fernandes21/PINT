@@ -1,42 +1,90 @@
 const Notificacao = require('../models/notificacaoModel');
+const Utilizador = require('../models/utilizadorModel');
 
-exports.NotificacoesId = async (req, res) => {
-    try
-    {
-        const idUtilizador = req.params.id;
-        const data = await Notificacao.findAll({
+exports.criarNotificacao = async (req, res) => {
+  try {
+    const {titulo, descricao } = req.body;
+    const idUtilizador = req.user.id;
+    const notificacao = await Notificacao.create({
+      idUtilizador,
+      titulo,
+      descricao,
+      data: new Date(),
+      estado: false
+    });
+    res.status(201).json({
+      status: 'success',
+      data: {
+        notificacao
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err
+    });
+  }
+};
+
+exports.getNotificacoes = async (req, res) => {
+  try {
+    const notificacoes = await Notificacao.findAll({
+      where: {
+        idUtilizador: req.user.id
+      },
+      include: [{ model: Utilizador, as: 'utilizador' }]
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        notificacoes
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err
+    });
+  }
+};
+
+exports.apagarNotificacao = async (req, res) => {
+    try {
+        const notificacao = await Notificacao.destroy({
+        where: {
+            id: req.params.id
+        }
+        });
+        res.status(204).json({
+        status: 'success',
+        data: null
+        });
+    } catch (err) {
+        res.status(400).json({
+        status: 'fail',
+        message: err
+        });
+    }
+    };
+
+    exports.contadorNotificacoes = async (req, res) => {
+        try {
+            const contador = await Notificacao.count({
             where: {
-                idUtilizador,
-            },
-        });
-        res.json({
-            success: true,
-            data,
-        });
-    }
-    catch (err)
-    {
-        res.status(500).json({
-            success: false,
-            error: 'Erro: ' + err.message,
-        });
-    }
-}
+                idUtilizador: req.user.id,
+                estado: false  }
+            });
+            res.status(200).json({
+            status: 'success',
+            data: {
+                contador
+            }
+            });
+        } catch (err) {
+            res.status(400).json({
+            status: 'fail',
+            message: err
+            });
+        }
+        }
 
-exports.Notificacoes = async (req, res) => {
-    try
-    {
-        const data = await Notificacao.findAll();
-        res.json({
-            success: true,
-            data,
-        });
-    }
-    catch (err)
-    {
-        res.status(500).json({
-            success: false,
-            error: 'Erro: ' + err.message,
-        });
-    }
-}

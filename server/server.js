@@ -47,6 +47,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/avaliacao', avaliacaoRoutes);
 app.use('/utilizador', utilizadorRoutes);
 app.use('/foto', fotoRoutes);
+app.use('/notificacao', notificacaoRoutes);
 
 
 

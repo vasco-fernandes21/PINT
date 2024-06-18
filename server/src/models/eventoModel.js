@@ -51,7 +51,14 @@ const Evento = sequelize.define('Evento', {
       key: 'id'
     }
   },
-
+  latitude : {
+    type: DataTypes.FLOAT,
+    allowNull: true
+  },
+  longitude : {
+    type: DataTypes.FLOAT,
+    allowNull: true
+  },
   titulo: {
     type: DataTypes.STRING,
     allowNull: false

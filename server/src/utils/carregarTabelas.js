@@ -6,6 +6,9 @@ const Evento = require('../models/eventoModel');
 const Estabelecimento = require('../models/estabelecimentoModel');
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
+const FotoEvento = require('../models/fotoEventoModel');
+const Inscricao = require('../models/inscricaoModel');
+const Notificao = require('../models/notificacaoModel');
 const { sequelize } = require('./database');
 
 const utilizadores = [
@@ -107,7 +110,7 @@ const postos = [
 
 const eventos = [
   // Saúde
-  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', morada: 'Viseu', estado: true},
+  {idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', morada: 'Viseu', estado: true, foto: 'foto-1717335916152-hospital.jpg'},
   {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, titulo: 'Check-up Dentário', descricao: 'Check-up Dentário na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', morada: 'Tomar', estado: true},
   {idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', morada: 'Fundão', estado: true},
 
@@ -208,6 +211,28 @@ const FotosEstabelecimento = [
   {idEstabelecimento: 1, foto: 'palacio.jpg', idAdmin: 1, idCriador: 1, estado: 0},
 ];
 
+const FotosEvento = [
+  {idEvento: 1, foto: 'foto-1717335916152-hospital.jpg', idAdmin: 1, idCriador: 1, estado: 1},
+  {idEvento: 1, foto: 'ginasio.jpg', idAdmin: 1, idCriador: 1, estado: 1},
+  {idEvento: 1, foto: 'palacio.jpg', idAdmin: 1, idCriador: 1, estado: 0},
+];
+
+const Inscricoes = [
+  {idEvento: 1, idUtilizador: 1, estado: 'aceite'},
+  {idEvento: 1, idUtilizador: 2, estado: 'aceite'},
+  {idEvento: 1, idUtilizador: 3, estado: 'aceite'},
+  {idEvento: 1, idUtilizador: 4, estado: 'aceite'},
+  {idEvento: 1, idUtilizador: 5, estado: 'aceite'},
+  {idEvento: 1, idUtilizador: 1, estado: 'aceite'},
+  {idEvento: 1, idUtilizador: 2, estado: 'aceite'},
+];
+
+const Notificacoes = [
+  {idUtilizador: 6,  titulo: "teste", descricao: "teste", estado: 1},
+  {idUtilizador: 6,  titulo: "teste", descricao: "teste", estado: 1},
+  {idUtilizador: 6,  titulo: "teste", descricao: "teste", estado: 0},
+];
+
 const carregarTabelas = () => {
   sequelize.sync({ force: true })
     .then(() => {
@@ -235,7 +260,16 @@ const carregarTabelas = () => {
       return AvaliacaoEstabelecimento.bulkCreate(AvaliacoesEstabelecimento);
     })
     .then(() => {
+      return FotoEvento.bulkCreate(FotosEvento);
+    })
+    .then(() => {
       return FotoEstabelecimento.bulkCreate(FotosEstabelecimento);
+    })
+    .then(() => {
+      return Inscricao.bulkCreate(Inscricoes);
+    })
+    .then(() => {
+      return Notificao.bulkCreate(Notificacoes);
     })
     .catch((error) => {
       console.error('Erro ao carregar tabelas:', error);

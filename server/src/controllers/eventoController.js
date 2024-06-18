@@ -3,11 +3,10 @@ const Area = require('../models/areaModel');
 const Subarea = require('../models/subareaModel');
 const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
+const FotoEvento = require('../models/fotoEventoModel');
+const Inscricao = require('../models/inscricaoModel');
 
 exports.listarEventos = async (req, res) => {
-    console.log('Query Params:', req.query); 
-    console.log('User:', req.user); 
-
     const { areaId, subareaId } = req.query;
     let idPosto;
     if (req.user) {
@@ -50,11 +49,11 @@ exports.listarEventos = async (req, res) => {
 };
 
 
-exports.get = async (req, res) => {
-    const { eventoId } = req.params;
+exports.getEvento = async (req, res) => {
+    const { id } = req.params;
     try {
         const data = await Evento.findOne({
-            where: { id: eventoId },
+            where: { id: id },
             include: [
                 { model: Area, as: 'area', attributes: ['nome'] },
                 { model: Subarea, as: 'subarea', attributes: ['nome'] },
@@ -71,7 +70,7 @@ exports.get = async (req, res) => {
         } else {
             res.status(404).json({
                 success: false,
-                message: 'O evento com o ID ' + eventoId + ' não foi encontrado!',
+                message: 'O evento com o ID ' + id + ' não foi encontrado!',
             });
         }
     } catch (err) {
@@ -83,7 +82,7 @@ exports.get = async (req, res) => {
     }
 };
 
-exports.create = async (req, res) => {
+exports.CriarEvento = async (req, res) => {
   const {
     titulo,
     descricao,
@@ -127,8 +126,7 @@ exports.create = async (req, res) => {
 
 
 
-
-exports.atualizar = async (req, res) => {
+exports.editarEvento = async (req, res) => {
     const { id } = req.params;
     const {
         titulo,
@@ -140,77 +138,60 @@ exports.atualizar = async (req, res) => {
         idSubarea,
         idCriador,
         idAdmin,
-        estado
+        latitude, 
+        longitude
     } = req.body;
 
+    const foto = req.file ? req.file.filename : null; 
+
+    let updateData = {};
+
+    if (titulo) updateData.titulo = titulo;
+    if (descricao) updateData.descricao = descricao;
+    if (data) updateData.data = data;
+    if (hora) updateData.hora = hora;
+    if (morada) updateData.morada = morada;
+    if (idArea) updateData.idArea = idArea;
+    if (idSubarea) updateData.idSubarea = idSubarea;
+    if (idCriador) updateData.idCriador = idCriador;
+    if (idAdmin) updateData.idAdmin = idAdmin;
+    if (foto) updateData.foto = foto;
+    if (latitude) updateData.latitude = latitude;
+    if (longitude) updateData.longitude = longitude;
+
     try {
-        const existingEvento = await Evento.findOne({ where: { id: id } });
-        if (!existingEvento) {
-            return res.status(404).json({
-                success: false,
-                message: "Evento não encontrado!"
-            });
-        }
-
-        const data = await Evento.update({
-            titulo,
-            descricao,
-            data,
-            hora,
-            morada,
-            idArea,
-            idSubarea,
-            idCriador,
-            idAdmin,
-            estado
-        }, { where: { id: id } });
-
-        if (data[0] === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Evento não encontrado!"
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: data,
-            message: "Evento atualizado com sucesso!"
+        const [updated] = await Evento.update(updateData, {
+            where: { id: id }
         });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).json({
-            success: false,
-            error: err.message,
-            message: "Erro ao efetuar a atualização do evento!"
-        });
+
+        if (updated) {
+            const updatedEvento = await Evento.findOne({ where: { id: id } });
+            res.status(200).json({ success: true, message: 'Evento atualizado com sucesso!', data: updatedEvento });
+        } else {
+            res.status(404).json({ success: false, message: 'Não foi possível atualizar o evento.' });
+        }
+    } catch (error) {
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao atualizar o evento!" });
     }
 };
 
-exports.delete = async (req, res) => {
-    const { eventoId } = req.body;
 
+exports.apagarEvento = async (req, res) => {
+    const { id } = req.params;
     try {
-        const del = await Evento.destroy({ where: { id: eventoId } });
-
-        if (del > 0) {
-            res.status(200).json({
-                success: true,
-                deleted: del,
-                message: 'Evento removido!'
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'Nenhum evento encontrado com o ID fornecido!',
-            });
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao eliminar o evento!'
+        const deleted = await Evento.destroy({
+            where: { id: id }
         });
+
+        if (deleted) {
+            res.status(200).json({ success: true, message: 'Evento apagado com sucesso!' });
+        } else {
+            res.status(404).json({ success: false, message: 'Evento não encontrado.' });
+        }
+    } catch (error) {
+        console.error('Erro ao apagar evento:', error); 
+        res.status(500).json({ success: false, message: "Erro ao apagar o evento!" });
     }
 };
 
@@ -244,7 +225,28 @@ exports.delete = async (req, res) => {
     }
 }
 
-exports.uploadFoto = async (req, res) => {
+
+exports.deleteFotoEvento = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [deleted] = await FotoEvento.update({
+            estado: false,
+        }, {
+            where: { id: id }
+        });
+
+        if (deleted) {
+            res.status(200).json({ success: true, message: 'Foto removida com sucesso!' });
+        } else {
+            res.status(404).json({ success: false, message: 'Foto não encontrada.' });
+        }
+    } catch (error) {
+        console.error('Erro ao remover foto:', error); // Adicione essa linha para registrar o erro no console
+        res.status(500).json({ success: false, message: "Erro ao remover a foto!" });
+    }
+};
+
+exports.uploadFotoEvento = async (req, res) => {
     const { id } = req.params;
     const { idUtilizador } = req.body;
     const foto = req.file ? req.file.filename : null;
@@ -253,7 +255,8 @@ exports.uploadFoto = async (req, res) => {
         const newFoto = await FotoEvento.create({
             foto,
             idEvento: id,
-            idUtilizador,
+            idCriador: idUtilizador,
+            estado: true,
         });
 
         res.status(200).json({
@@ -262,34 +265,62 @@ exports.uploadFoto = async (req, res) => {
             data: newFoto
         });
     } catch (error) {
-        console.log('Error: ', error);
+        console.error('Erro ao criar nova foto:', error); // Adicione essa linha para registrar o erro no console
         res.status(500).json({ success: false, message: "Erro ao adicionar a foto!" });
     }
 };
 
-exports.deleteFoto = async (req, res) => {
-    const { fotoId } = req.body;
-
+exports.getInscricaoEvento = async (req, res) => {
+    const { id } = req.params;
     try {
-        const del = await FotoEvento.destroy({ where: { id: fotoId } });
+        const inscricoes = await Inscricao.findAll({
+            where: { 
+                idEvento: id,
+            },
+            include: [
+                { model: Utilizador, as: 'utilizador', attributes: ['nome'] },
+                { model: Utilizador, as: 'admin', attributes: ['nome'] },
+            ]
+        });
 
-        if (del > 0) {
+        if (inscricoes.length > 0) {
             res.status(200).json({
                 success: true,
-                deleted: del,
-                message: 'Foto removida!'
+                data: inscricoes,
             });
         } else {
             res.status(404).json({
                 success: false,
-                message: 'Nenhuma foto encontrada com o ID fornecido!',
+                message: 'Nenhuma inscrição encontrada para o evento com o ID ' + id,
             });
         }
     } catch (err) {
-        console.error(err);
+        console.log("Error: " + err);
         res.status(500).json({
             success: false,
-            message: 'Erro ao eliminar a foto!'
+            error: 'Erro: ' + err.message,
         });
     }
-};
+}
+
+exports.InscricaoEvento = async (req, res) => {
+    const { id } = req.params;
+    const { idUtilizador } = req.body;
+
+    try {
+        const newInscricao = await Inscricao.create({
+            idEvento: id,
+            idUtilizador: idUtilizador,
+            estado: 'pendente',
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Inscrição realizada com sucesso!',
+            data: newInscricao
+        });
+    } catch (error) {
+        console.error('Erro ao realizar inscrição:', error); 
+        res.status(500).json({ success: false, message: "Erro ao realizar a inscrição!" });
+    }
+}

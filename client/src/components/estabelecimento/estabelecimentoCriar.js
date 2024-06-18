@@ -69,7 +69,7 @@ function CriarEstabelecimento({ handleClose }) {
       formData.append('idCriador', userResponse.data.id);
       formData.append('idPosto', userResponse.data.idPosto)
 
-      const response = await api.post('/estabelecimentos/criar', formData, {
+      const response = await api.post('/estabelecimentos', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`

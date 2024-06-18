@@ -69,7 +69,7 @@ function CriarEvento() {
       // Append idCriador to formData
       formData.append('idCriador', userResponse.data.id);
   
-      const response = await api.post('/eventos/criar', formData, {
+      const response = await api.post('/eventos', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

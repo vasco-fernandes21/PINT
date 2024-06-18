@@ -25,14 +25,22 @@ const Inscricao = sequelize.define('Inscricao', {
       key: 'id'
     }
   },
+  idAdmin: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'Utilizador',
+      key: 'id'
+    }
+  },
   data: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   },
   estado: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  }
+    type: DataTypes.ENUM,
+    values: ['aceite', 'pendente', 'recusada'],
+    defaultValue: 'pendente'
+}
 }, 
 {
   freezeTableName: true,
@@ -41,5 +49,6 @@ const Inscricao = sequelize.define('Inscricao', {
 
 Inscricao.belongsTo(Evento, { foreignKey: 'idEvento', as: 'evento' });
 Inscricao.belongsTo(Utilizador, { foreignKey: 'idUtilizador', as: 'utilizador' });
+Inscricao.belongsTo(Utilizador, { foreignKey: 'idAdmin', as: 'admin' });
 
 module.exports = Inscricao;
