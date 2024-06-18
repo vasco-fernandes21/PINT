@@ -16,6 +16,7 @@ import SelecionarPosto from './components/posto/SelecionarPostoForm';
 import EditarEstabelecimento from './components/estabelecimento/estabelecimentoEdit';
 import CreateAreaForm from './components/area/areaCriar';
 import UtilizadorPerfil from './components/utilizador/utilizadorPerfil';
+import Calendario from './components/calendario/calendario';
 import EventoPage from './components/eventos/eventoPage';
 import Notificacoes from './components/notificacao/notificacaoPage';
 
@@ -71,7 +72,6 @@ function App() {
           <Route path="utilizadores" element={<ListaUtilizadores />} />
           <Route path="area" element={<CreateAreaForm />} />
           <Route path="utilizador" element={<UtilizadorPerfil />} />
-          <Route path="notificacoes" element={<Notificacoes />} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
