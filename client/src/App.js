@@ -72,6 +72,8 @@ function App() {
           <Route path="utilizadores" element={<ListaUtilizadores />} />
           <Route path="area" element={<CreateAreaForm />} />
           <Route path="utilizador" element={<UtilizadorPerfil />} />
+          <Route path="calendario" element={<Calendario />} />
+          <Route path="notificacoes" element={<Notificacoes />} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
