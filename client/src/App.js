@@ -63,7 +63,7 @@ function App() {
           <Route path="posto" element={<SelecionarPosto />} />
         </Route>
 
-        <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
+        <Route path="/*" element={isAutenticado ? <Autenticado /> : <Navigate to="/login" replace />}>
           <Route path="/*" element={<Dashboard />} />
           <Route path="eventos" element={<Eventos />} />
             <Route path="eventos/criar" element={<CriarEvento />} />
