@@ -36,6 +36,7 @@ const avaliacaoRoutes = require('./src/routes/avaliacaoRoutes');
 const utilizadorRoutes = require('./src/routes/utilizadorRoutes');
 const notificacaoRoutes = require('./src/routes/notificacaoRoutes');
 const fotoRoutes = require('./src/routes/fotoRoutes');
+const estatisticaRoutes = require('./src/routes/estatisticaRoutes');
 
 // Rotas da API
 app.use('/', authRoutes);
@@ -48,6 +49,7 @@ app.use('/avaliacao', avaliacaoRoutes);
 app.use('/utilizador', utilizadorRoutes);
 app.use('/foto', fotoRoutes);
 app.use('/notificacao', notificacaoRoutes);
+app.use('/estatistica', estatisticaRoutes);
 
 
 

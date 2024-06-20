@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { Grid } from '@mui/material';
 import api from '../api/api';
 import moment from 'moment';
 import 'moment/locale/pt';
@@ -113,7 +114,8 @@ const ListaUtilizadores = () => {
   }));
 
   return (
-    <div style={{ height: 600, width: '70%', margin: '0 auto'}}>
+    <Grid container spacing={3} style={{ margin: '0', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '0vh' }}>
+      <Grid item xs={11} md={10} xl={10}>   
       <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', marginBottom: 4, fontWeight: 'bold' }}>
         Gerir Utilizadores
       </Typography>
@@ -125,6 +127,7 @@ const ListaUtilizadores = () => {
         checkboxSelection
         disableSelectionOnClick
         localeText={{ rowsPerPage: 'Linhas por página' }}
+        sx={{ maxHeight: '500px' }} // Adicione esta linha
       />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{isEdit ? 'Editar Utilizador' : 'Adicionar Utilizador'}</DialogTitle>
@@ -187,7 +190,8 @@ const ListaUtilizadores = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+      </Grid>
+  </Grid>
   );
 };
 

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography, Rating, Avatar, Stack, Pagination, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, IconButton } from "@mui/material";
+import { Box, Typography, Rating, Avatar, Stack, Pagination, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, IconButton, Alert } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import api from '../api/api';
 import Swal from 'sweetalert2';
+import moment from 'moment';
 
 function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, fetchAvaliacoes, tipo }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -83,54 +84,62 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
 
   return (
     <div>
-      {avaliacoes.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((avaliacao, index) => (
-        <Box key={index} sx={{ display: 'flex', flexDirection: 'column', marginBottom: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {avaliacao.utilizador && avaliacao.utilizador.foto && (
-                <Avatar 
-                  src={`/uploads/utilizador/${avaliacao.utilizador.foto}`} 
-                  alt={avaliacao.utilizador.nome} 
-                  sx={{ marginRight: 2 }}
-                />
-              )}
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{avaliacao.utilizador ? avaliacao.utilizador.nome : ''}</Typography>
-                <Rating value={avaliacao.classificacao} readOnly />
-                <Typography variant="body2" color="text.secondary">Há {avaliacao.tempo}</Typography>
+      {avaliacoes.length === 0 ? (
+        <Alert severity="info">Não há avaliações para mostrar.</Alert>
+      ) : (
+        avaliacoes.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((avaliacao, index) => (
+          <Box key={index} sx={{ display: 'flex', flexDirection: 'column', marginBottom: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {avaliacao.utilizador && avaliacao.utilizador.foto && (
+                  <Avatar 
+                    src={`/uploads/utilizador/${avaliacao.utilizador.foto}`} 
+                    alt={avaliacao.utilizador.nome} 
+                    sx={{ marginRight: 2 }}
+                  />
+                )}
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{avaliacao.utilizador ? avaliacao.utilizador.nome : ''}</Typography>
+                  <Rating value={avaliacao.classificacao} readOnly />
+                  <Typography variant="body2" color="text.secondary">
+                    {moment(avaliacao.data).fromNow()}
+                  </Typography>
+                </Box>
               </Box>
+              <IconButton onClick={(event) => handleClick(event, avaliacao)}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={handleEdit}>Editar Comentário</MenuItem>
+                <MenuItem onClick={handleDelete}>Apagar Comentário</MenuItem>
+              </Menu>
             </Box>
-            <IconButton onClick={(event) => handleClick(event, avaliacao)}>
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              MenuListProps={{
-                'aria-labelledby': 'basic-button',
-              }}
-            >
-              <MenuItem onClick={handleEdit}>Editar Comentário</MenuItem>
-              <MenuItem onClick={handleDelete}>Apagar Comentário</MenuItem>
-            </Menu>
+            <Typography variant="body1" sx={{ marginTop: 1}}>{avaliacao.comentario}</Typography>
+            <Box sx={{ width: '100%', height: '1px', backgroundColor: 'lightgray', marginTop: 2, marginBottom: 2 }} />
           </Box>
-          <Typography variant="body1" sx={{ marginTop: 1}}>{avaliacao.comentario}</Typography>
-          <Box sx={{ width: '100%', height: '1px', backgroundColor: 'lightgray', marginTop: 2, marginBottom: 2 }} />
-        </Box>
-      ))}
-      <Stack spacing={2}>
-        <Pagination count={noOfPages} page={page} onChange={handleChange} shape="rounded" />
-      </Stack>
+        ))
+      )}
+      {avaliacoes.length > 0 && (
+        <Stack spacing={2}>
+          <Pagination count={noOfPages} page={page} onChange={handleChange} shape="rounded" />
+        </Stack>
+      )}
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Editar Comentário</DialogTitle>
         <DialogContent>

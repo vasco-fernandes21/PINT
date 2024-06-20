@@ -80,9 +80,8 @@ const Evento = sequelize.define('Evento', {
     allowNull: false
   },
   estado: {
-    type: DataTypes.ENUM('pendente', 'aceite', 'recusada'),
-    allowNull: false,
-    defaultValue: 'pendente'
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   foto : {
     type: DataTypes.STRING,

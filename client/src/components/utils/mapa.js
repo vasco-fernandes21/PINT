@@ -1,5 +1,6 @@
 import React from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import Alert from '@mui/material/Alert';
 
 const mapContainerStyle = {
   width: "100%",
@@ -15,6 +16,10 @@ const Mapa = ({ latitude, longitude }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8', 
   });
+
+  if (latitude === undefined || latitude === null || longitude === undefined || longitude === null) {
+    return <Alert severity="error">Não há dados disponíveis para fornecer um ponteiro no mapa.</Alert>;
+  }
 
   if (loadError) return <div>Erro ao carregar mapas</div>;
   if (!isLoaded) return <div>A carregar...</div>;

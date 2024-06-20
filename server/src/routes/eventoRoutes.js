@@ -8,6 +8,7 @@ const auth = require('../middlewares/decodeJWT');
 
 
 router.get('/', auth, eventoController.listarEventos);
+router.get('/validar', auth, eventoController.listarEventos);
 router.post('/', auth, uploadEventos.single('foto'), eventoController.CriarEvento);
 router.delete('/:id', auth, eventoController.apagarEvento);
 router.get('/:id', eventoController.getEvento);

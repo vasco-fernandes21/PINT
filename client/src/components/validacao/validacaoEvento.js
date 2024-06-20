@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from '../api/api';
 import { IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { Link } from 'react-router-dom';
 
 const ValidacaoEventos = () => {
   const [eventos, setEventos] = useState([]); // Inicializa como um array vazio
@@ -14,8 +15,8 @@ const ValidacaoEventos = () => {
   const fetchEventos = async () => {
     try {
       const response = await api.get('/eventos');
-      if (Array.isArray(response.data)) {
-        setEventos(response.data);
+      if (response.data.success && Array.isArray(response.data.data)) {
+        setEventos(response.data.data);
       } else {
         console.error('Erro: a resposta da API não é um array');
       }
@@ -31,7 +32,16 @@ const ValidacaoEventos = () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'titulo', headerName: 'Título', width: 200 },
+    {
+      field: 'titulo',
+      headerName: 'Título',
+      width: 200,
+      renderCell: (params) => (
+        <Link to={`/eventos/${params.row.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {params.value}
+        </Link>
+      )
+    },
     { field: 'descricao', headerName: 'Descrição', width: 250 },
     { field: 'data', headerName: 'Data', width: 150 },
     { field: 'estado', headerName: 'Estado', width: 100, type: 'boolean' },

@@ -9,7 +9,7 @@ router.get('/mobile', estabelecimentoController.estabelecimentosMobile);
 router.put('/:id', uploadEstabelecimentos.single('foto'), estabelecimentoController.editarEstabelecimento);
 router.get('/:id', estabelecimentoController.estabelecimento_id);
 router.delete('/:id', estabelecimentoController.apagarEstabelecimento);
-router.post('/', auth, uploadEstabelecimentos.single('foto'), estabelecimentoController.create);
+router.post('/', auth, uploadEstabelecimentos.single('foto'), estabelecimentoController.criarEstabelecimento);
 
 
 
