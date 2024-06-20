@@ -1,12 +1,10 @@
-import * as React from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Grid, Card, CardContent, Typography, MenuItem, CardMedia, Box } from "@mui/material";
+import { Grid, Card, CardContent, Typography, MenuItem, CardMedia, Box, Dialog, Fab, Select, DialogActions, DialogContent, DialogTitle, DialogContentText } from "@mui/material";
 import { styled } from "@mui/system";
-import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import Select from "@mui/material/Select";
 import api from "../api/api";
+import CriarEvento from "./eventoCriar";
 
 function EventoList() {
   const [eventos, setEventos] = React.useState([]);
@@ -15,6 +13,7 @@ function EventoList() {
   const [areaId, setAreaId] = React.useState("");
   const [subareaId, setSubareaId] = React.useState("");
   const [idPosto, setIdPosto] = React.useState(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const getAreas = async () => {
@@ -38,6 +37,14 @@ function EventoList() {
 
     getSubareas();
   }, [areaId]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     const getIdPosto = async () => {
@@ -202,11 +209,18 @@ function EventoList() {
           );
         })}
       </Grid>
-      <Link to="/eventos/criar">
-        <Fab aria-label="add" style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
-          <AddIcon style={{ color: '#fff' }} />
-        </Fab>
-      </Link>
+      <Fab aria-label="add" onClick={handleClickOpen} style={{ position: 'fixed', bottom: 35, right: 20, backgroundColor: '#1D324F' }}>
+        <AddIcon style={{ color: '#fff' }} />
+      </Fab>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogTitle>Criar Evento</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Preencha os campos abaixo para criar um novo evento.
+          </DialogContentText>
+          <CriarEvento open={open} handleClose={handleClose} />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }

@@ -244,7 +244,8 @@ exports.editarEstabelecimento = async (req, res) => {
             res.status(404).json({ success: false, message: 'Não foi possível atualizar o estabelecimento.' });
         }
     } catch (error) {
-        console.log('Error: ', error);
+        co
+        nsole.log('Error: ', error);
         res.status(500).json({ success: false, message: "Erro ao atualizar o estabelecimento!" });
     }
 };
@@ -276,13 +277,13 @@ exports.uploadFotoEstabelecimento = async (req, res) => {
 exports.deleteFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
-        const [deleted] = await FotoEstabelecimento.update({
+        const [apagado] = await FotoEstabelecimento.update({
             estado: false,
         }, {
             where: { id: id }
         });
 
-        if (deleted) {
+        if (apagado) {
             res.status(200).json({ success: true, message: 'Foto removida com sucesso!' });
         } else {
             res.status(404).json({ success: false, message: 'Foto não encontrada.' });
@@ -296,17 +297,28 @@ exports.deleteFotoEstabelecimento = async (req, res) => {
 exports.apagarEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
-        const deleted = await Estabelecimento.destroy({
+        // Apagar todas as avaliações associadas ao estabelecimento
+        await AvaliacaoEstabelecimento.destroy({
+            where: { idEstabelecimento: id }
+        });
+
+        // Apagar todas as fotos associadas ao estabelecimento
+        await FotoEstabelecimento.destroy({
+            where: { idEstabelecimento: id }
+        });
+
+        // Apagar o estabelecimento
+        const apagado = await Estabelecimento.destroy({
             where: { id: id }
         });
 
-        if (deleted) {
+        if (apagado) {
             res.status(200).json({ success: true, message: 'Estabelecimento apagado com sucesso!' });
         } else {
             res.status(404).json({ success: false, message: 'Estabelecimento não encontrado.' });
         }
     } catch (error) {
-        console.error('Erro ao apagar estabelecimento:', error); // Adicione essa linha para registrar o erro no console
+        console.error('Erro ao apagar estabelecimento:', error);
         res.status(500).json({ success: false, message: "Erro ao apagar o estabelecimento!" });
     }
 };

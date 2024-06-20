@@ -36,7 +36,7 @@ export default function ContadorNotificacoes({ className }) {
             sx={{
                 '& .MuiBadge-badge': {
                     right: 12, // Move a badge 15px para a direita
-                    top: 2, // Move a badge para o topo
+                    top: 4, // Move a badge para o topo
                 },
             }}
         >

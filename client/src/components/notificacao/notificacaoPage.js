@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  Button,
-  Typography,
   Menu,
   MenuItem,
-  Box,
-  Grid,
   Paper,
-  Divider,
+  Typography,
   Checkbox,
-  ListItemIcon,
+  Divider,
+ListItemSecondaryAction,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import api from '../api/api';
@@ -22,7 +21,7 @@ import api from '../api/api';
 export default function Notificacoes() {
   const [notificacoes, setNotificacoes] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [idsSelecionados, setIdsSelecionados] = useState([]);
   const open = Boolean(anchorEl);
 
   useEffect(() => {
@@ -51,22 +50,22 @@ export default function Notificacoes() {
   };
 
   const handleToggle = (notificacaoId) => {
-    if (selectedIds.includes(notificacaoId)) {
-      setSelectedIds(selectedIds.filter((id) => id !== notificacaoId));
+    if (idsSelecionados.includes(notificacaoId)) {
+      setIdsSelecionados(idsSelecionados.filter((id) => id !== notificacaoId));
     } else {
-      setSelectedIds([...selectedIds, notificacaoId]);
+      setIdsSelecionados([...idsSelecionados, notificacaoId]);
     }
   };
 
   const handleMarkSelectedRead = async () => {
     try {
-      await api.put('/notificacao/marcar-como-lidas', { ids: selectedIds });
+      await api.put('/notificacao/lido', { ids: idsSelecionados });
       const updatedNotificacoes = notificacoes.map((notificacao) => ({
         ...notificacao,
-        estado: selectedIds.includes(notificacao.id) ? true : notificacao.estado,
+        estado: idsSelecionados.includes(notificacao.id) ? true : notificacao.estado,
       }));
       setNotificacoes(updatedNotificacoes);
-      setSelectedIds([]);
+      setIdsSelecionados([]);
       handleClose();
     } catch (error) {
       console.error('Erro ao marcar selecionadas como lidas:', error);
@@ -75,10 +74,10 @@ export default function Notificacoes() {
 
   const handleDeleteSelected = async () => {
     try {
-      await api.delete('/notificacao', { data: { ids: selectedIds } });
-      const updatedNotificacoes = notificacoes.filter((notificacao) => !selectedIds.includes(notificacao.id));
+      await api.delete(`/notificacao`, { data: { ids: idsSelecionados } });
+      const updatedNotificacoes = notificacoes.filter((notificacao) => !idsSelecionados.includes(notificacao.id));
       setNotificacoes(updatedNotificacoes);
-      setSelectedIds([]);
+      setIdsSelecionados([]);
       handleClose();
     } catch (error) {
       console.error('Erro ao apagar selecionadas:', error);
@@ -90,54 +89,68 @@ export default function Notificacoes() {
   };
 
   const isSelected = (notificacaoId) => {
-    return selectedIds.includes(notificacaoId);
+    return idsSelecionados.includes(notificacaoId);
   };
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <Typography variant="h5">Notificações</Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleClick}
-            disabled={selectedIds.length === 0}
-            startIcon={<MoreVertIcon />}
-          >
-            Opções
-          </Button>
+    <Box p={3}>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography variant="h5">Notificações</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleClick}
+              disabled={idsSelecionados.length === 0}
+              startIcon={<MoreVertIcon />}
+            >
+              Opções
+            </Button>
           <Menu
-            id="long-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={{
+          id="long-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          componentsProps={{
+            paper: {
               sx: {
                 width: 200,
-                marginTop: 4,
+                marginTop: 6,
+                marginRight: 15,
               },
-            }}
-          >
-            <MenuItem onClick={handleMarkSelectedRead}>Marcar selecionadas como lidas</MenuItem>
-            <MenuItem onClick={handleDeleteSelected}>Apagar selecionadas</MenuItem>
-          </Menu>
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <Paper elevation={0}>
-          <List>
-            {notificacoes.map((notificacao) => (
-              <React.Fragment key={notificacao.id}>
-                <ListItem
-                  button
-                  onClick={() => handleToggle(notificacao.id)}
-                  sx={{
-                    borderBottom: '1px solid #e0e0e0',
-                    backgroundColor: isSelected(notificacao.id) ? '#f0f0f0' : '#ffffff',
-                  }}
-                >
-                  <ListItemIcon>
+            },
+          }}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <MenuItem onClick={handleMarkSelectedRead}>Marcar selecionadas como lidas</MenuItem>
+          <MenuItem onClick={handleDeleteSelected}>Apagar selecionadas</MenuItem>
+        </Menu>
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={0}>
+            <Typography variant="h6" gutterBottom>
+              Não Lidas
+            </Typography>
+            <List>
+              {notificacoes.filter((n) => !n.estado).map((notificacao) => (
+                <React.Fragment key={notificacao.id}>
+                  <ListItem
+                    button
+                    onClick={() => handleToggle(notificacao.id)}
+                    sx={{
+                      borderBottom: '1px solid #e0e0e0',
+                      backgroundColor: isSelected(notificacao.id) ? '#f0f0f0' : '#ffffff',
+                    }}
+                  >
                     <Checkbox
                       edge="start"
                       checked={isSelected(notificacao.id)}
@@ -145,32 +158,70 @@ export default function Notificacoes() {
                       disableRipple
                       inputProps={{ 'aria-labelledby': notificacao.id }}
                     />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={notificacao.titulo}
-                    secondary={
-                      <>
-                        <Typography variant="body2" color="textSecondary">
-                          {notificacao.descricao}
-                        </Typography>
-                        <Typography variant="caption" color="textSecondary">
-                          {new Date(notificacao.data).toLocaleString()}
-                        </Typography>
-                      </>
-                    }
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="more" onClick={handleClick}>
-                      <MoreVertIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </List>
-        </Paper>
+                    <ListItemText
+                      primary={notificacao.titulo}
+                      secondary={
+                        <>
+                          <Typography variant="body2" color="textSecondary">
+                            {notificacao.descricao}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {new Date(notificacao.data).toLocaleString()}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                  <Divider />
+                </React.Fragment>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper elevation={0}>
+            <Typography variant="h6" gutterBottom>
+              Lidas
+            </Typography>
+            <List>
+              {notificacoes.filter((n) => n.estado).map((notificacao) => (
+                <React.Fragment key={notificacao.id}>
+                  <ListItem
+                    button
+                    onClick={() => handleToggle(notificacao.id)}
+                    sx={{
+                      borderBottom: '1px solid #e0e0e0',
+                      backgroundColor: isSelected(notificacao.id) ? '#f0f0f0' : '#ffffff',
+                    }}
+                  >
+                    <Checkbox
+                      edge="start"
+                      checked={isSelected(notificacao.id)}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ 'aria-labelledby': notificacao.id }}
+                    />
+                    <ListItemText
+                      primary={notificacao.titulo}
+                      secondary={
+                        <>
+                          <Typography variant="body2" color="textSecondary">
+                            {notificacao.descricao}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {new Date(notificacao.data).toLocaleString()}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                  <Divider />
+                </React.Fragment>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
 }

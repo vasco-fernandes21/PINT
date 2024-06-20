@@ -3,7 +3,7 @@ const Utilizador = require('../models/utilizadorModel');
 
 exports.criarNotificacao = async (req, res) => {
   try {
-    const {titulo, descricao } = req.body;
+    const { titulo, descricao } = req.body;
     const idUtilizador = req.user.id;
     const notificacao = await Notificacao.create({
       idUtilizador,
@@ -21,7 +21,7 @@ exports.criarNotificacao = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      message: err
+      message: err.message
     });
   }
 };
@@ -48,43 +48,45 @@ exports.getNotificacoes = async (req, res) => {
   }
 };
 
-exports.apagarNotificacao = async (req, res) => {
-    try {
-        const notificacao = await Notificacao.destroy({
-        where: {
-            id: req.params.id
-        }
-        });
-        res.status(204).json({
-        status: 'success',
-        data: null
-        });
-    } catch (err) {
-        res.status(400).json({
-        status: 'fail',
-        message: err
-        });
-    }
-    };
+exports.apagarNotificacoes = async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    await Notificacao.destroy({ where: { id: ids } });
+    res.status(200).send({ message: 'Notificações apagadas com sucesso.' });
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao apagar notificações.' });
+  }
+};
 
-    exports.contadorNotificacoes = async (req, res) => {
-        try {
-            const contador = await Notificacao.count({
-            where: {
-                idUtilizador: req.user.id,
-                estado: false  }
-            });
-            res.status(200).json({
-            status: 'success',
-            data: {
-                contador
-            }
-            });
-        } catch (err) {
-            res.status(400).json({
-            status: 'fail',
-            message: err
-            });
-        }
-        }
+exports.marcarComoLidas = async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    await Notificacao.update({ estado: true }, { where: { id: ids } });
+    res.status(200).send({ message: 'Notificações marcadas como lidas com sucesso.' });
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao marcar notificações como lidas.' });
+  }
+}
+
+  exports.contadorNotificacoes = async (req, res) => {
+      try {
+          const contador = await Notificacao.count({
+          where: {
+              idUtilizador: req.user.id,
+              estado: false  }
+          });
+          res.status(200).json({
+          status: 'success',
+          data: {
+              contador
+          }
+          });
+      } catch (err) {
+          res.status(400).json({
+          status: 'fail',
+          message: err
+          });
+      }
+      }
+
 

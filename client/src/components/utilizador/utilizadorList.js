@@ -3,6 +3,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import api from '../api/api';
+import moment from 'moment';
+import 'moment/locale/pt';
 
 const ListaUtilizadores = () => {
   const [utilizadores, setUtilizadores] = useState([]);
@@ -10,6 +12,8 @@ const ListaUtilizadores = () => {
   const [postos, setPostos] = useState([]);
   const [form, setForm] = useState({ nome: '', email: '', estado: false, isAdmin: false, idPosto: '' });
   const [isEdit, setIsEdit] = useState(false);
+
+  moment.locale('pt');
 
   useEffect(() => {
     fetchIdPostoAndUtilizadores();
@@ -120,6 +124,7 @@ const ListaUtilizadores = () => {
         rowsPerPageOptions={[5, 10, 20]}
         checkboxSelection
         disableSelectionOnClick
+        localeText={{ rowsPerPage: 'Linhas por página' }}
       />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{isEdit ? 'Editar Utilizador' : 'Adicionar Utilizador'}</DialogTitle>

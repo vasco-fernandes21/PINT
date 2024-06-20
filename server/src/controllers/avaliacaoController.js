@@ -1,32 +1,44 @@
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
 const Utilizador = require('../models/utilizadorModel');
+const Sequelize = require('sequelize');
 
 exports.listarAvaliacoesEstabelecimento = async (req, res) => {
     try {
-       const idEstabelecimento = req.params.id || req.query.idEstabelecimento;
-       
+        const idEstabelecimento = req.params.id || req.query.idEstabelecimento;
+
         const data = await AvaliacaoEstabelecimento.findAll({
             where: { 
-            idEstabelecimento: idEstabelecimento,
-            estado: 'aceite'
+                idEstabelecimento: idEstabelecimento,
+                estado: 'aceite'
             }, 
             include: [
-            { 
-                model: Utilizador, 
-                as: 'utilizador', 
-                attributes: ['nome', 'foto'] 
-            },
-            { 
-                model: Utilizador, 
-                as: 'admin', 
-                attributes: ['nome'] 
-            },
+                { 
+                    model: Utilizador, 
+                    as: 'utilizador', 
+                    attributes: ['nome', 'foto'] 
+                },
+                { 
+                    model: Utilizador, 
+                    as: 'admin', 
+                    attributes: ['nome'] 
+                },
             ],
         });
+
+        
+        const media = await AvaliacaoEstabelecimento.findOne({
+            where: { 
+                idEstabelecimento: idEstabelecimento,
+                estado: 'aceite'
+            },
+            attributes: [[Sequelize.fn('avg', Sequelize.col('classificacao')), 'media']]
+        });
+
         res.json({
             success: true,
             data,
+            media: media.get('media')
         });
     } catch (err) {
         res.status(500).json({
@@ -34,7 +46,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
             error: 'Erro: ' + err.message,
         });
     }
-}
+};
 
 exports.CriarAvaliacaoEstabelecimento = async (req, res) => {
     try {
