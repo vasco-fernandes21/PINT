@@ -29,7 +29,7 @@ const handleLogout = () => {
     showDenyButton: true,
     confirmButtonText: 'Sim',
     denyButtonText: 'Não',
-    confirmButtonColor: '#1D324F', 
+    confirmButtonColor: '#1D324F',
     denyButtonColor: '#6c757d',
   }).then((result) => {
     if (result.isConfirmed) {

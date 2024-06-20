@@ -19,6 +19,7 @@ import UtilizadorPerfil from './components/utilizador/utilizadorPerfil';
 import Calendario from './components/calendario/calendario';
 import EventoPage from './components/eventos/eventoPage';
 import Notificacoes from './components/notificacao/notificacaoPage';
+import Dashboard from './components/home/dashboardMain';
 
 const AuthenticatedLayout = () => (
   <>
@@ -62,6 +63,7 @@ function App() {
         </Route>
 
         <Route path="/*" element={isAuthenticated ? <AuthenticatedLayout /> : <Navigate to="/login" replace />}>
+          <Route path="/*" element={<Dashboard />} />
           <Route path="eventos" element={<Eventos />} />
             <Route path="eventos/criar" element={<CriarEvento />} />
             <Route path="eventos/:id" element={<EventoPage />} />
