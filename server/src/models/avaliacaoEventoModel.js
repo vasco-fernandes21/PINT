@@ -41,6 +41,11 @@ const AvaliacaoEvento = sequelize.define('AvaliacaoEvento', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  data: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
   comentario: DataTypes.TEXT
 }, 
 {

@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Grid,
-  IconButton,
   List,
   ListItem,
   ListItemText,
@@ -13,10 +12,11 @@ import {
   Typography,
   Checkbox,
   Divider,
-ListItemSecondaryAction,
+  Alert,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import api from '../api/api';
+import moment from 'moment';
 
 export default function Notificacoes() {
   const [notificacoes, setNotificacoes] = useState([]);
@@ -93,132 +93,141 @@ export default function Notificacoes() {
   };
 
   return (
-    <Box p={3}>
+    <Box p={1}>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography variant="h5">Notificações</Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={-2}>
+            <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>Notificações</Typography>
             <Button
               variant="contained"
               color="primary"
               onClick={handleClick}
               disabled={idsSelecionados.length === 0}
               startIcon={<MoreVertIcon />}
+              sx={{ marginTop: -1 }}
             >
               Opções
             </Button>
-          <Menu
-          id="long-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          componentsProps={{
-            paper: {
-              sx: {
-                width: 200,
-                marginTop: 6,
-                marginRight: 15,
-              },
-            },
-          }}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-        >
-          <MenuItem onClick={handleMarkSelectedRead}>Marcar selecionadas como lidas</MenuItem>
-          <MenuItem onClick={handleDeleteSelected}>Apagar selecionadas</MenuItem>
-        </Menu>
+            <Menu
+              id="long-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              componentsProps={{
+                paper: {
+                  sx: {
+                    width: 200,
+                    marginTop: 6,
+                    marginRight: 15,
+                  },
+                },
+              }}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+            >
+              <MenuItem onClick={handleMarkSelectedRead}>Marcar selecionadas como lidas</MenuItem>
+              <MenuItem onClick={handleDeleteSelected}>Apagar selecionadas</MenuItem>
+            </Menu>
           </Box>
         </Grid>
         <Grid item xs={12}>
           <Paper elevation={0}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
               Não Lidas
             </Typography>
-            <List>
-              {notificacoes.filter((n) => !n.estado).map((notificacao) => (
-                <React.Fragment key={notificacao.id}>
-                  <ListItem
-                    button
-                    onClick={() => handleToggle(notificacao.id)}
-                    sx={{
-                      borderBottom: '1px solid #e0e0e0',
-                      backgroundColor: isSelected(notificacao.id) ? '#f0f0f0' : '#ffffff',
-                    }}
-                  >
-                    <Checkbox
-                      edge="start"
-                      checked={isSelected(notificacao.id)}
-                      tabIndex={-1}
-                      disableRipple
-                      inputProps={{ 'aria-labelledby': notificacao.id }}
-                    />
-                    <ListItemText
-                      primary={notificacao.titulo}
-                      secondary={
-                        <>
-                          <Typography variant="body2" color="textSecondary">
-                            {notificacao.descricao}
-                          </Typography>
-                          <Typography variant="caption" color="textSecondary">
-                            {new Date(notificacao.data).toLocaleString()}
-                          </Typography>
-                        </>
-                      }
-                    />
-                  </ListItem>
-                  <Divider />
-                </React.Fragment>
-              ))}
-            </List>
+            {notificacoes.filter((n) => !n.estado).length === 0 ? (
+              <Alert severity="info">Não há notificações não lidas.</Alert>
+            ) : (
+              <List>
+                {notificacoes.filter((n) => !n.estado).map((notificacao) => (
+                  <React.Fragment key={notificacao.id}>
+                    <ListItem
+                      button
+                      onClick={() => handleToggle(notificacao.id)}
+                      sx={{
+                        borderBottom: '1px solid #e0e0e0',
+                        backgroundColor: isSelected(notificacao.id) ? '#f0f0f0' : '#ffffff',
+                      }}
+                    >
+                      <Checkbox
+                        edge="start"
+                        checked={isSelected(notificacao.id)}
+                        tabIndex={-1}
+                        disableRipple
+                        inputProps={{ 'aria-labelledby': notificacao.id }}
+                      />
+                      <ListItemText
+                        primary={<Typography variant="body1" fontWeight="bold" sx={{ fontSize: '1.2rem' }}>{notificacao.titulo}</Typography>}
+                        secondary={
+                          <>
+                            <Typography variant="body2" color="textSecondary" sx={{ fontSize: '1rem' }}>
+                              {notificacao.descricao}
+                            </Typography>
+                            <Typography variant="caption" color="textSecondary">
+                              {moment(notificacao.data).fromNow()}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </ListItem>
+                    <Divider />
+                  </React.Fragment>
+                ))}
+              </List>
+            )}
           </Paper>
         </Grid>
         <Grid item xs={12}>
           <Paper elevation={0}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
               Lidas
             </Typography>
-            <List>
-              {notificacoes.filter((n) => n.estado).map((notificacao) => (
-                <React.Fragment key={notificacao.id}>
-                  <ListItem
-                    button
-                    onClick={() => handleToggle(notificacao.id)}
-                    sx={{
-                      borderBottom: '1px solid #e0e0e0',
-                      backgroundColor: isSelected(notificacao.id) ? '#f0f0f0' : '#ffffff',
-                    }}
-                  >
-                    <Checkbox
-                      edge="start"
-                      checked={isSelected(notificacao.id)}
-                      tabIndex={-1}
-                      disableRipple
-                      inputProps={{ 'aria-labelledby': notificacao.id }}
-                    />
-                    <ListItemText
-                      primary={notificacao.titulo}
-                      secondary={
-                        <>
-                          <Typography variant="body2" color="textSecondary">
-                            {notificacao.descricao}
-                          </Typography>
-                          <Typography variant="caption" color="textSecondary">
-                            {new Date(notificacao.data).toLocaleString()}
-                          </Typography>
-                        </>
-                      }
-                    />
-                  </ListItem>
-                  <Divider />
-                </React.Fragment>
-              ))}
-            </List>
+            {notificacoes.filter((n) => n.estado).length === 0 ? (
+              <Alert severity="info">Não há notificações lidas.</Alert>
+            ) : (
+              <List>
+                {notificacoes.filter((n) => n.estado).map((notificacao) => (
+                  <React.Fragment key={notificacao.id}>
+                    <ListItem
+                      button
+                      onClick={() => handleToggle(notificacao.id)}
+                      sx={{
+                        borderBottom: '1px solid #e0e0e0',
+                        backgroundColor: isSelected(notificacao.id) ? '#f0f0f0' : '#ffffff',
+                      }}
+                    >
+                      <Checkbox
+                        edge="start"
+                        checked={isSelected(notificacao.id)}
+                        tabIndex={-1}
+                        disableRipple
+                        inputProps={{ 'aria-labelledby': notificacao.id }}
+                      />
+                      <ListItemText
+                        primary={<Typography variant="body1" fontWeight="bold" sx={{ fontSize: '1.2rem' }}>{notificacao.titulo}</Typography>}
+                        secondary={
+                          <>
+                            <Typography variant="body2" color="textSecondary" sx={{ fontSize: '1rem' }}>
+                              {notificacao.descricao}
+                            </Typography>
+                            <Typography variant="caption" color="textSecondary">
+                              {moment(notificacao.data).fromNow()}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </ListItem>
+                    <Divider />
+                  </React.Fragment>
+                ))}
+              </List>
+            )}
           </Paper>
         </Grid>
       </Grid>

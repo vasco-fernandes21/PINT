@@ -68,9 +68,8 @@ const Estabelecimento = sequelize.define('Estabelecimento', {
     }
   },
   estado: {
-    type: DataTypes.ENUM('pendente', 'aceite', 'recusada'),
-    allowNull: false,
-    defaultValue: 'pendente'
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   latitude : {
     type: DataTypes.FLOAT,

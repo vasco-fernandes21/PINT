@@ -4,6 +4,8 @@ const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
+const notificacaoController = require('./notificacaoController');
+
 
 
 exports.listarEstabelecimentos = async (req, res) => {
@@ -85,7 +87,7 @@ exports.estabelecimentosMobile = async (req, res) => {
 }
 
 
-exports.create = async (req, res) => {
+exports.criarEstabelecimento = async (req, res) => {
     const {
       nome,
       idArea,
@@ -115,11 +117,28 @@ exports.create = async (req, res) => {
         latitude,
         longitude
       });
-  
+
+      // Criar notificação após a criação do estabelecimento
+      const mockRes = {
+          status: () => mockRes,
+          json: (data) => { return data; }
+      };
+
+      const notificacao = await notificacaoController.criarNotificacao({
+          body: {
+              titulo: 'Estabelecimento criado',
+              descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
+          },
+          user: {
+              id: idCriador
+          }
+      }, mockRes);
+
       res.status(200).json({
         success: true,
         message: 'Estabelecimento criado com sucesso!',
-        data: newEstabelecimento
+        data: newEstabelecimento,
+        notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
       });
     } catch (error) {
       console.log('Error: ', error);

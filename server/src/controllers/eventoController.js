@@ -7,7 +7,6 @@ const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
 const notificacaoController = require('./notificacaoController');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
-const moment = require('moment');
 
 exports.listarEventos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -50,6 +49,7 @@ exports.listarEventos = async (req, res) => {
         });
     }
 };
+
 
 
 exports.getEvento = async (req, res) => {
@@ -349,7 +349,7 @@ exports.InscricaoEvento = async (req, res) => {
     const { idUtilizador } = req.body;
 
     try {
-        const newInscricao = await Inscricao.create({
+        const novaInscricao = await Inscricao.create({
             idEvento: id,
             idUtilizador: idUtilizador,
             estado: 'pendente',
@@ -358,7 +358,7 @@ exports.InscricaoEvento = async (req, res) => {
         res.status(200).json({
             success: true,
             message: 'Inscrição realizada com sucesso!',
-            data: newInscricao
+            data: novaInscricao
         });
     } catch (error) {
         console.error('Erro ao realizar inscrição:', error); 
