@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
-import { Card, CardMedia, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box} from "@mui/material";
+import { Card, CardMedia, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Alert} from "@mui/material";
 import api from "../api/api";
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -93,6 +93,9 @@ function FotoSlider({ descricao, tipo, id }) {
 
   return (
     <>
+    {fotosState.length === 0 && (
+      <Alert severity="info">Ainda não existem fotos disponíveis.</Alert>
+    )}
       {fotosState.length > 0 && (
         <Box sx={{ 
           position: 'absolute', 

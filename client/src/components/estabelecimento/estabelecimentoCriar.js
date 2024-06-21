@@ -67,7 +67,9 @@ function CriarEstabelecimento({ handleClose }) {
       formData.append('idArea', selectedArea);
       formData.append('idSubarea', data.subarea);
       formData.append('idCriador', userResponse.data.id);
-      formData.append('idPosto', userResponse.data.idPosto)
+      formData.append('idPosto', userResponse.data.idPosto);
+      formData.append('telemovel', userResponse.data.telemovel);
+      formData.append('email', userResponse.data.email);
 
       const response = await api.post('/estabelecimentos', formData, {
         headers: {
@@ -121,6 +123,18 @@ function CriarEstabelecimento({ handleClose }) {
       <TextField 
         {...register('morada')} 
         label="Morada" 
+        fullWidth 
+        sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+      />
+      <TextField 
+        {...register('telemovel')} 
+        label="Telemovel" 
+        fullWidth 
+        sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+      />
+      <TextField 
+        {...register('email')} 
+        label="Email" 
         fullWidth 
         sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
       />

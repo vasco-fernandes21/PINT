@@ -236,6 +236,20 @@ function EditarEvento({ open, handleClose }) {
           fullWidth
           sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }}
         />
+        <InputLabel htmlFor="telemovel">Telemóvel</InputLabel>
+          <TextField 
+            {...register('telemovel')} 
+            label="Telemovel" 
+            fullWidth 
+            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+          />
+          <InputLabel htmlFor="email">Email</InputLabel>
+          <TextField 
+            {...register('email')} 
+            label="Email" 
+            fullWidth 
+            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+          />
         <InputLabel htmlFor="latitude">Latitude</InputLabel>
           <TextField 
             {...register('latitude')} 

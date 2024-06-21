@@ -169,6 +169,18 @@ function CriarEvento({ open, handleClose }) {
             helperText={errors.morada ? errors.morada.message : ''}
           />
           <TextField 
+          {...register('telemovel')} 
+          label="Telemovel" 
+          fullWidth 
+          sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+         />
+          <TextField 
+            {...register('email')} 
+            label="Email" 
+            fullWidth 
+            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+          />
+          <TextField 
             {...register('latitude')} 
             label="Latitude" 
             fullWidth 

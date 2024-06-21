@@ -51,6 +51,14 @@ const Estabelecimento = sequelize.define('Estabelecimento', {
     type: DataTypes.STRING,
     allowNull: true
   },
+  telemovel : {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  email : {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   idAdmin: {
     type: DataTypes.INTEGER,
     allowNull: true,

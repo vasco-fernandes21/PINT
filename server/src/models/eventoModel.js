@@ -79,6 +79,14 @@ const Evento = sequelize.define('Evento', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  telemovel : {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  email : {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   estado: {
     type: DataTypes.BOOLEAN,
     defaultValue: false

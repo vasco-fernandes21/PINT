@@ -92,6 +92,8 @@ exports.CriarEvento = async (req, res) => {
         data,
         hora,
         morada,
+        telemovel,
+        email,
         idArea,
         idSubarea,
         idCriador,
@@ -111,6 +113,8 @@ exports.CriarEvento = async (req, res) => {
             data,
             hora,
             morada,
+            telemovel,
+            email,
             foto,
             estado: false, // Estado inicial definido como falso
             idArea,
@@ -159,6 +163,8 @@ exports.editarEvento = async (req, res) => {
         data,
         hora,
         morada,
+        telemovel,
+        email,
         idArea,
         idSubarea,
         idCriador,
@@ -177,6 +183,8 @@ exports.editarEvento = async (req, res) => {
     if (data) updateData.data = data;
     if (hora) updateData.hora = hora;
     if (morada) updateData.morada = morada;
+    if (telemovel) updateData.telemovel = telemovel;
+    if (email) updateData.email = email;
     if (idArea) updateData.idArea = idArea;
     if (idSubarea) updateData.idSubarea = idSubarea;
     if (idCriador) updateData.idCriador = idCriador;

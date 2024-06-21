@@ -96,6 +96,8 @@ exports.criarEstabelecimento = async (req, res) => {
       idPosto,
       morada,
       descricao,
+      telemovel,
+      email,
       idAdmin,
       idCriador,
       latitude, 
@@ -112,6 +114,8 @@ exports.criarEstabelecimento = async (req, res) => {
         idPosto,
         morada,
         descricao,
+        telemovel,
+        email,
         idAdmin,
         idCriador,
         foto, 
@@ -230,6 +234,8 @@ exports.editarEstabelecimento = async (req, res) => {
         idPosto,
         morada,
         descricao,
+        telemovel,
+        email,
         idAdmin,
         idCriador,
         latitude, 
@@ -246,6 +252,8 @@ exports.editarEstabelecimento = async (req, res) => {
     if (idPosto) updateData.idPosto = idPosto;
     if (morada) updateData.morada = morada;
     if (descricao) updateData.descricao = descricao;
+    if (telemovel) updateData.telemovel = telemovel;
+    if (email) updateData.email = email;
     if (idAdmin) updateData.idAdmin = idAdmin;
     if (idCriador) updateData.idCriador = idCriador;
     if (foto) updateData.foto = foto;
