@@ -70,6 +70,7 @@ const utilizadores = [
     isAdmin: true,
     isPrimeiroLogin: false, 
     idPosto: 1,
+    foto: 'ginasio.jpg'
   },
 ];
 
@@ -84,7 +85,7 @@ const areas = [
 ];
 
 const subareas = [
-  {idArea: 1, nome: 'Clinicas medicas e hospitais'},
+  {idArea: 1, nome: 'Clinicas médicas e hospitais'},
   {idArea: 1, nome: 'Clinicas dentárias'},
   {idArea: 2, nome: 'Ginásios'},
   {idArea: 2, nome: 'Atividades ao Ar Livre'},
@@ -155,7 +156,7 @@ const estabelecimentos = [
   idPosto: 1, 
   nome: 'CUF Viseu', 
   descricao: 'O Hospital CUF Viseu é a primeira unidade CUF na zona Centro do país, possibilitando o acesso a serviços de saúde de excelência por parte dos viseenses.\n\nEste hospital disponibiliza a tecnologia mais avançada para poder prestar um serviço de excelência aos seus clientes. Uma resposta global em termos de prestação de cuidados de saúde, incluindo uma gama de equipamentos que permitem responder a todas as necessidades, desde a prevenção, passando pelo diagnóstico e até ao tratamento.', 
-  morada: 'Viseu', 
+  morada: 'Rua do Belo Horizonte, nº 12 e 14, 3500-612 Viseu', 
   estado: true, 
   foto: 'foto-1717335916152-hospital.jpg', 
   latitude: 40.64525311186517, 
@@ -203,6 +204,7 @@ const AvaliacoesEstabelecimento = [
   {idUtilizador: 5, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: 'aceite'},
   {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: 'aceite'},
   {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: 'aceite'},
+  {idUtilizador: 6, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: 'aceite'},
 ];
 
 const FotosEstabelecimento = [

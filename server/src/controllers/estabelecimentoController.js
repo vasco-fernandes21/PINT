@@ -53,7 +53,7 @@ exports.estabelecimentosMobile = async (req, res) => {
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
-    let whereClause = {};
+    let whereClause = { estado: true };
     if (areaId) {
         whereClause.idArea = areaId;
     }

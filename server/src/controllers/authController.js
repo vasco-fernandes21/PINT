@@ -7,6 +7,7 @@ const Utilizador = require('../models/utilizadorModel');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 require('dotenv').config();
 const gerarToken = require('../middlewares/gerarToken');
+const { log } = require('console');
 
 
 exports.getUtilizador = (req, res) => {
@@ -129,7 +130,7 @@ exports.criarConta = async (req, res) => {
 
     const verificationToken = crypto.randomBytes(32).toString('hex');
  
-    const newUser = await Utilizador.create({
+    const novoUser = await Utilizador.create({
       nome,
       email,
       palavra_passe: hashedPassword,
@@ -137,7 +138,7 @@ exports.criarConta = async (req, res) => {
       estado: false
     });
 
-    const token = gerarToken(newUser);
+    const token = gerarToken(novoUser);
 
     const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
     await enviarEmail({  
@@ -249,6 +250,7 @@ const enviarEmail = async (options) => {
   }
 };
 
+
 exports.google = async (req, res) => {
   try {
     const { token } = req.body;
@@ -264,12 +266,14 @@ exports.google = async (req, res) => {
     const payload = ticket.getPayload();
     const email = payload['email'];
     const nome = payload['name'];
+    const foto = payload['picture'];
+    const id_google = payload['sub'];
 
     let user = await Utilizador.findOne({ where: { email } });
 
     if (!user) {
-      const accountCreationResponse = await criarContaGoogleHandler({ nome, email });
-      return res.json(accountCreationResponse);
+      const respostaCriarConta = await criarContaGoogleHandler({ nome, email, foto, id_google });
+      return res.json(respostaCriarConta);
     } else {
       req.body.email = email;
       const loginResponse = await loginGoogleHandler(req);
@@ -292,7 +296,7 @@ const loginGoogleHandler = async (req) => {
   }
 };
 
-const criarContaGoogleHandler = async ({ nome, email }) => {
+const criarContaGoogleHandler = async ({ nome, email, foto, id_google}) => {
   try {
     if (!nome || !email) {
       throw new Error('Nome e email são necessários');
@@ -306,15 +310,17 @@ const criarContaGoogleHandler = async ({ nome, email }) => {
     const password = crypto.randomBytes(10).toString('hex');
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await Utilizador.create({
+    const novoUser = await Utilizador.create({
       nome,
       email,
       palavra_passe: hashedPassword,
+      foto,
+      id_google,
       estado: true,
       isPrimeiroLogin: true
     });
 
-    const token = gerarToken(newUser);
+    const token = gerarToken(novoUser);
 
     await enviarEmail({
       email,

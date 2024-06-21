@@ -127,7 +127,7 @@ const ListaUtilizadores = () => {
         checkboxSelection
         disableSelectionOnClick
         localeText={{ rowsPerPage: 'Linhas por página' }}
-        sx={{ maxHeight: '500px' }} // Adicione esta linha
+        sx={{ maxHeight: '100vh' }} // Adicione esta linha
       />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{isEdit ? 'Editar Utilizador' : 'Adicionar Utilizador'}</DialogTitle>

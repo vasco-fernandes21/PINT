@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Grid, Avatar, Typography, Card, CardContent, Button, Tabs, Tab } from '@mui/material';
+import { Box, Avatar, Typography, Button, Tabs, Tab } from '@mui/material';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import Comentarios from '../avaliacao/comentarios';
+import ComentariosPerfil from "./comentariosPerfil";
 import api from '../api/api';
+import AvatarImagem from "../utils/avatarImagem";
 
 const Perfil = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const Perfil = () => {
   useEffect(() => {
     const fetchUtilizador = async () => {
       try {
-        const response = await api.get('/utilizador');
+        const response = await api.get('/utilizador/completo');
         setUtilizador(response.data);
       } catch (error) {
         console.error('Erro ao encontrar utilizador:', error);
@@ -26,66 +27,34 @@ const Perfil = () => {
     };
     fetchUtilizador();
   }, []);
-  
-  useEffect(() => {
+
+  const fetchAvaliacoes = async () => {
     if (utilizador) {
-      console.log(utilizador.id);
+      try {
+        const response = await api.get(`/avaliacao/utilizador/${utilizador.id}`);
+        setAvaliacoes(response.data.data);
+      } catch (error) {
+        console.error('Error fetching Avaliações:', error.response || error.message);
+      }
     }
+  };
+
+  useEffect(() => {
+    fetchAvaliacoes();
   }, [utilizador]);
 
-
-  const StyledCard = styled(Card)({
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    borderRadius: 10,
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  });
-
-  const StyledCardContent = styled(CardContent)({
-    flexGrow: 1,
-  });
-
-  const StyledTypography = styled(Typography)({
-    marginBottom: 10,
-    fontSize: 20,
-    fontWeight: 600,
-  });
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
 
-const fetchAvaliacoesEstabelecimentos = async () => {
-  if (utilizador) {
-    try {
-      const response = await api.get(`/avaliacao/utilizador/${utilizador.id}`);
-      setAvaliacoes(response.data.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error fetching Avaliações:', error.response || error.message);
-    }
-  }
-};
-
-useEffect(() => {
-  fetchAvaliacoesEstabelecimentos();
-}, [id, utilizador]);
-
-useEffect(() => {
-  console.log(avaliacoes);
-}, [avaliacoes]);
-  
-const handleChange = (event, value) => {
-  setPage(value);
-};
-
   const navigate = useNavigate();
 
   return (
     <Box sx={{ padding: 2 }}>
-      {/* Profile Section */}
       <Box
         sx={{
           display: 'flex',
@@ -98,13 +67,15 @@ const handleChange = (event, value) => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Avatar sx={{ width: 100, height: 100 }}>JW</Avatar>
+          <AvatarImagem 
+            src={utilizador && utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador ? utilizador.foto : ''}`}
+            alt={utilizador?.nome} sx={{ width: 100, height: 100 }} />
           <Button variant="contained" sx={{ backgroundColor: '#1D324F' }} onClick={() => navigate('/perfil/editar')}>
             Editar Perfil
           </Button>
         </Box>
         <Typography variant="h6" sx={{ marginTop: 2 }}>
-          User
+          {utilizador?.nome}
         </Typography>
         <Typography variant="h6" sx={{ marginTop: 2 }}>
           Sobre:
@@ -114,27 +85,25 @@ const handleChange = (event, value) => {
         </Typography>
       </Box>
 
-      {/* Tabs for Avaliações and Imagens */}
       <Tabs value={selectedTab} onChange={handleTabChange} sx={{ marginBottom: 2 }}>
         <Tab label="Avaliações" />
         <Tab label="Imagens" />
       </Tabs>
 
-      {/* Content based on selected tab */}
       {selectedTab === 0 && (
         <Box>
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
             Avaliações:
           </Typography>
-          <Comentarios 
-            fetchAvaliacoes={fetchAvaliacoesEstabelecimentos} 
+          <ComentariosPerfil 
+            fetchAvaliacoes={fetchAvaliacoes}
             avaliacoes={avaliacoes} 
             page={page} 
             itemsPerPage={itemsPerPage} 
             noOfPages={noOfPages} 
             handleChange={handleChange} 
             tipo="estabelecimentos"
-        />
+          />
         </Box>
       )}
 
@@ -143,33 +112,7 @@ const handleChange = (event, value) => {
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
             Imagens:
           </Typography>
-          <Grid container spacing={2}>
-            {[
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-            ].map((image, index) => (
-              <Grid item xs={2} key={index}>
-                <StyledCard>
-                  <Box component="img" src={image.img} alt={image.description} sx={{ width: '100%', height: 'auto' }} />
-                  <StyledCardContent>
-                    <Typography variant="body2" color="text.secondary">
-                      {image.description}
-                    </Typography>
-                  </StyledCardContent>
-                </StyledCard>
-              </Grid>
-            ))}
-          </Grid>
+          {/* Adicione aqui o código para exibir as imagens */}
         </Box>
       )}
     </Box>

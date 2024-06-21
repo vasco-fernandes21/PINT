@@ -6,7 +6,7 @@ import GoogleAuth from './googleauth';
 import './login.css';
 import api from '../api/api';
 
-function Login({ setIsAuthenticated: setAuth }) {
+function Login({ setIsAutenticado: setAuth }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

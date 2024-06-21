@@ -8,6 +8,22 @@ exports.getUtilizador = (req, res) => {
     res.send(req.user);
   };
 
+exports.getUtilizadorCompleto = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    res.send(utilizador);
+  } catch (error) {
+    console.error('Erro ao buscar utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+}
+
 exports.getUtilizadores = async (req, res) => {
   const { idPosto } = req.query;
 

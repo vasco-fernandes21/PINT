@@ -15,7 +15,7 @@ exports.listarEventos = async (req, res) => {
         idPosto = req.user.idPosto;
     }
 
-    let whereClause = {};
+    let whereClause = {estado: true };
     if (areaId) {
         whereClause.idArea = areaId;
     }   

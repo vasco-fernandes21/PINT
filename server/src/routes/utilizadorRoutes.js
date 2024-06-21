@@ -5,6 +5,7 @@ const auth = require('../middlewares/decodeJWT');
 const avaliacaoController = require('../controllers/avaliacaoController');
 
 router.get('/', auth, utilizadorController.getUtilizador);
+router.get('/completo', auth, utilizadorController.getUtilizadorCompleto);
 router.get('/todos', utilizadorController.getUtilizadores);
 router.get('/:id', utilizadorController.utilizadorPorId);
 router.post('/', utilizadorController.criarUtilizador);

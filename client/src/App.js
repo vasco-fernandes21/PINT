@@ -71,8 +71,7 @@ function App() {
             <Route path="estabelecimentos/:id" element={<EstabelecimentoPage/>} />
             <Route path="estabelecimentos/:id/editar" element={<EditarEstabelecimento />} />
           <Route path="utilizadores" element={<ListaUtilizadores />} />
-          <Route path="area" element={<CreateAreaForm />} />
-          <Route path="utilizador" element={<UtilizadorPerfil />} />
+          <Route path="perfil" element={<UtilizadorPerfil />} />
           <Route path="calendario" element={<Calendario />} />
           <Route path="notificacoes" element={<Notificacoes />} />
           <Route path="validacao" element={<Validacao />} />

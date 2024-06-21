@@ -1,5 +1,7 @@
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
+const Evento = require('../models/eventoModel');
+const Estabelecimento = require('../models/estabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const Sequelize = require('sequelize');
 
@@ -291,7 +293,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         const idUtilizador = req.params.idUtilizador;
         
         const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
-            where: { idUtilizador },
+            where: { idUtilizador, estado: 'aceite' },
             include: [
                 { 
                     model: Utilizador, 
@@ -303,12 +305,16 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                { 
+                    model: Estabelecimento, 
+                    as: 'estabelecimento', 
+                    attributes: ['nome'] 
+                },
             ],
         });
 
-        // Buscar avaliações de eventos
         const avaliacoesEvento = await AvaliacaoEvento.findAll({
-            where: { idUtilizador },
+            where: { idUtilizador, estado: 'aceite' },
             include: [
                 { 
                     model: Utilizador, 
@@ -320,10 +326,14 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                { 
+                    model: Evento, 
+                    as: 'evento', 
+                    attributes: ['titulo'] 
+                },
             ],
         });
 
-        // Combinar os resultados
         const data = [...avaliacoesEstabelecimento, ...avaliacoesEvento];
 
         res.json({
