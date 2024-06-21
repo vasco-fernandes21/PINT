@@ -6,70 +6,70 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-const ValidacaoEventos = () => {
-  const [eventos, setEventos] = useState([]);
-  const [open, setOpen] = useState(false); // Estado para controlar a abertura do diálogo
-  const [eventoSelecionado, setEventoSelecionado] = useState(null); // Estado para armazenar o evento selecionado
+const ValidacaoEstabelecimentos = () => {
+  const [estabelecimentos, setEstabelecimentos] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [estabelecimentoSelecionado, setEstabelecimentoSelecionado] = useState(null);
 
   useEffect(() => {
-    fetchEventos();
+    fetchEstabelecimentos();
   }, []);
 
-  const fetchEventos = async () => {
+  const fetchEstabelecimentos = async () => {
     try {
-      const response = await api.get('/eventos/validar');
+      const response = await api.get('/estabelecimentos/validar');
       if (response.data.success && Array.isArray(response.data.data)) {
-        setEventos(response.data.data);
+        setEstabelecimentos(response.data.data);
       } else {
         console.error('Erro: a resposta da API não é um array');
       }
     } catch (error) {
-      console.error('Erro ao buscar eventos:', error);
+      console.error('Erro ao encontrar estabelecimentos:', error);
     }
   };
 
   const handleClickOpen = (row) => {
-    setEventoSelecionado(row); // Armazena o evento selecionado
-    setOpen(true); // Abre o diálogo
+    setEstabelecimentoSelecionado(row);
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false); // Fecha o diálogo
+    setOpen(false);
   };
 
-  const handlevalidar = () => {
+  const handleValidar = () => {
     handleClose(); // fecha o diálogo para vermos o alerta
     // Exibe um diálogo de confirmação
     Swal.fire({
       title: 'Tem certeza?',
-      text: 'Deseja realmente validar este evento?',
+      text: 'Deseja realmente validar este estabelecimento?',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#1d324f', 
-      cancelButtonColor: '#6c757d', 
+      confirmButtonColor: '#1d324f',
+      cancelButtonColor: '#6c757d',
       confirmButtonText: 'Sim, validar',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Lógica para validar o evento (PUT /eventos/:id)
-          const id = eventoSelecionado.id; // Supondo que o eventoSelecionado tenha um ID
-          await api.put(`/eventos/${id}`, { estado: true });
+          // Lógica para validar o estabelecimento (PUT /estabelecimentos/:id)
+          const id = estabelecimentoSelecionado.id; // Supondo que o estabelecimentoSelecionado tenha um ID
+          await api.put(`/estabelecimentos/${id}`, { estado: true });
           handleClose();
-          fetchEventos(); // Atualiza a lista de eventos após a alteração
-            Swal.fire({
+          fetchEstabelecimentos(); // Atualiza a lista de estabelecimentos após a alteração
+          Swal.fire({
             title: 'Validado!',
-            text: 'O evento foi validado com sucesso.',
+            text: 'O estabelecimento foi validado com sucesso.',
             icon: 'success',
             confirmButtonColor: '#1d324f',
-            });
-          } catch (error) {
-            console.error('Erro ao validar o evento:', error);
-            Swal.fire({
+          });
+        } catch (error) {
+          console.error('Erro ao validar o estabelecimento:', error);
+          Swal.fire({
             title: 'Erro',
-            text: 'Erro ao validar o evento. Por favor, tente novamente.',
+            text: 'Erro ao validar o estabelecimento. Por favor, tente novamente.',
             icon: 'error',
             confirmButtonColor: '#1d324f',
-            });
+          });
         }
       }
     });
@@ -80,7 +80,7 @@ const ValidacaoEventos = () => {
     // Exibe um diálogo de confirmação
     Swal.fire({
       title: 'Tem certeza?',
-      text: 'Deseja realmente recusar este evento?',
+      text: 'Deseja realmente recusar este estabelecimento?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#1d324f',
@@ -89,15 +89,15 @@ const ValidacaoEventos = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Lógica para recusar o evento (DELETE /eventos/:id)
-          const id = eventoSelecionado.id; // Supondo que o eventoSelecionado tenha um ID
-          await api.delete(`/eventos/${id}`);
+          // Lógica para recusar o estabelecimento (DELETE /estabelecimentos/:id)
+          const id = estabelecimentoSelecionado.id; // Supondo que o estabelecimentoSelecionado tenha um ID
+          await api.delete(`/estabelecimentos/${id}`);
           handleClose();
-          fetchEventos(); // Atualiza a lista de eventos após a alteração
-          Swal.fire('Recusado!', 'O evento foi recusado com sucesso.', 'success');
+          fetchEstabelecimentos(); // Atualiza a lista de estabelecimentos após a alteração
+          Swal.fire('Recusado!', 'O estabelecimento foi recusado com sucesso.', 'success');
         } catch (error) {
-          console.error('Erro ao recusar o evento:', error);
-          Swal.fire('Erro', 'Erro ao recusar o evento. Por favor, tente novamente.', 'error');
+          console.error('Erro ao recusar o estabelecimento:', error);
+          Swal.fire('Erro', 'Erro ao recusar o estabelecimento. Por favor, tente novamente.', 'error');
         }
       }
     });
@@ -105,22 +105,13 @@ const ValidacaoEventos = () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
-    {
-      field: 'titulo',
-      headerName: 'Título',
-      width: 200,
-      renderCell: (params) => (
-        <Link to={`/eventos/${params.row.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-          {params.value}
-        </Link>
-      ),
-    },
+    { field: 'nome', headerName: 'Nome', width: 200 },
     { field: 'descricao', headerName: 'Descrição', width: 250 },
-    { field: 'data', headerName: 'Data', width: 150 },
-    { field: 'estado', headerName: 'Estado', width: 100, type: 'boolean' },
+    { field: 'morada', headerName: 'Morada', width: 200 },
     {
       field: 'actions',
       headerName: 'Ações',
+      width: 150,
       renderCell: (params) => (
         <IconButton color="primary" onClick={() => handleClickOpen(params.row)}>
           <EditIcon />
@@ -129,9 +120,11 @@ const ValidacaoEventos = () => {
     },
   ];
 
-  const rows = eventos.map((evento) => ({
-    ...evento,
-    data: new Date(evento.data).toLocaleDateString('pt-PT'),
+  const rows = estabelecimentos.map((estabelecimento) => ({
+    id: estabelecimento.id,
+    nome: estabelecimento.nome,
+    descricao: estabelecimento.descricao,
+    morada: estabelecimento.morada,
   }));
 
   return (
@@ -144,14 +137,14 @@ const ValidacaoEventos = () => {
         disableSelectionOnClick
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Editar Evento</DialogTitle>
+        <DialogTitle>Editar Estabelecimento</DialogTitle>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleRecusar} color="error">
             Recusar
           </Button>
-          <Button onClick={handlevalidar} color="primary">
-            validar
+          <Button onClick={handleValidar} color="primary">
+            Validar
           </Button>
         </DialogActions>
       </Dialog>
@@ -159,4 +152,4 @@ const ValidacaoEventos = () => {
   );
 };
 
-export default ValidacaoEventos;
+export default ValidacaoEstabelecimentos;

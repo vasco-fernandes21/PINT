@@ -5,6 +5,7 @@ const { uploadEstabelecimentos } = require('../config/multer');
 const auth = require('../middlewares/decodeJWT');
 
 router.get('/', auth, estabelecimentoController.listarEstabelecimentos);
+router.get('/validar', auth, estabelecimentoController.EstabelecimentosPorValidar);
 router.get('/mobile', estabelecimentoController.estabelecimentosMobile); 
 router.put('/:id', uploadEstabelecimentos.single('foto'), estabelecimentoController.editarEstabelecimento);
 router.get('/:id', estabelecimentoController.estabelecimento_id);

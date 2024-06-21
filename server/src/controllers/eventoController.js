@@ -162,6 +162,7 @@ exports.editarEvento = async (req, res) => {
         idArea,
         idSubarea,
         idCriador,
+        estado,
         idAdmin,
         latitude, 
         longitude
@@ -179,6 +180,7 @@ exports.editarEvento = async (req, res) => {
     if (idArea) updateData.idArea = idArea;
     if (idSubarea) updateData.idSubarea = idSubarea;
     if (idCriador) updateData.idCriador = idCriador;
+    if (estado) updateData.estado = estado;
     if (idAdmin) updateData.idAdmin = idAdmin;
     if (foto) updateData.foto = foto;
     if (latitude) updateData.latitude = latitude;
@@ -311,12 +313,48 @@ exports.uploadFotoEvento = async (req, res) => {
     }
 };
 
+exports.EventosPorValidar = async (req, res) => {
+    let idPosto;
+    if (req.user) {
+        idPosto = req.user.idPosto;
+    }
+
+    let whereClause = { estado: false };
+
+    if (idPosto) {
+        whereClause.idPosto = idPosto;
+    }
+
+    try {
+        const data = await Evento.findAll({
+            where: whereClause,
+            include: [
+                { model: Utilizador, as: 'criador', attributes: ['nome'] },
+            ]
+        });
+
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        console.error('Erro ao listar eventos:', err.message);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
 exports.getInscricaoEvento = async (req, res) => {
     const { id } = req.params;
     try {
         const inscricoes = await Inscricao.findAll({
             where: { 
                 idEvento: id,
+                //estado aceite ou pendente
+                estado: 'aceite' || 'pendente',
+
             },
             include: [
                 { model: Utilizador, as: 'utilizador', attributes: ['nome'] },
@@ -344,9 +382,9 @@ exports.getInscricaoEvento = async (req, res) => {
     }
 }
 
-exports.InscricaoEvento = async (req, res) => {
+exports.inscreverEvento = async (req, res) => {
     const { id } = req.params;
-    const { idUtilizador } = req.body;
+    const { idUtilizador } = req.user.id;
 
     try {
         const novaInscricao = await Inscricao.create({

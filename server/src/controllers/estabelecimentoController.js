@@ -5,6 +5,7 @@ const Posto = require('../models/postoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const notificacaoController = require('./notificacaoController');
+const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 
 
 
@@ -341,3 +342,36 @@ exports.apagarEstabelecimento = async (req, res) => {
         res.status(500).json({ success: false, message: "Erro ao apagar o estabelecimento!" });
     }
 };
+
+exports.EstabelecimentosPorValidar = async (req, res) => {
+    let idPosto;
+    if (req.user) {
+        idPosto = req.user.idPosto;
+    }
+
+    let whereClause = { estado: false };
+
+    if (idPosto) {
+        whereClause.idPosto = idPosto;
+    }
+
+    try {
+        const data = await Estabelecimento.findAll({
+            where: whereClause,
+            include: [
+                { model: Utilizador, as: 'criador', attributes: ['nome'] },
+            ]
+        });
+
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        console.error('Erro ao listar estabelecimentos:', err.message);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}

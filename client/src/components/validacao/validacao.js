@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
 import ValidacaoEventos from './validacaoEvento';
+import ValidacaoEstabelecimentos from './validacaoEstabelecimento';
 // Importar outros componentes de validação aqui
 
 const Validacao = () => {
@@ -14,6 +15,8 @@ const Validacao = () => {
     switch (opcaoSelecionada) {
       case 'eventos':
         return <ValidacaoEventos />;
+      case 'estabelecimentos':
+        return <ValidacaoEstabelecimentos />;
       // Adicione outras opções de validação aqui
       default:
         return <Typography variant="h6">Selecione uma opção para validação</Typography>;
@@ -29,6 +32,7 @@ const Validacao = () => {
         <InputLabel>Selecione a validação</InputLabel>
         <Select value={opcaoSelecionada} onChange={handleChange}>
           <MenuItem value="eventos">Eventos</MenuItem>
+          <MenuItem value="estabelecimentos">Estabelecimentos</MenuItem>
           {/* Adicione outras opções de validação aqui */}
         </Select>
       </FormControl>

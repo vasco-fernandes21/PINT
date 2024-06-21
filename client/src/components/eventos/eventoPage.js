@@ -184,15 +184,9 @@ function EventoPage () {
                         </Grid>
                         <Grid item xs={12}>
                             <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2}}>
-                                {evento.latitude && evento.longitude ? (
-                                    <>
-                                        <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
+                            <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
                                         <Mapa latitude={evento.latitude} longitude={evento.longitude} />
                                         <Box sx={{ height: '50px' }} /> 
-                                    </>
-                                ) : (
-                                    <Typography variant="body1">Localização não disponível</Typography>
-                                )}
                             </Box>
                         </Grid>
                     </Grid>
