@@ -15,6 +15,7 @@ router.put('/eventos/:id', avaliacaoController.editarAvaliacaoEvento)
 router.delete('/eventos/:id', avaliacaoController.apagarAvaliacaoEvento)
 
 router.get('/utilizador/:idUtilizador', avaliacaoController.listarAvaliacoesUtilizador);
+router.get('/maisavaliacoes', avaliacaoController.obterMaisAvaliacoes);
 
 
 
