@@ -96,17 +96,6 @@ function FotoSlider({ descricao, tipo, id }) {
     {fotosState.length === 0 && (
       <Alert severity="info">Ainda não existem fotos disponíveis.</Alert>
     )}
-      {fotosState.length > 0 && (
-        <Box sx={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          width: '100%', 
-          height: { xs: '52%', sm: '62%', md: '62%', lg: '62%', xl: '72%' }, 
-          backgroundColor: alpha('#808080', 0.1),
-          zIndex: -1 
-        }} />
-      )}
       {fotosState.length === 0 ? null : fotosState.length === 1 ? (
         <div onClick={() => handleClick(0)} style={{ cursor: "pointer" }}>
           <Card sx={{ boxSizing: "border-box", height: { xs: '300px', sm: '400px', md: '400px', lg: '400px', xl: '500px' } }}>
