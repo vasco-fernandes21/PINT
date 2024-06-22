@@ -195,14 +195,14 @@ const estabelecimentos = [
 ];
 
 const AvaliacoesEstabelecimento = [
-  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: 'aceite', comentario: 'sou muito gay'},
-  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: 'aceite'},
-  {idUtilizador: 3, idAdmin: 3, idEstabelecimento: 1, classificacao: 3, estado: 'aceite'},
-  {idUtilizador: 4, idAdmin: 4, idEstabelecimento: 1, classificacao: 2, estado: 'aceite'},
-  {idUtilizador: 5, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: 'aceite'},
-  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: 'aceite'},
-  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: 'aceite'},
-  {idUtilizador: 6, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: 'aceite'},
+  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: true, comentario: 'sou muito gay'},
+  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: true},
+  {idUtilizador: 3, idAdmin: 3, idEstabelecimento: 1, classificacao: 3, estado: true},
+  {idUtilizador: 4, idAdmin: 4, idEstabelecimento: 1, classificacao: 2, estado: true},
+  {idUtilizador: 5, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: true},
+  {idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: true},
+  {idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: true},
+  {idUtilizador: 6, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: true},
 ];
 
 const FotosEstabelecimento = [
@@ -218,13 +218,13 @@ const FotosEvento = [
 ];
 
 const Inscricoes = [
-  {idEvento: 1, idUtilizador: 1, estado: 'aceite'},
-  {idEvento: 1, idUtilizador: 2, estado: 'aceite'},
-  {idEvento: 1, idUtilizador: 3, estado: 'aceite'},
-  {idEvento: 1, idUtilizador: 4, estado: 'aceite'},
-  {idEvento: 1, idUtilizador: 5, estado: 'aceite'},
-  {idEvento: 1, idUtilizador: 1, estado: 'aceite'},
-  {idEvento: 1, idUtilizador: 2, estado: 'aceite'},
+  {idEvento: 1, idUtilizador: 1, estado: true},
+  {idEvento: 1, idUtilizador: 2, estado: true},
+  {idEvento: 1, idUtilizador: 3, estado: true},
+  {idEvento: 1, idUtilizador: 4, estado: true},
+  {idEvento: 1, idUtilizador: 5, estado: true},
+  {idEvento: 1, idUtilizador: 1, estado: true},
+  {idEvento: 1, idUtilizador: 2, estado: true},
 ];
 
 const Notificacoes = [

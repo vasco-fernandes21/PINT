@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const avaliacaoController = require('../controllers/avaliacaoController');
+const auth = require('../middlewares/decodeJWT');
 
 // /avaliacao
 
@@ -15,6 +16,9 @@ router.put('/eventos/:id', avaliacaoController.editarAvaliacaoEvento)
 router.delete('/eventos/:id', avaliacaoController.apagarAvaliacaoEvento)
 
 router.get('/utilizador/:idUtilizador', avaliacaoController.listarAvaliacoesUtilizador);
+
+//validações
+router.get('/validar/eventos', auth, avaliacaoController.AvaliacaoEventoPorValidar);
 
 
 

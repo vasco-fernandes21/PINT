@@ -69,6 +69,7 @@ function EditarEvento({ open, handleClose }) {
 
   const onSubmit = async (data) => {
     handleClose();
+
     Swal.fire({
       title: 'Tem certeza?',
       text: "Você deseja editar este evento?",

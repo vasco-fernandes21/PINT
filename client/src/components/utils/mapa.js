@@ -15,7 +15,7 @@ const options = {
 
 const Mapa = ({ morada }) => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8', // Substitua pela sua chave de API
+    googleMapsApiKey: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8',  
   });
 
   const [location, setLocation] = useState(null);
@@ -31,7 +31,7 @@ const Mapa = ({ morada }) => {
       const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
         params: {
           address: address,
-          key: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8' // Substitua pela sua chave de API
+          key: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8'  
         }
       });
 
@@ -50,7 +50,11 @@ const Mapa = ({ morada }) => {
   };
 
   if (!morada) {
-    return <Alert severity="error">Não há dados disponíveis para fornecer um ponteiro no mapa.</Alert>;
+    return <Alert severity="info">Por favor, forneça uma morada para mostrar no mapa.</Alert>;
+  }
+
+  if (!location) {
+    return <Alert severity="info">Não foi possível encontrar a localização para a morada fornecida.</Alert>;
   }
 
   if (loadError) return <div>Erro ao carregar mapas</div>;

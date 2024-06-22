@@ -69,7 +69,7 @@ const Evento = sequelize.define('Evento', {
   },
   morada: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true,
   },
   telemovel : {
     type: DataTypes.STRING,

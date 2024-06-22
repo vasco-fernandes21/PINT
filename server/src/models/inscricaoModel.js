@@ -37,10 +37,10 @@ const Inscricao = sequelize.define('Inscricao', {
     defaultValue: DataTypes.NOW
   },
   estado: {
-    type: DataTypes.ENUM,
-    values: ['aceite', 'pendente', 'recusada'],
-    defaultValue: 'pendente'
-}
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
 }, 
 {
   freezeTableName: true,

@@ -185,6 +185,7 @@ exports.editarEvento = async (req, res) => {
     if (estado) updateData.estado = estado;
     if (idAdmin) updateData.idAdmin = idAdmin;
     if (foto) updateData.foto = foto
+    if ('morada' in req.body) updateData.morada = morada || null;
 
     try {
         const [updated] = await Evento.update(updateData, {
@@ -352,8 +353,7 @@ exports.getInscricaoEvento = async (req, res) => {
         const inscricoes = await Inscricao.findAll({
             where: { 
                 idEvento: id,
-                //estado aceite ou pendente
-                estado: 'aceite' || 'pendente',
+                estado: true,
 
             },
             include: [
@@ -390,7 +390,7 @@ exports.inscreverEvento = async (req, res) => {
         const novaInscricao = await Inscricao.create({
             idEvento: id,
             idUtilizador: idUtilizador,
-            estado: 'pendente',
+            estado: false
         });
 
         res.status(200).json({
