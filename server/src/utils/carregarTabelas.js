@@ -159,8 +159,6 @@ const estabelecimentos = [
   morada: 'Rua do Belo Horizonte, nº 12 e 14, 3500-612 Viseu', 
   estado: true, 
   foto: 'foto-1717335916152-hospital.jpg', 
-  latitude: 40.64525311186517, 
-  longitude: -7.91139338898848
 },
   {idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, nome: 'Clínica Dentária Tomar', descricao: 'Clínica Dentária Tomar, com atendimento especializado', morada: 'Tomar', estado: true},
   {idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, nome: 'Hospital do Fundão', descricao: 'Hospital do Fundão, oferecendo serviços de emergência', morada: 'Fundão', estado: true},
@@ -168,7 +166,7 @@ const estabelecimentos = [
   // Desporto
   {idArea: 2, idSubarea: 3, idCriador: 4, idAdmin: 4, idPosto: 4, nome: 'Ginásio Portalegre', descricao: 'Ginásio Portalegre, equipado com as melhores máquinas', morada: 'Portalegre', estado: true},
   {idArea: 2, idSubarea: 4, idCriador: 5, idAdmin: 5, idPosto: 5, nome: 'Centro de Atividades Vila Real', descricao: 'Centro de Atividades ao Ar Livre em Vila Real', morada: 'Vila Real', estado: true},
-  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Fitness Club Viseu', descricao: 'Fitness Club Viseu, para um treino completo', morada: 'Viseu', estado: true, foto:'ginasio.jpg', latitude: 40.636309000123255, longitude: -7.931026006745427},
+  {idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, nome: 'Fitness Club Viseu', descricao: 'Fitness Club Viseu, para um treino completo', morada: 'Viseu', estado: true, foto:'ginasio.jpg'},
 
   // Formação
   {idArea: 3, idSubarea: 5, idCriador: 2, idAdmin: 3, idPosto: 2, nome: 'Centro de Formação Tomar', descricao: 'Centro de Formação Profissional em Tomar', morada: 'Tomar', estado: true},

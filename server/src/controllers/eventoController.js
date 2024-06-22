@@ -96,9 +96,7 @@ exports.CriarEvento = async (req, res) => {
         email,
         idArea,
         idSubarea,
-        idCriador,
-        latitude, 
-        longitude
+        idCriador
     } = req.body;
 
     const idPosto = req.user.idPosto; // Use idPosto from req.user
@@ -120,9 +118,7 @@ exports.CriarEvento = async (req, res) => {
             idArea,
             idSubarea,
             idCriador,
-            idPosto,
-            latitude,
-            longitude
+            idPosto
         });
 
         // Criar notificação após a criação do evento
@@ -169,9 +165,7 @@ exports.editarEvento = async (req, res) => {
         idSubarea,
         idCriador,
         estado,
-        idAdmin,
-        latitude, 
-        longitude
+        idAdmin
     } = req.body;
 
     const foto = req.file ? req.file.filename : null; 
@@ -190,9 +184,7 @@ exports.editarEvento = async (req, res) => {
     if (idCriador) updateData.idCriador = idCriador;
     if (estado) updateData.estado = estado;
     if (idAdmin) updateData.idAdmin = idAdmin;
-    if (foto) updateData.foto = foto;
-    if (latitude) updateData.latitude = latitude;
-    if (longitude) updateData.longitude = longitude;
+    if (foto) updateData.foto = foto
 
     try {
         const [updated] = await Evento.update(updateData, {

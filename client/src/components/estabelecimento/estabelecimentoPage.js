@@ -152,7 +152,7 @@ function EstabelecimentoPage() {
                                     </Typography>
                                     <Divider orientation="vertical" flexItem />
                                     <Typography variant="body2" color="text.secondary">
-                                        Telefone: {estabelecimento.telefone}
+                                        Telemovel: {estabelecimento.telemovel}
                                     </Typography>
                                     <Divider orientation="vertical" flexItem />
                                     <Typography variant="body2" color="text.secondary">
@@ -164,7 +164,7 @@ function EstabelecimentoPage() {
                         <Grid item xs={12}>
                             <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2}}>
                             <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
-                                        <Mapa latitude={estabelecimento.latitude} longitude={estabelecimento.longitude} />
+                                     <Mapa morada={estabelecimento.morada} />
                                         <Box sx={{ height: '50px' }} /> 
                             </Box>
                         </Grid>

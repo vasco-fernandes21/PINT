@@ -43,13 +43,9 @@ function CriarEstabelecimento({ handleClose }) {
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key === 'latitude' || key === 'longitude') {
-        formData.append(key, data[key] || null);
-      } else {
+      Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
-      }
-    });
+      });
 
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (!token) {
@@ -136,22 +132,6 @@ function CriarEstabelecimento({ handleClose }) {
         {...register('email')} 
         label="Email" 
         fullWidth 
-        sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
-      />
-      <TextField 
-        {...register('latitude')} 
-        label="Latitude" 
-        fullWidth 
-        multiline
-        rows={4}
-        sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
-      />
-      <TextField 
-        {...register('longitude')} 
-        label="Longitude" 
-        fullWidth 
-        multiline
-        rows={4}
         sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
       />
       <FormControl fullWidth sx={{ mb: 2 }}>

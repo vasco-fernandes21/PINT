@@ -99,9 +99,7 @@ exports.criarEstabelecimento = async (req, res) => {
       telemovel,
       email,
       idAdmin,
-      idCriador,
-      latitude, 
-      longitude
+      idCriador
     } = req.body;
 
     const foto = req.file ? req.file.filename : null; 
@@ -118,9 +116,7 @@ exports.criarEstabelecimento = async (req, res) => {
         email,
         idAdmin,
         idCriador,
-        foto, 
-        latitude,
-        longitude
+        foto
       });
 
       // Criar notificação após a criação do estabelecimento
@@ -238,8 +234,6 @@ exports.editarEstabelecimento = async (req, res) => {
         email,
         idAdmin,
         idCriador,
-        latitude, 
-        longitude
     } = req.body;
 
     const foto = req.file ? req.file.filename : null; 
@@ -256,9 +250,8 @@ exports.editarEstabelecimento = async (req, res) => {
     if (email) updateData.email = email;
     if (idAdmin) updateData.idAdmin = idAdmin;
     if (idCriador) updateData.idCriador = idCriador;
-    if (foto) updateData.foto = foto;
-    if (latitude) updateData.latitude = latitude;
-    if (longitude) updateData.longitude = longitude;
+    if (foto) updateData.foto = foto
+
 
     try {
         const [updated] = await Estabelecimento.update(updateData, {

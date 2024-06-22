@@ -16,4 +16,4 @@ router.post('/inscrever/:id', auth, eventoController.inscreverEvento);
 
 
 
-module.exports = router;
+module.exports = router;    

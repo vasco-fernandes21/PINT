@@ -24,7 +24,7 @@ const Validacao = () => {
   };
 
   return (
-    <div style={{ width: '70%', margin: '0 auto' }}>
+    <div style={{ width: '80%', margin: '0 auto' }}>
       <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', marginBottom: 4, fontWeight: 'bold' }}>
         Validação
       </Typography>

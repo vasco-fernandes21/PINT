@@ -173,7 +173,7 @@ function EventoPage () {
                                     </Typography>
                                     <Divider orientation="vertical" flexItem />
                                     <Typography variant="body2" color="text.secondary">
-                                        Telefone: {evento.telefone}
+                                        Telemovel: {evento.telemovel}
                                     </Typography>
                                     <Divider orientation="vertical" flexItem />
                                     <Typography variant="body2" color="text.secondary">
@@ -185,8 +185,8 @@ function EventoPage () {
                         <Grid item xs={12}>
                             <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2}}>
                             <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
-                                        <Mapa latitude={evento.latitude} longitude={evento.longitude} />
-                                        <Box sx={{ height: '50px' }} /> 
+                                    <Mapa morada={evento.morada} />
+                                    <Box sx={{ height: '50px' }} /> 
                             </Box>
                         </Grid>
                     </Grid>

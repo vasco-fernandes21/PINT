@@ -250,18 +250,6 @@ function EditarEvento({ open, handleClose }) {
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
-        <InputLabel htmlFor="latitude">Latitude</InputLabel>
-          <TextField 
-            {...register('latitude')} 
-            fullWidth 
-            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
-          />
-          <InputLabel htmlFor="longitude">Longitude</InputLabel>
-          <TextField 
-            {...register('longitude')} 
-            fullWidth 
-            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
-          />
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel id="area-label">Tipo de Evento</InputLabel>
           <Select
