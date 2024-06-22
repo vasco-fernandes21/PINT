@@ -135,13 +135,75 @@ exports.CriarEvento = async (req, res) => {
         telemovel,
         email,
         idArea,
-        idSubarea,
-        idCriador
+        idSubarea
     } = req.body;
 
-    const idPosto = req.user.idPosto; // Use idPosto from req.user
+    const idPosto = req.user.idPosto; 
+    const idCriador = req.user.id;
+    const foto = req.file ? req.file.filename : null; 
 
-    const foto = req.file ? req.file.filename : null; // Aqui você obtém apenas o nome do arquivo
+    try {
+
+        const newEvento = await Evento.create({
+            titulo,
+            descricao,
+            data,
+            hora,
+            morada,
+            telemovel,
+            email,
+            foto,
+            estado: false, // Estado inicial definido como falso
+            idArea,
+            idSubarea,
+            idCriador,
+            idPosto
+        });
+
+        // Criar notificação após a criação do evento
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => { return data; }
+        };
+
+        const notificacao = await notificacaoController.criarNotificacao({
+            body: {
+                titulo: 'Evento criado',
+                descricao: `O seu evento ${titulo} foi criado e enviado para validação!`
+            },
+            user: {
+                id: idCriador
+            }
+        }, mockRes);
+
+        res.status(200).json({
+            success: true,
+            message: 'Evento criado com sucesso!',
+            data: newEvento,
+            notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
+        });
+    } catch (error) {
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
+    }
+};
+
+exports.CriarEventoMobile = async (req, res) => {
+    const {
+        titulo,
+        descricao,
+        data,
+        hora,
+        morada,
+        telemovel,
+        idPosto,
+        email,
+        idArea,
+        idSubarea
+    } = req.body;
+
+    const idCriador = req.user.id;
+    const foto = req.file ? req.file.filename : null; 
 
     try {
 

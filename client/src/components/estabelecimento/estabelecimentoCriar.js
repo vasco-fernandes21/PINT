@@ -47,32 +47,13 @@ function CriarEstabelecimento({ handleClose }) {
         formData.append(key, data[key]);
       });
 
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token de autenticação não encontrado.');
-      }
-
-      // Get user data
-      const userResponse = await api.get('/utilizador', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-      });
-
       formData.append('estado', false);
       formData.append('idArea', selectedArea);
       formData.append('idSubarea', data.subarea);
-      formData.append('idCriador', userResponse.data.id);
-      formData.append('idPosto', userResponse.data.idPosto);
-      formData.append('telemovel', userResponse.data.telemovel);
-      formData.append('email', userResponse.data.email);
+      formData.append('telemovel', response.data.telemovel);
+      formData.append('email', response.data.email);
 
-      const response = await api.post('/estabelecimentos', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`
-        },
-      });
+      const response = await api.post('/estabelecimentos', formData);
 
       Swal.fire({
         title: "Sucesso",
