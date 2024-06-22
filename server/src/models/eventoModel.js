@@ -90,6 +90,7 @@ const Evento = sequelize.define('Evento', {
 
 },
 {
+  tableName: 'Evento',
   freezeTableName: true,
   timestamps: false
 });

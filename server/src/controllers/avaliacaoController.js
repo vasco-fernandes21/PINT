@@ -25,6 +25,11 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                {
+                    model: Estabelecimento,
+                    as: 'estabelecimento',
+                    attributes: ['nome','idPosto']
+                }
             ],
         });
 
@@ -173,6 +178,11 @@ exports.listarAvaliacoesEvento = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                {
+                    model: Evento,
+                    as: 'evento',
+                    attributes: ['nome','idPosto']
+                }
             ],
         });
         res.json({
@@ -348,6 +358,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
     }
 }
 
+
 exports.AvaliacaoEventoPorValidar = async (req, res) => {
     if (!req.user) {
         return res.status(401).json({ success: false, message: "Usuário não autenticado." });
@@ -359,7 +370,39 @@ exports.AvaliacaoEventoPorValidar = async (req, res) => {
         const avaliacoesEvento = await AvaliacaoEvento.findAll({
             include: [{
                 model: Evento,
-                as: 'evento', // Ensure this matches the alias used in the Evento model association
+                as: 'Evento',
+                include: [{
+                    model: Estabelecimento, // Inclui o modelo Estabelecimento
+                    as: 'estabelecimento', // Assumindo que esta é a associação definida
+                    where: { idPosto: idPosto }, // Aplica a condição where ao Estabelecimento
+                    include: [{
+                        model: Utilizador,
+                        as: 'utilizador',
+                        attributes: ['id', 'nome', 'idPosto']
+                    }]
+                }]
+            }],
+            where: { estado: false } // Mantém a condição para listar apenas avaliações com estado false
+        });
+
+        res.json({ success: true, data: avaliacoesEvento });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Erro ao buscar avaliações: " + error.message });
+    }
+};
+
+exports.AvaliacaoEstabelecimentoPorValidar = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: "Usuário não autenticado." });
+    }
+
+    const idPosto = req.user.idPosto;
+
+    try {
+        const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
+            include: [{
+                model: Estabelecimento,
+                as: 'Estabelecimento', 
                 where: { idPosto: idPosto },
                 include: [{
                     model: Utilizador,
@@ -370,8 +413,8 @@ exports.AvaliacaoEventoPorValidar = async (req, res) => {
             where: { estado: false } 
         });
 
-        res.json({ success: true, data: avaliacoesEvento });
+        res.json({ success: true, data: avaliacoesEstabelecimento });
     } catch (error) {
         res.status(500).json({ success: false, message: "Erro ao buscar avaliações: " + error.message });
     }
-};
+}

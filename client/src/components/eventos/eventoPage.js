@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Grid, CardContent, Typography, Box, Divider, Button } from "@mui/material";
 import api from "../api/api";
@@ -13,9 +13,7 @@ import BotaoUpload from "../utils/botaoUpload";
 import EditarEvento from "./eventoEdit";
 import InscricoesGrelha from "./eventoInscricoes";
 
-
-
-function EventoPage () {
+function EventoPage() {
     const { id } = useParams();
     const [evento, setEvento] = useState(null);
     const [fotos, setFotos] = useState([]);
@@ -31,7 +29,7 @@ function EventoPage () {
         const fetchUtilizador = async () => {
             try {
                 const response = await api.get('/utilizador');
-                setUtilizador(response.data); 
+                setUtilizador(response.data);
             } catch (error) {
                 console.error('Erro ao encontrar utilizador:', error);
             }
@@ -51,7 +49,7 @@ function EventoPage () {
         fetchEvento();
     }, [id]);
 
-    const fetchAvaliacoes = async () => {
+    const fetchAvaliacoes = useCallback(async () => {
         try {
             const response = await api.get(`/avaliacao/eventos/${id}`);
             setAvaliacoes(response.data.data);
@@ -59,30 +57,29 @@ function EventoPage () {
         } catch (error) {
             console.error('Error fetching Avaliações:', error.response || error.message);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchAvaliacoes();
-    }, [id]);
+    }, [fetchAvaliacoes]);
 
-    const fetchInscricoes = async () => {
+    const fetchInscricoes = useCallback(async () => {
         try {
             const response = await api.get(`/eventos/${id}/inscricao`);
             setInscricoes(response.data.data);
         } catch (error) {
             console.error('Error fetching inscrições:', error.response || error.message);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchInscricoes();
-    }, [id]);
-
+    }, [fetchInscricoes]);
 
     const handleOpen = () => {
         setOpen(true);
     };
-  
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -113,9 +110,9 @@ function EventoPage () {
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
-                <Box sx={{ padding: 0, paddingTop: 0}}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0}}>{evento.titulo}</Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3}}>
+                <Box sx={{ padding: 0, paddingTop: 0 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>{evento.titulo}</Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3 }}>
                         {utilizador && (
                             <>
                                 <BotaoUpload tipo="eventos" id={id} fotos={fotos} setFotos={setFotos} idUtilizador={utilizador.id} updateFotos={updateFotos} />
@@ -129,7 +126,7 @@ function EventoPage () {
                     <FotoSlider fotos={fotos} descricao={evento.nome} tipo="eventos" id={id} updateFotos={updateFotos} />
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <CardContent sx={{ padding: 0, marginTop: 10}}>
+                            <CardContent sx={{ padding: 0, marginTop: 10 }}>
                                 <Typography variant="h4" sx={{ marginBottom: 1, fontWeight: 'bold' }}>Descrição</Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     {evento.descricao}
@@ -138,25 +135,25 @@ function EventoPage () {
                         </Grid>
                         <Grid item xs={12}>
                             <Grid item xs={12} sx={{ marginBottom: 4 }}>
-                                <Typography variant="h5" sx={{ marginTop: 3, fontWeight: 'bold', marginBottom: 2}}>Avaliações</Typography>
+                                <Typography variant="h5" sx={{ marginTop: 3, fontWeight: 'bold', marginBottom: 2 }}>Avaliações</Typography>
                                 <AvaliacoesDetalhadas avaliacoes={avaliacoes} />
                             </Grid>
-                            <Comentarios 
-                                fetchAvaliacoes={fetchAvaliacoes} 
-                                avaliacoes={avaliacoes} 
-                                page={page} 
-                                itemsPerPage={itemsPerPage} 
-                                noOfPages={noOfPages} 
-                                handleChange={handleChange} 
+                            <Comentarios
+                                fetchAvaliacoes={fetchAvaliacoes}
+                                avaliacoes={avaliacoes}
+                                page={page}
+                                itemsPerPage={itemsPerPage}
+                                noOfPages={noOfPages}
+                                handleChange={handleChange}
                                 tipo="eventos"
                             />
                             {utilizador && (
-                                <NovaAvaliacao 
+                                <NovaAvaliacao
                                     handleUpdateAvaliacoes={fetchAvaliacoes}
-                                    id={id} 
-                                    idUtilizador={utilizador.id} 
-                                    avaliacoes={avaliacoes} 
-                                    setAvaliacoes={setAvaliacoes} 
+                                    id={id}
+                                    idUtilizador={utilizador.id}
+                                    avaliacoes={avaliacoes}
+                                    setAvaliacoes={setAvaliacoes}
                                     tipo="eventos"
                                 />
                             )}
@@ -169,7 +166,7 @@ function EventoPage () {
                                 <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Informações de Contacto</Typography>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                     <Typography variant="body2" color="text.secondary">
-                                        Morada: {evento.morada}  
+                                        Morada: {evento.morada}
                                     </Typography>
                                     <Divider orientation="vertical" flexItem />
                                     <Typography variant="body2" color="text.secondary">
@@ -183,10 +180,10 @@ function EventoPage () {
                             </Box>
                         </Grid>
                         <Grid item xs={12}>
-                            <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2}}>
-                            <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
-                                    <Mapa morada={evento.morada} />
-                                    <Box sx={{ height: '50px' }} /> 
+                            <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2 }}>
+                                <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
+                                <Mapa morada={evento.morada} />
+                                <Box sx={{ height: '50px' }} />
                             </Box>
                         </Grid>
                     </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import { useParams } from "react-router-dom";
 import { Grid, CardContent, Typography, Box, Divider, Button } from "@mui/material";
 import api from "../api/api";
@@ -47,7 +47,7 @@ function EstabelecimentoPage() {
         fetchEstabelecimento();
     }, [id]);
   
-    const fetchAvaliacoes = async () => {
+    const fetchAvaliacoes = useCallback(async () => {
         try {
             const response = await api.get(`/avaliacao/estabelecimentos/${id}`);
             setAvaliacoes(response.data.data);
@@ -55,11 +55,11 @@ function EstabelecimentoPage() {
         } catch (error) {
             console.error('Error fetching Avaliações:', error.response || error.message);
         }
-    };
-  
+    }, [id]);
+
     useEffect(() => {
         fetchAvaliacoes();
-    }, [id]);
+    }, [fetchAvaliacoes]);
 
     const handleOpen = () => {
         setOpen(true);

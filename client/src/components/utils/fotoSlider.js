@@ -5,7 +5,6 @@ import api from "../api/api";
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import { alpha } from '@mui/material/styles';
 
 function FotoSlider({ descricao, tipo, id }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);

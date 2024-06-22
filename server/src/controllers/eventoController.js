@@ -50,6 +50,46 @@ exports.listarEventos = async (req, res) => {
     }
 };
 
+exports.eventosMobile = async (req, res) => {
+    const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
+    const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
+    const idEvento = req.body.idEvento || req.params.idEvento || req.query.idEvento;
+
+    let whereClause = { estado: true };
+    if (areaId) {
+        whereClause.idArea = areaId;
+    }
+    if (subareaId) {
+        whereClause.idSubarea = subareaId;
+    }
+    if (idEvento) {
+        whereClause.idEvento = idEvento;
+    }
+    try {
+        const data = await Evento.findAll({
+            where: whereClause,
+            include: [
+                { model: Area, as: 'area', attributes: ['nome'] },
+                { model: Subarea, as: 'subarea', attributes: ['nome'] }, 
+                { model: Posto, as: 'posto', attributes: ['nome'] }, 
+                { model: Utilizador, as: 'criador', attributes: ['nome'] },
+                { model: Utilizador, as: 'admin', attributes: ['nome'] }
+            ]
+        });
+        res.json({
+            success: true,
+            data: data,
+        });
+    }
+    catch (err) {
+        console.error('Erro ao listar eventos:', err.message);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
 
 
 exports.getEvento = async (req, res) => {

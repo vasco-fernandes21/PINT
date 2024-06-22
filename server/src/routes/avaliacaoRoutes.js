@@ -19,7 +19,7 @@ router.get('/utilizador/:idUtilizador', avaliacaoController.listarAvaliacoesUtil
 
 //validações
 router.get('/validar/eventos', auth, avaliacaoController.AvaliacaoEventoPorValidar);
-
+router.get('/validar/estabelecimentos', auth, avaliacaoController.AvaliacaoEstabelecimentoPorValidar);
 
 
 
