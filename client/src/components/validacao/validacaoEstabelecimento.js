@@ -104,21 +104,30 @@ const ValidacaoEstabelecimentos = () => {
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'nome', headerName: 'Nome', width: 200 },
-    { field: 'descricao', headerName: 'Descrição', width: 250 },
-    { field: 'morada', headerName: 'Morada', width: 200 },
-    {
-      field: 'actions',
-      headerName: 'Ações',
-      width: 150,
-      renderCell: (params) => (
-        <IconButton color="primary" onClick={() => handleClickOpen(params.row)}>
-          <EditIcon />
-        </IconButton>
-      ),
-    },
-  ];
+  { field: 'id', headerName: 'ID', width: 100 },
+  {
+    field: 'nome',
+    headerName: 'Nome',
+    width: 200,
+    renderCell: (params) => (
+      <Link to={`/estabelecimentos/${params.row.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        {params.row.nome}
+      </Link>
+    ),
+  },
+  { field: 'descricao', headerName: 'Descrição', width: 250 },
+  { field: 'morada', headerName: 'Morada', width: 200 },
+  {
+    field: 'actions',
+    headerName: 'Ações',
+    width: 150,
+    renderCell: (params) => (
+      <IconButton color="primary" onClick={() => handleClickOpen(params.row)}>
+        <EditIcon />
+      </IconButton>
+    ),
+  },
+];
 
   const rows = estabelecimentos.map((estabelecimento) => ({
     id: estabelecimento.id,

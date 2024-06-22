@@ -41,7 +41,7 @@ const Estabelecimento = sequelize.define('Estabelecimento', {
   },
   morada: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   descricao: {
     type: DataTypes.STRING(1000),

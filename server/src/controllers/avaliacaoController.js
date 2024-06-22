@@ -12,7 +12,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
         const data = await AvaliacaoEstabelecimento.findAll({
             where: { 
                 idEstabelecimento: idEstabelecimento,
-                estado: 'aceite'
+                estado: true,
             }, 
             include: [
                 { 
@@ -32,7 +32,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
         const media = await AvaliacaoEstabelecimento.findOne({
             where: { 
                 idEstabelecimento: idEstabelecimento,
-                estado: 'aceite'
+                estado: true,
             },
             attributes: [[Sequelize.fn('avg', Sequelize.col('classificacao')), 'media']]
         });
@@ -77,7 +77,7 @@ exports.CriarAvaliacaoEstabelecimento = async (req, res) => {
             idEstabelecimento,
             classificacao,
             comentario,
-            estado: 'pendente'
+            estado: false
         });
 
         res.json({
@@ -160,7 +160,7 @@ exports.listarAvaliacoesEvento = async (req, res) => {
         const data = await AvaliacaoEvento.findAll({
             where: { 
                 idEvento,
-                estado: 'aceite'
+                estado: true,
             },
             include: [
                 { 
@@ -212,7 +212,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             idEvento,
             classificacao,
             comentario,
-            estado: 'pendente'
+            estado: false,
         });
 
         res.json({
@@ -293,7 +293,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         const idUtilizador = req.params.idUtilizador;
         
         const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
-            where: { idUtilizador, estado: 'aceite' },
+            where: { idUtilizador, estado: true, },
             include: [
                 { 
                     model: Utilizador, 
@@ -314,7 +314,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         });
 
         const avaliacoesEvento = await AvaliacaoEvento.findAll({
-            where: { idUtilizador, estado: 'aceite' },
+            where: { idUtilizador, estado: true, },
             include: [
                 { 
                     model: Utilizador, 
@@ -347,3 +347,31 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         });
     }
 }
+
+exports.AvaliacaoEventoPorValidar = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: "Usuário não autenticado." });
+    }
+
+    const idPosto = req.user.idPosto;
+
+    try {
+        const avaliacoesEvento = await AvaliacaoEvento.findAll({
+            include: [{
+                model: Evento,
+                as: 'evento', // Ensure this matches the alias used in the Evento model association
+                where: { idPosto: idPosto },
+                include: [{
+                    model: Utilizador,
+                    as: 'utilizador', 
+                    attributes: ['id', 'nome', 'idPosto']
+                }]
+            }],
+            where: { estado: false } 
+        });
+
+        res.json({ success: true, data: avaliacoesEvento });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Erro ao buscar avaliações: " + error.message });
+    }
+};
