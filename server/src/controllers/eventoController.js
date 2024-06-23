@@ -274,20 +274,19 @@ exports.editarEvento = async (req, res) => {
 
     let updateData = {};
 
-    if (titulo) updateData.titulo = titulo;
-    if (descricao) updateData.descricao = descricao;
-    if (data) updateData.data = data;
-    if (hora) updateData.hora = hora;
-    if (morada) updateData.morada = morada;
-    if (telemovel) updateData.telemovel = telemovel;
-    if (email) updateData.email = email;
-    if (idArea) updateData.idArea = idArea;
-    if (idSubarea) updateData.idSubarea = idSubarea;
-    if (idCriador) updateData.idCriador = idCriador;
-    if (estado) updateData.estado = estado;
-    if (idAdmin) updateData.idAdmin = idAdmin;
-    if (foto) updateData.foto = foto
-    if ('morada' in req.body) updateData.morada = morada || null;
+    if (titulo !== undefined) updateData.titulo = titulo;
+    if (descricao !== undefined) updateData.descricao = descricao;
+    if (data !== undefined) updateData.data = data;
+    if (hora !== undefined) updateData.hora = hora;
+    if (morada !== undefined) updateData.morada = morada;
+    if (telemovel !== undefined) updateData.telemovel = telemovel;
+    if (email !== undefined) updateData.email = email;
+    if (idArea !== undefined) updateData.idArea = idArea;
+    if (idSubarea !== undefined) updateData.idSubarea = idSubarea;
+    if (idCriador !== undefined) updateData.idCriador = idCriador;
+    if (estado !== undefined) updateData.estado = estado;
+    if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
+    if (foto !== undefined) updateData.foto = foto;
 
     try {
         const [updated] = await Evento.update(updateData, {
@@ -305,7 +304,6 @@ exports.editarEvento = async (req, res) => {
         res.status(500).json({ success: false, message: "Erro ao atualizar o evento!" });
     }
 };
-
 
 exports.apagarEvento = async (req, res) => {
     const { id } = req.params;

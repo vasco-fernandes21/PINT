@@ -299,18 +299,17 @@ exports.editarEstabelecimento = async (req, res) => {
 
     let updateData = {};
 
-    if (nome) updateData.nome = nome;
-    if (idArea) updateData.idArea = idArea;
-    if (idSubarea) updateData.idSubarea = idSubarea;
-    if (idPosto) updateData.idPosto = idPosto;
-    if (morada) updateData.morada = morada;
-    if (descricao) updateData.descricao = descricao;
-    if (telemovel) updateData.telemovel = telemovel;
-    if (email) updateData.email = email;
-    if (idAdmin) updateData.idAdmin = idAdmin;
-    if (idCriador) updateData.idCriador = idCriador;
-    if (foto) updateData.foto = foto
-
+    if (nome !== undefined) updateData.nome = nome;
+    if (idArea !== undefined) updateData.idArea = idArea;
+    if (idSubarea !== undefined) updateData.idSubarea = idSubarea;
+    if (idPosto !== undefined) updateData.idPosto = idPosto;
+    if (morada !== undefined) updateData.morada = morada;
+    if (descricao !== undefined) updateData.descricao = descricao;
+    if (telemovel !== undefined) updateData.telemovel = telemovel;
+    if (email !== undefined) updateData.email = email;
+    if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
+    if (idCriador !== undefined) updateData.idCriador = idCriador;
+    if (foto !== undefined) updateData.foto = foto;
 
     try {
         const [updated] = await Estabelecimento.update(updateData, {
@@ -324,8 +323,7 @@ exports.editarEstabelecimento = async (req, res) => {
             res.status(404).json({ success: false, message: 'Não foi possível atualizar o estabelecimento.' });
         }
     } catch (error) {
-        co
-        nsole.log('Error: ', error);
+        console.log('Error: ', error);
         res.status(500).json({ success: false, message: "Erro ao atualizar o estabelecimento!" });
     }
 };
