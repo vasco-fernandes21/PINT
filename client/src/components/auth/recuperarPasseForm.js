@@ -56,7 +56,7 @@ function RecuperarPasseForm() {
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
                     <input
-                        type="email"\
+                        type="email"
                         className="form-control"
                         id="email"
                         name="email"
