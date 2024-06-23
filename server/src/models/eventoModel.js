@@ -86,8 +86,11 @@ const Evento = sequelize.define('Evento', {
   foto : {
     type: DataTypes.STRING,
     allowNull: true
-  }
-
+  },
+  inscricaoAberta: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
 },
 {
   tableName: 'Evento',

@@ -181,7 +181,7 @@ exports.listarAvaliacoesEvento = async (req, res) => {
                 {
                     model: Evento,
                     as: 'evento',
-                    attributes: ['nome','idPosto']
+                    attributes: ['titulo','idPosto']
                 }
             ],
         });
@@ -378,7 +378,7 @@ exports.AvaliacaoEventoPorValidar = async (req, res) => {
                     include: [{
                         model: Utilizador,
                         as: 'utilizador',
-                        attributes: ['id', 'nome', 'idPosto']
+                        attributes: ['id', 'titulo', 'idPosto']
                     }]
                 }]
             }],

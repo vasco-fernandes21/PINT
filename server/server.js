@@ -26,7 +26,7 @@ const carregarTabelas = require('./src/utils/carregarTabelas');
 carregarTabelas();   
 
 
-// Importação do módulo de roteamento para o login
+// Importação das rotas
 const authRoutes = require('./src/routes/authRoutes'); 
 const eventoRoutes = require('./src/routes/eventoRoutes');
 const areaRoutes = require('./src/routes/areaRoutes');

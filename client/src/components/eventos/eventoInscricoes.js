@@ -13,9 +13,7 @@ const InscricoesGrelha = ({ inscricoes }) => {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Nome do Utilizador</TableCell> 
-                <TableCell>Nome do Admin</TableCell>
                 <TableCell>Data</TableCell>
-                <TableCell>Estado</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -23,9 +21,7 @@ const InscricoesGrelha = ({ inscricoes }) => {
                 <TableRow key={inscricao.id}>
                   <TableCell>{inscricao.id}</TableCell>
                   <TableCell>{inscricao.utilizador?.nome}</TableCell> 
-                  <TableCell>{inscricao.admin?.nome}</TableCell> 
                   <TableCell>{new Date(inscricao.data).toLocaleDateString()}</TableCell>
-                  <TableCell>{inscricao.estado}</TableCell> 
                 </TableRow>
               ))}
             </TableBody>

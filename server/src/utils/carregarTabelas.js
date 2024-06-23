@@ -5,6 +5,7 @@ const Posto = require('../models/postoModel');
 const Evento = require('../models/eventoModel');
 const Estabelecimento = require('../models/estabelecimentoModel');
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
+const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const { sequelize } = require('./database');
 
@@ -404,6 +405,16 @@ const FotosEstabelecimento = [
   {idEstabelecimento: 1, foto: 'palacio.jpg', idAdmin: 1, idCriador: 1, estado: 0},
 ];
 
+const AvaliacoesEvento = [
+  {idUtilizador: 1, idAdmin: 1, idEvento: 1, classificacao: 5, estado: true},
+  {idUtilizador: 2, idAdmin: 2, idEvento: 1, classificacao: 4, estado: true},
+  {idUtilizador: 3, idAdmin: 3, idEvento: 1, classificacao: 3, estado: true},
+  {idUtilizador: 4, idAdmin: 4, idEvento: 1, classificacao: 2, estado: true},
+  {idUtilizador: 5, idAdmin: 5, idEvento: 1, classificacao: 1, estado: true},
+  {idUtilizador: 1, idAdmin: 1, idEvento: 1, classificacao: 5, estado: true},
+  {idUtilizador: 2, idAdmin: 2, idEvento: 1, classificacao: 4, estado: true},
+];
+
 const carregarTabelas = () => {
   sequelize.sync({ force: true })
     .then(() => {
@@ -426,6 +437,9 @@ const carregarTabelas = () => {
     })
     .then(() => {
       return AvaliacaoEstabelecimento.bulkCreate(AvaliacoesEstabelecimento);
+    })
+    .then(() => {
+      return AvaliacaoEvento.bulkCreate(AvaliacoesEvento);
     })
     .then(() => {
       return FotoEstabelecimento.bulkCreate(FotosEstabelecimento);

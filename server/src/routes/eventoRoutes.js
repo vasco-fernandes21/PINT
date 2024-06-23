@@ -15,6 +15,7 @@ router.get('/:id', eventoController.getEvento);
 router.put('/:id', uploadEventos.single('foto'), eventoController.editarEvento);
 router.get('/:id/inscricao', eventoController.getInscricaoEvento);
 router.post('/inscrever/:id', auth, eventoController.inscreverEvento);
+router.delete('/inscrever/:id', auth, eventoController.desinscreverEvento);
 
 
 

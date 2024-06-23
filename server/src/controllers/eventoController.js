@@ -5,7 +5,8 @@ const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
 const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
-const notificacaoController = require('./notificacaoController');
+const Notificacao = require('../models/notificacaoModel');
+const notificacaoController = require('../controllers/notificacaoController');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
 
 exports.listarEventos = async (req, res) => {
@@ -143,7 +144,6 @@ exports.CriarEvento = async (req, res) => {
     const foto = req.file ? req.file.filename : null; 
 
     try {
-
         const newEvento = await Evento.create({
             titulo,
             descricao,
@@ -161,26 +161,19 @@ exports.CriarEvento = async (req, res) => {
         });
 
         // Criar notificação após a criação do evento
-        const mockRes = {
-            status: () => mockRes,
-            json: (data) => { return data; }
-        };
-
-        const notificacao = await notificacaoController.criarNotificacao({
-            body: {
-                titulo: 'Evento criado',
-                descricao: `O seu evento ${titulo} foi criado e enviado para validação!`
-            },
-            user: {
-                id: idCriador
-            }
-        }, mockRes);
+        const notificacao = await Notificacao.create({
+            idUtilizador: idCriador,
+            titulo: 'Evento criado',
+            descricao: `O seu evento ${titulo} foi criado e enviado para validação!`,
+            estado: false, // Supondo que 'estado' indica se a notificação foi lida
+            data: new Date() // Supondo que 'data' é a data da criação da notificação
+        });
 
         res.status(200).json({
             success: true,
             message: 'Evento criado com sucesso!',
             data: newEvento,
-            notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
+            notificacao: notificacao // Enviar a notificação como parte da resposta
         });
     } catch (error) {
         console.log('Error: ', error);
@@ -229,7 +222,7 @@ exports.CriarEventoMobile = async (req, res) => {
             json: (data) => { return data; }
         };
 
-        const notificacao = await notificacaoController.criarNotificacao({
+        const notificacao = await Notificacao.criarNotificacao({
             body: {
                 titulo: 'Evento criado',
                 descricao: `O seu evento ${titulo} foi criado e enviado para validação!`
@@ -267,7 +260,8 @@ exports.editarEvento = async (req, res) => {
         idSubarea,
         idCriador,
         estado,
-        idAdmin
+        idAdmin,
+        inscricaoAberta
     } = req.body;
 
     const foto = req.file ? req.file.filename : null; 
@@ -287,6 +281,7 @@ exports.editarEvento = async (req, res) => {
     if (estado !== undefined) updateData.estado = estado;
     if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
     if (foto !== undefined) updateData.foto = foto;
+    if (inscricaoAberta !== undefined) updateData.inscricaoAberta = inscricaoAberta;
 
     try {
         const [updated] = await Evento.update(updateData, {
@@ -484,22 +479,87 @@ exports.getInscricaoEvento = async (req, res) => {
 
 exports.inscreverEvento = async (req, res) => {
     const { id } = req.params;
-    const { idUtilizador } = req.user.id;
+    const idUtilizador = req.user.id;
 
     try {
-        const novaInscricao = await Inscricao.create({
-            idEvento: id,
-            idUtilizador: idUtilizador,
-            estado: false
+        // Verifica se o usuário já está inscrito no evento
+        const inscricaoExistente = await Inscricao.findOne({
+            where: {
+                idEvento: id,
+                idUtilizador: idUtilizador
+            }
         });
 
-        res.status(200).json({
-            success: true,
-            message: 'Inscrição realizada com sucesso!',
-            data: novaInscricao
-        });
+        if (inscricaoExistente) {
+            // Se já estiver inscrito, remove a inscrição
+            await Inscricao.destroy({
+                where: {
+                    idEvento: id,
+                    idUtilizador: idUtilizador
+                }
+            });
+
+            res.status(200).json({
+                success: true,
+                message: 'Inscrição removida com sucesso!'
+            });
+        } else {
+            // Se não estiver inscrito, faz a inscrição
+            const novaInscricao = await Inscricao.create({
+                idEvento: id,
+                idUtilizador: idUtilizador,
+                estado: true
+            });
+
+            const evento = await Evento.findByPk(id);
+
+            await Notificacao.create({
+                idUtilizador: idUtilizador,
+                titulo: 'Inscrição realizada com sucesso!',
+                descricao: `Inscrito com sucesso no evento '${evento.titulo}'.`,
+                data: new Date(),
+                estado: false
+            });
+
+            await Notificacao.create({
+                idUtilizador: evento.idCriador,
+                titulo: 'Nova inscrição no seu evento',
+                descricao: `Tem uma nova inscrição no seu evento '${evento.titulo}'.`,
+                data: new Date(),
+                estado: false
+            });
+
+            res.status(200).json({
+                success: true,
+                message: 'Inscrição realizada com sucesso!'
+            });
+        }
     } catch (error) {
-        console.error('Erro ao realizar inscrição:', error); 
+        console.error('Erro ao realizar inscrição:', error);
         res.status(500).json({ success: false, message: "Erro ao realizar a inscrição!" });
     }
-}
+};
+
+exports.desinscreverEvento = async (req, res) => {
+    const { id } = req.params;
+    const idUtilizador = req.user.id;
+
+    try {
+        const inscricaoRemovida = await Inscricao.destroy({
+            where: {
+                idEvento: id,
+                idUtilizador: idUtilizador
+            }
+        });
+
+        if (inscricaoRemovida) {
+            res.status(200).json({ success: true, message: 'Inscrição removida com sucesso!' });
+        } else {
+            res.status(404).json({ success: false, message: 'Inscrição não encontrada.' });
+        }
+    } catch (error) {
+        console.error('Erro ao remover inscrição:', error);
+        res.status(500).json({ success: false, message: "Erro ao remover a inscrição!" });
+    }
+};
+

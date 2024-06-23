@@ -10,6 +10,7 @@ import FotoSlider from "../utils/fotoSlider";
 import Comentarios from "../avaliacao/comentarios";
 import NovaAvaliacao from "../avaliacao/novaAvaliacao";
 import BotaoUpload from "../utils/botaoUpload";
+import BotaoInscricaoEvento from "../utils/BotaoInscricao";
 import EditarEvento from "./eventoEdit";
 import InscricoesGrelha from "./eventoInscricoes";
 
@@ -123,7 +124,7 @@ function EventoPage() {
                             </>
                         )}
                     </Box>
-                    <FotoSlider fotos={fotos} descricao={evento.nome} tipo="eventos" id={id} updateFotos={updateFotos} />
+                    <FotoSlider fotos={fotos} descricao={evento.titulo} tipo="eventos" id={id} updateFotos={updateFotos} />
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <CardContent sx={{ padding: 0, marginTop: 10 }}>
@@ -158,8 +159,11 @@ function EventoPage() {
                                 />
                             )}
                         </Grid>
-                        <Grid item xs={12}>
+                       <Grid item xs={12}>
                             <InscricoesGrelha inscricoes={inscricoes} />
+                            <Grid item xs={12} sx={{ position: 'relative' }}>
+                                <BotaoInscricaoEvento sx={{ position: 'absolute', marginLeft: 0, marginTop: 2 }} idEvento={id} idUtilizador={utilizador?.id} inscricaoAberta={evento.inscricaoAberta}/>
+                            </Grid>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Box sx={{ bgcolor: 'rgba(0, 0, 0, 0.03)', borderRadius: 2, p: 3, display: 'flex', justifyContent: 'space-between' }}>
