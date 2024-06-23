@@ -49,14 +49,14 @@ function RecuperarPasseForm() {
     };
 
     return (
-        <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '62vh' }}>
+        <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '54vh' }}>
             <header className="header mb-1">
                 <img src={logo} alt="Logo" className="logo" />
             </header>
             <form onSubmit={handleSubmit} className="login-form">
                 <div className="form-group">
                     <input
-                        type="email"
+                        type="email"\
                         className="form-control"
                         id="email"
                         name="email"

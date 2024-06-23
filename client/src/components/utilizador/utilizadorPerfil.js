@@ -81,7 +81,7 @@ const Perfil = () => {
           Sobre:
         </Typography>
         <Typography variant="body2" sx={{ marginTop: 1 }}>
-          Pequena descrição do user.
+          {utilizador?.descricao || <span onClick={() => alert('Descricao não definida')}>Pequena descrição do user.</span>}
         </Typography>
       </Box>
 

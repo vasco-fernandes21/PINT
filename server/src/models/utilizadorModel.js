@@ -9,6 +9,7 @@ const Utilizador = sequelize.define('Utilizador', {
     primaryKey: true
   },
   nome: DataTypes.STRING,
+  descricao: DataTypes.STRING(1000),
   nif: DataTypes.STRING,
   localidade: DataTypes.STRING,
   telemovel: DataTypes.STRING,
