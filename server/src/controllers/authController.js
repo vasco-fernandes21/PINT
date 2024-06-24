@@ -7,6 +7,7 @@ const Utilizador = require('../models/utilizadorModel');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 require('dotenv').config();
 const gerarToken = require('../middlewares/gerarToken');
+const { log } = require('console');
 
 
 exports.getUtilizador = (req, res) => {
@@ -129,7 +130,7 @@ exports.criarConta = async (req, res) => {
 
     const verificationToken = crypto.randomBytes(32).toString('hex');
  
-    const newUser = await Utilizador.create({
+    const novoUser = await Utilizador.create({
       nome,
       email,
       palavra_passe: hashedPassword,
@@ -137,9 +138,9 @@ exports.criarConta = async (req, res) => {
       estado: false
     });
 
-    const token = gerarToken(newUser);
+    const token = gerarToken(novoUser);
 
-    const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
+    const verificationUrl = `${process.env.REACT_APP_FRONTEND}/verificar-conta?token=${verificationToken}`;
     await enviarEmail({  
       email,
       subject: 'Verifique o seu email',
@@ -155,7 +156,11 @@ exports.criarConta = async (req, res) => {
 
 exports.verificarEmail = async (req, res) => {
   try {
-    const { token } = req.query;
+    const { token } = req.body || req.query; 
+
+    if (!token) {
+      return res.status(400).send({ error: 'Token de verificação não fornecido' });
+    }
 
     const user = await Utilizador.findOne({ where: { verificationToken: token } });
     if (!user) {
@@ -166,12 +171,13 @@ exports.verificarEmail = async (req, res) => {
     user.verificationToken = null;
     await user.save();
 
-    res.send({ message: 'Email verificado com sucesso. Pode seguir para o login' });
+    res.status(200).send({ message: 'Email verificado com sucesso. Pode seguir para o login' });
   } catch (error) {
-    console.error('Error during email verification:', error);
+    console.error('Erro durante a verificação de email:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
+ 
 
 exports.recuperarPasse = async (req, res) => {
   try {
@@ -193,7 +199,7 @@ exports.recuperarPasse = async (req, res) => {
       message: `Clique no link a seguir para redefinir a sua palavra-passe: ${resetUrl}`
     });
 
-    res.send({ message: 'Email enviado com sucesso. Verifique a sua caixa de entrada' });
+    res.send({ message: 'Email enviado com sucesso. Verifique o seu email para recuperar a password ' });
   } catch (error) {
     console.error('Error during password recovery:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
@@ -249,6 +255,7 @@ const enviarEmail = async (options) => {
   }
 };
 
+
 exports.google = async (req, res) => {
   try {
     const { token } = req.body;
@@ -264,12 +271,14 @@ exports.google = async (req, res) => {
     const payload = ticket.getPayload();
     const email = payload['email'];
     const nome = payload['name'];
+    const foto = payload['picture'];
+    const id_google = payload['sub'];
 
     let user = await Utilizador.findOne({ where: { email } });
 
     if (!user) {
-      const accountCreationResponse = await criarContaGoogleHandler({ nome, email });
-      return res.json(accountCreationResponse);
+      const respostaCriarConta = await criarContaGoogleHandler({ nome, email, foto, id_google });
+      return res.json(respostaCriarConta);
     } else {
       req.body.email = email;
       const loginResponse = await loginGoogleHandler(req);
@@ -292,7 +301,7 @@ const loginGoogleHandler = async (req) => {
   }
 };
 
-const criarContaGoogleHandler = async ({ nome, email }) => {
+const criarContaGoogleHandler = async ({ nome, email, foto, id_google}) => {
   try {
     if (!nome || !email) {
       throw new Error('Nome e email são necessários');
@@ -306,15 +315,17 @@ const criarContaGoogleHandler = async ({ nome, email }) => {
     const password = crypto.randomBytes(10).toString('hex');
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await Utilizador.create({
+    const novoUser = await Utilizador.create({
       nome,
       email,
       palavra_passe: hashedPassword,
+      foto,
+      id_google,
       estado: true,
       isPrimeiroLogin: true
     });
 
-    const token = gerarToken(newUser);
+    const token = gerarToken(novoUser);
 
     await enviarEmail({
       email,

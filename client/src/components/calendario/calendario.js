@@ -25,7 +25,7 @@ const Calendario = () => {
         }));
         setEventos(eventosFormatados);
       } catch (error) {
-        console.error('Erro ao buscar eventos:', error.response || error.message);
+        console.error('Erro ao procurar eventos:', error.response || error.message);
       }
     };
 

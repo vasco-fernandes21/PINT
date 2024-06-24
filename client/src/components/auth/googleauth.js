@@ -22,31 +22,47 @@ const GoogleAuth = () => {
 
     setErrorMessage(null);
 
-    Swal.fire({
-      title: 'Sucesso!',
-      text: 'Login com a conta Google realizado com sucesso',
-      icon: 'success',
-      confirmButtonColor: '#1D324F',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const userResponse = await api.get('/utilizador');
-        if (userResponse && userResponse.data) {
-          const { idPosto } = userResponse.data;
-          if (idPosto === null || idPosto === undefined) {
-            navigate('/posto');
+      Swal.fire({
+        title: 'Sucesso!',
+        text: 'Login com a conta Google realizado com sucesso',
+        icon: 'success',
+        confirmButtonColor: '#1D324F',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const respostaUser = await api.get('/utilizador/completo');
+          console.log(respostaUser);
+          if (respostaUser && respostaUser.data) {
+            // se o utilizador não tiver isAdmin a true, alerta swal a dizer que não tem permissões e manda para o /login
+            if (!respostaUser.data.isAdmin) {
+              Swal.fire({
+                title: 'Sem permissões',
+                text: 'Não tem permissões para aceder a esta página',
+                icon: 'error',
+                confirmButtonColor: '#1D324F',
+              }).then(() => {
+                navigate('/login');
+              });
+            } else {
+              const { idPosto } = respostaUser.data;
+              if (idPosto === null || idPosto === undefined) {
+                navigate('/posto');
+              } else {
+                navigate('/');
+              }
+            }
           } else {
-            navigate('/');
+            console.error('Invalid user response:', respostaUser);
           }
-        } else {
-          console.error('Invalid user response:', userResponse);
         }
-      }
-    });
-  } catch (err) {
-    console.error('Server error:', err);
-    setErrorMessage('Server error. Please try again later.');
+      }).catch((err) => {
+        console.error('Server error:', err);
+        setErrorMessage('Server error. Please try again later.');
+      }); 
+  } catch (error) {
+    console.error('Error logging in with Google:', error.response || error.message);
+    setErrorMessage('Error logging in with Google. Please try again.');
   }
-};
+  };
 
   const handleError = () => {
     console.error('Google login failed');
@@ -63,5 +79,7 @@ const GoogleAuth = () => {
     </GoogleOAuthProvider>
   );
 };
+
+
 
 export default GoogleAuth;

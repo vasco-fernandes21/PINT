@@ -8,6 +8,27 @@ exports.getUtilizador = (req, res) => {
     res.send(req.user);
   };
 
+exports.getUtilizadorCompleto = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id, {
+      include: [{
+        model: Posto,
+        attributes: ['nome'] 
+      }]
+    });
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    res.send(utilizador);
+  } catch (error) {
+    console.error('Erro ao procurar utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
 exports.getUtilizadores = async (req, res) => {
   const { idPosto } = req.query;
 
@@ -36,7 +57,7 @@ exports.utilizadorPorId = async (req, res) => {
 
     res.send(utilizador);
   } catch (error) {
-    console.error('Erro ao buscar utilizador:', error);
+    console.error('Erro ao procurar utilizador:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 }
@@ -72,8 +93,6 @@ exports.apagarUtilizador = async (req, res) => {
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
-
-
 
 
 exports.atualizarUtilizador = async (req, res) => {
@@ -125,7 +144,69 @@ exports.associarPosto = async (req, res) => {
 
     return res.status(200).send({ message: 'Utilizador associado ao posto com sucesso', token });
   } catch (error) {
-    console.log(error); // Adicione esta linha
+    console.log(error); 
     return res.status(500).send({ message: 'Erro ao associar utilizador ao posto', error });
   }
 };
+
+exports.uploadFotoUtilizador = async (req, res) => {
+  const { id } = req.params;
+  const foto = req.file ? req.file.filename : null; 
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    utilizador.foto = foto; 
+    await utilizador.save();
+
+    res.status(200).send({ message: 'Foto do utilizador atualizada com sucesso' });
+  } catch (error) {
+    console.error('Erro ao atualizar foto do utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+exports.deleteFotoUtilizador = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    utilizador.foto = null;
+    await utilizador.save();
+
+    res.status(200).send({ message: 'Foto do utilizador apagada com sucesso' });
+  } catch (error) {
+    console.error('Erro ao apagar foto do utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+}
+
+exports.getFotoUtilizador = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    if (!utilizador.foto) {
+      return res.status(404).send({ message: 'Foto não encontrada' });
+    }
+
+    res.sendFile(utilizador.foto, { root: './uploads/utilizador' });
+  } catch (error) {
+    console.error('Erro ao encontrar foto do utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+}

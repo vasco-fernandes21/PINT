@@ -19,3 +19,4 @@ const Area = sequelize.define('Area', {
 
 
 module.exports = Area;
+

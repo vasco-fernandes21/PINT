@@ -50,31 +50,32 @@ function EstabelecimentoList() {
   }, []);
 
   useEffect(() => {
-    const getEstabelecimentos = async () => {
-      const params = {};
-      if (areaId) {
-        params.areaId = areaId;
-      }
-      if (subareaId) {
-        params.subareaId = subareaId;
-      }
-      if (idPosto) {
-        params.idPosto = idPosto;
-      }
-      console.log('Sending request with params:', params);
-      try {
-        const response = await api.get(`/estabelecimentos`, { params });
-        console.log('Received response:', response);
-        setEstabelecimentos(response.data.data);
-      } catch (error) {
-        console.error('Error fetching estabelecimentos:', error.response || error.message);
-      }
-    };
-
-    if (idPosto !== null) {
-      getEstabelecimentos();
+  const getEstabelecimentos = async () => {
+    const params = {};
+    if (areaId) {
+      params.areaId = areaId;
     }
-  }, [areaId, subareaId, idPosto]);
+    if (subareaId) {
+      params.subareaId = subareaId;
+    }
+    if (idPosto) {
+      params.idPosto = idPosto;
+    }
+    console.log('Sending request with params:', params);
+    try {
+      setEstabelecimentos([]);
+      const response = await api.get(`/estabelecimentos`, { params });
+      console.log('Received response:', response);
+      setEstabelecimentos(response.data.data);
+    } catch (error) {
+      console.error('Error fetching estabelecimentos:', error.response || error.message);
+    }
+  };
+
+  if (idPosto !== null) {
+    getEstabelecimentos();
+  }
+}, [areaId, subareaId, idPosto]);
 
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);
@@ -98,8 +99,9 @@ function EstabelecimentoList() {
 
   const StyledSelectArea = styled(Select)({
     marginBottom: 20,
+    marginLeft: 10,
     minWidth: 200,
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: '#1D324F',
     color: '#fff',
     '& .MuiSelect-icon': {
@@ -115,8 +117,9 @@ function EstabelecimentoList() {
 
   const StyledSelectSubarea = styled(Select)({
     marginBottom: 20,
+    marginLeft: 10,
     minWidth: 200,
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: '#fff',
     color: '#1D324F',
     '& .MuiSelect-icon': {
@@ -135,7 +138,7 @@ function EstabelecimentoList() {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    borderRadius: 10,
+    borderRadius: 4,
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   });
 
@@ -152,13 +155,13 @@ function EstabelecimentoList() {
   const StyledCardMedia = styled(CardMedia)({
     height: 200,  
     objectFit: 'cover',  
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
   });
 
   return (
     <Box sx={{ padding: 1, paddingTop: 0 }}>
-      <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>Estabelecimentos</Typography>
+      <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold'}}>Estabelecimentos</Typography>
       <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }}>
         <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
           <Grid item xs={12} sm={2}>

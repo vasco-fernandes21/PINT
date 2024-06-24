@@ -42,9 +42,9 @@
       allowNull: true
     },
     estado: {
-      type: DataTypes.ENUM('pendente', 'aceite', 'recusada'),
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: 'pendente'
+      defaultValue: false
     },
     data: {
       type: DataTypes.DATE,

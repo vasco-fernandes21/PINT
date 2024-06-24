@@ -91,16 +91,26 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
           <Box key={index} sx={{ display: 'flex', flexDirection: 'column', marginBottom: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                {avaliacao.utilizador && avaliacao.utilizador.foto && (
-                  <Avatar 
-                    src={`/uploads/utilizador/${avaliacao.utilizador.foto}`} 
-                    alt={avaliacao.utilizador.nome} 
-                    sx={{ marginRight: 2 }}
-                  />
-                )}
+              {avaliacao.utilizador ? (
+                  <>
+                    {avaliacao.utilizador.foto ? (
+                      <Avatar 
+                        src={`${process.env.REACT_APP_API_URL}/uploads/utilizador/${avaliacao.utilizador.foto}`} 
+                        alt={avaliacao.utilizador.nome} 
+                        sx={{ marginRight: 2 }}
+                      />
+                    ) : (
+                      <Avatar sx={{ marginRight: 2 }}>
+                        {avaliacao.utilizador.nome[0]}
+                      </Avatar>
+                    )}
+                  </>
+                ) : null}
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{avaliacao.utilizador ? avaliacao.utilizador.nome : ''}</Typography>
-                  <Rating value={avaliacao.classificacao} readOnly />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {avaliacao.utilizador ? avaliacao.utilizador.nome : 'Anônimo'}
+                  </Typography>
+                  <Rating value={avaliacao.classificacao} sx={{ marginTop: 0, marginLeft: -0.4}} readOnly />
                   <Typography variant="body2" color="text.secondary">
                     {moment(avaliacao.data).fromNow()}
                   </Typography>
@@ -130,7 +140,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
                 <MenuItem onClick={handleDelete}>Apagar Comentário</MenuItem>
               </Menu>
             </Box>
-            <Typography variant="body1" sx={{ marginTop: 1}}>{avaliacao.comentario}</Typography>
+            <Typography variant="body1" sx={{ marginTop: 1, marginLeft: 7}}>{avaliacao.comentario}</Typography>
             <Box sx={{ width: '100%', height: '1px', backgroundColor: 'lightgray', marginTop: 2, marginBottom: 2 }} />
           </Box>
         ))

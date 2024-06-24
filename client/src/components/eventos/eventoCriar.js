@@ -12,8 +12,6 @@ const schema = yup.object().shape({
   data: yup.date().required('Data é obrigatória'),
   hora: yup.string().required('Hora é obrigatória'),
   morada: yup.string().required('Morada é obrigatória'),
-  latitude: yup.number().typeError('Latitude deve ser um número').required('Latitude é obrigatória'),
-  longitude: yup.number().typeError('Longitude deve ser um número').required('Longitude é obrigatória'),
   area: yup.string().required('Tipo de Evento é obrigatório'),
   subarea: yup.string().required('Subtipo é obrigatório'),
 });
@@ -32,7 +30,7 @@ function CriarEvento({ open, handleClose }) {
         const response = await api.get('/areas');
         setAreas(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar áreas:', error);
+        console.error('Erro ao procurar áreas:', error);
       }
     };
 
@@ -46,7 +44,7 @@ function CriarEvento({ open, handleClose }) {
           const response = await api.get(`/areas/${selectedArea}`);
           setSubareas(response.data.data);
         } catch (error) {
-          console.error('Erro ao buscar subáreas:', error);
+          console.error('Erro ao procurar subáreas:', error);
         }
       } else {
         setSubareas([]);
@@ -60,11 +58,7 @@ function CriarEvento({ open, handleClose }) {
     try {
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
-        if (key === 'latitude' || key === 'longitude') {
-          formData.append(key, data[key] || null);
-        } else {
-          formData.append(key, data[key]);
-        }
+        formData.append(key, data[key]);
       });
 
       formData.append('estado', false);
@@ -169,20 +163,16 @@ function CriarEvento({ open, handleClose }) {
             helperText={errors.morada ? errors.morada.message : ''}
           />
           <TextField 
-            {...register('latitude')} 
-            label="Latitude" 
-            fullWidth 
-            sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
-            error={!!errors.latitude}
-            helperText={errors.latitude ? errors.latitude.message : ''}
-          />
+          {...register('telemovel')} 
+          label="Telemovel" 
+          fullWidth 
+          sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
+         />
           <TextField 
-            {...register('longitude')} 
-            label="Longitude" 
+            {...register('email')} 
+            label="Email" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
-            error={!!errors.longitude}
-            helperText={errors.longitude ? errors.longitude.message : ''}
           />
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.area}>
             <InputLabel id="area-label">Tipo de Evento</InputLabel>

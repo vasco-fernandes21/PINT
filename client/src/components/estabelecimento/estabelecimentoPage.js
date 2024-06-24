@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import { useParams } from "react-router-dom";
 import { Grid, CardContent, Typography, Box, Divider, Button } from "@mui/material";
 import api from "../api/api";
@@ -47,7 +47,7 @@ function EstabelecimentoPage() {
         fetchEstabelecimento();
     }, [id]);
   
-    const fetchAvaliacoes = async () => {
+    const fetchAvaliacoes = useCallback(async () => {
         try {
             const response = await api.get(`/avaliacao/estabelecimentos/${id}`);
             setAvaliacoes(response.data.data);
@@ -55,11 +55,11 @@ function EstabelecimentoPage() {
         } catch (error) {
             console.error('Error fetching Avaliações:', error.response || error.message);
         }
-    };
-  
+    }, [id]);
+
     useEffect(() => {
         fetchAvaliacoes();
-    }, [id]);
+    }, [fetchAvaliacoes]);
 
     const handleOpen = () => {
         setOpen(true);
@@ -113,7 +113,7 @@ function EstabelecimentoPage() {
                         <Grid item xs={12}>
                             <CardContent sx={{ padding: 0, marginTop: 10}}>
                                 <Typography variant="h4" sx={{ marginBottom: 1, fontWeight: 'bold' }}>Descrição</Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body1" color="text.secondary">
                                     {estabelecimento.descricao}
                                 </Typography>
                             </CardContent>
@@ -144,27 +144,37 @@ function EstabelecimentoPage() {
                             )}
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Box sx={{ bgcolor: 'rgba(0, 0, 0, 0.03)', borderRadius: 2, p: 3, display: 'flex', justifyContent: 'space-between' }}>
-                                <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center' }}>Informações de Contacto</Typography>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Morada: {estabelecimento.morada}  
-                                    </Typography>
-                                    <Divider orientation="vertical" flexItem />
-                                    <Typography variant="body2" color="text.secondary">
-                                        Telefone: {estabelecimento.telefone}
-                                    </Typography>
-                                    <Divider orientation="vertical" flexItem />
-                                    <Typography variant="body2" color="text.secondary">
-                                        Email: {estabelecimento.email}
-                                    </Typography>
+                            <Box sx={{ bgcolor: 'rgba(0, 0, 0, 0.03)', borderRadius: 2, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 2 }}>Informações de Contacto</Typography>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                                    {estabelecimento.morada && (
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                            Morada: {estabelecimento.morada}
+                                        </Typography>
+                                    )}
+                                    {estabelecimento.telemovel && (
+                                        <>
+                                            <Divider sx={{ width: '100%', my: 1 }} />
+                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                Telemovel: {estabelecimento.telemovel}
+                                            </Typography>
+                                        </>
+                                    )}
+                                    {estabelecimento.email && (
+                                        <>
+                                            <Divider sx={{ width: '100%', my: 1 }} />
+                                            <Typography variant="body2" color="text.secondary">
+                                                Email: {estabelecimento.email}
+                                            </Typography>
+                                        </>
+                                    )}
                                 </Box>
                             </Box>
                         </Grid>
                         <Grid item xs={12}>
                             <Box sx={{ maxWidth: '100%', height: '300px', marginTop: 2}}>
                             <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>Localização</Typography>
-                                        <Mapa latitude={estabelecimento.latitude} longitude={estabelecimento.longitude} />
+                                     <Mapa morada={estabelecimento.morada} />
                                         <Box sx={{ height: '50px' }} /> 
                             </Box>
                         </Grid>

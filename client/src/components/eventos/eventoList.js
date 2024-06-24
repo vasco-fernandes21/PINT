@@ -96,8 +96,9 @@ function EventoList() {
 
   const StyledSelectArea = styled(Select)({
     marginBottom: 20,
+    marginLeft: 10,
     minWidth: 200,
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: '#1D324F',
     color: '#fff',
     '& .MuiSelect-icon': {
@@ -113,8 +114,9 @@ function EventoList() {
 
   const StyledSelectSubarea = styled(Select)({
     marginBottom: 20,
+    marginLeft: 10,
     minWidth: 200,
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: '#fff',
     color: '#1D324F',
     '& .MuiSelect-icon': {
@@ -133,7 +135,7 @@ function EventoList() {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    borderRadius: 10,
+    borderRadius: 4,
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   });
 
@@ -150,8 +152,8 @@ function EventoList() {
   const StyledCardMedia = styled(CardMedia)({
     height: 200,  // Fix the height of the image
     objectFit: 'cover',  // Ensure the image covers the area
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
   });
 
   return (

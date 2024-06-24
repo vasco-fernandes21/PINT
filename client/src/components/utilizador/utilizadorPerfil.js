@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { Box, Grid, Avatar, Typography, Card, CardContent, Button, Tabs, Tab } from '@mui/material';
-import { styled } from '@mui/system';
+import { Box, Avatar, Typography, Button, Grid, Paper, Pagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import Comentarios from '../avaliacao/comentarios';
 import api from '../api/api';
+import AvatarImagem from "../utils/avatarImagem";
+import BotaoUpload from "../utils/botaoUpload";
+import ComentariosPerfil from "./comentariosPerfil";
+import EditarPerfil from './utilizadorEditar'; 
 
 const Perfil = () => {
-  const { id } = useParams();
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [avaliacoes, setAvaliacoes] = useState([]);
   const [utilizador, setUtilizador] = useState(null);
+  const [avaliacoes, setAvaliacoes] = useState([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
+  const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
 
   useEffect(() => {
     const fetchUtilizador = async () => {
       try {
-        const response = await api.get('/utilizador');
+        const response = await api.get('/utilizador/completo');
         setUtilizador(response.data);
       } catch (error) {
         console.error('Erro ao encontrar utilizador:', error);
@@ -26,152 +27,132 @@ const Perfil = () => {
     };
     fetchUtilizador();
   }, []);
-  
-  useEffect(() => {
+
+  const fetchAvaliacoes = async () => {
     if (utilizador) {
-      console.log(utilizador.id);
+      try {
+        const response = await api.get(`/avaliacao/utilizador/${utilizador.id}`);
+        setAvaliacoes(response.data.data);
+      } catch (error) {
+        console.error('Error fetching Avaliações:', error.response || error.message);
+      }
     }
-  }, [utilizador]);
-
-
-  const StyledCard = styled(Card)({
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    borderRadius: 10,
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  });
-
-  const StyledCardContent = styled(CardContent)({
-    flexGrow: 1,
-  });
-
-  const StyledTypography = styled(Typography)({
-    marginBottom: 10,
-    fontSize: 20,
-    fontWeight: 600,
-  });
-
-  const handleTabChange = (event, newValue) => {
-    setSelectedTab(newValue);
   };
 
-const fetchAvaliacoesEstabelecimentos = async () => {
-  if (utilizador) {
-    try {
-      const response = await api.get(`/avaliacao/utilizador/${utilizador.id}`);
-      setAvaliacoes(response.data.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error fetching Avaliações:', error.response || error.message);
-    }
-  }
-};
+  useEffect(() => {
+    fetchAvaliacoes();
+  }, [utilizador]);
 
-useEffect(() => {
-  fetchAvaliacoesEstabelecimentos();
-}, [id, utilizador]);
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
 
-useEffect(() => {
-  console.log(avaliacoes);
-}, [avaliacoes]);
-  
-const handleChange = (event, value) => {
-  setPage(value);
-};
+  const updateFotoPerfil = (novaFoto) => {
+    setUtilizador({ ...utilizador, foto: novaFoto });
+  };
 
-  const navigate = useNavigate();
+  const handleDialogOpen = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleUpdate = (updatedUtilizador) => {
+    setUtilizador(updatedUtilizador);
+  };
 
   return (
-    <Box sx={{ padding: 2 }}>
-      {/* Profile Section */}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 2,
-          borderRadius: 2,
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          width: '100%',
-          marginBottom: 2,
-        }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Avatar sx={{ width: 100, height: 100 }}>JW</Avatar>
-          <Button variant="contained" sx={{ backgroundColor: '#1D324F' }} onClick={() => navigate('/perfil/editar')}>
-            Editar Perfil
-          </Button>
-        </Box>
-        <Typography variant="h6" sx={{ marginTop: 2 }}>
-          User
-        </Typography>
-        <Typography variant="h6" sx={{ marginTop: 2 }}>
-          Sobre:
-        </Typography>
-        <Typography variant="body2" sx={{ marginTop: 1 }}>
-          Pequena descrição do user.
-        </Typography>
-      </Box>
-
-      {/* Tabs for Avaliações and Imagens */}
-      <Tabs value={selectedTab} onChange={handleTabChange} sx={{ marginBottom: 2 }}>
-        <Tab label="Avaliações" />
-        <Tab label="Imagens" />
-      </Tabs>
-
-      {/* Content based on selected tab */}
-      {selectedTab === 0 && (
-        <Box>
-          <Typography variant="h6" sx={{ marginBottom: 2 }}>
-            Avaliações:
-          </Typography>
-          <Comentarios 
-            fetchAvaliacoes={fetchAvaliacoesEstabelecimentos} 
-            avaliacoes={avaliacoes} 
-            page={page} 
-            itemsPerPage={itemsPerPage} 
-            noOfPages={noOfPages} 
-            handleChange={handleChange} 
-            tipo="estabelecimentos"
-        />
-        </Box>
-      )}
-
-      {selectedTab === 1 && (
-        <Box>
-          <Typography variant="h6" sx={{ marginBottom: 2 }}>
-            Imagens:
-          </Typography>
-          <Grid container spacing={2}>
-            {[
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-              { img: 'https://via.placeholder.com/150', description: 'Imagem' },
-            ].map((image, index) => (
-              <Grid item xs={2} key={index}>
-                <StyledCard>
-                  <Box component="img" src={image.img} alt={image.description} sx={{ width: '100%', height: 'auto' }} />
-                  <StyledCardContent>
-                    <Typography variant="body2" color="text.secondary">
-                      {image.description}
-                    </Typography>
-                  </StyledCardContent>
-                </StyledCard>
-              </Grid>
-            ))}
+    <Box sx={{ padding: 2, maxWidth: { xl: '10' } }}>
+      <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+        <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+          <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pl: 1 }}>
+            <AvatarImagem 
+              src={utilizador && utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador ? utilizador.foto : ''}`}
+              alt={utilizador?.nome} sx={{ width: 200, height: 200, mb: 2 }} 
+            />
+            <Button variant="contained" sx={{ mb: 2, backgroundColor: '#1D324F' }} onClick={handleDialogOpen}>
+              Editar Perfil
+            </Button>
+            {utilizador && <BotaoUpload tipo="utilizador" id={utilizador.id} idUtilizador={utilizador.id} updateFotos={updateFotoPerfil} />}
           </Grid>
-        </Box>
-      )}
+          <Grid item xs={12} md={8}>
+            <Paper elevation={2} sx={{ padding: 2, backgroundColor: '#f0f0f0', minHeight: '30vh' }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                {utilizador?.nome}
+              </Typography>
+              <Typography variant="h6" sx={{ marginTop: 2 }}>
+                Sobre:
+              </Typography>
+              {utilizador?.descricao && (
+                <Typography variant="body1" sx={{ marginTop: 2 }}>
+                  <strong>Descrição:</strong> {utilizador.descricao}
+                </Typography>
+              )}
+              {utilizador?.nif && (
+                <Typography variant="body1" sx={{ marginTop: 2 }}>
+                  <strong>NIF:</strong> {utilizador.nif}
+                </Typography>
+              )}
+              {utilizador?.localidade && (
+                <Typography variant="body1" sx={{ marginTop: 1 }}>
+                  <strong>Localidade:</strong> {utilizador.localidade}
+                </Typography>
+              )}
+              {utilizador?.telemovel && (
+                <Typography variant="body1" sx={{ marginTop: 1 }}>
+                  <strong>Telemóvel:</strong> {utilizador.telemovel}
+                </Typography>
+              )}
+              {utilizador?.email && (
+                <Typography variant="body1" sx={{ marginTop: 1 }}>
+                  <strong>Email:</strong> {utilizador.email}
+                </Typography>
+              )}
+              {utilizador?.cargo && (
+                <Typography variant="body1" sx={{ marginTop: 1 }}>
+                  <strong>Cargo:</strong> {utilizador.cargo}
+                </Typography>
+              )}
+              {utilizador?.Posto?.nome && (
+                <Typography variant="body1" sx={{ marginTop: 1 }}>
+                  <strong>Posto:</strong> {utilizador.Posto.nome}
+                </Typography>
+              )}
+            </Paper>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      <Paper elevation={3} sx={{ padding: 2 }}>
+        <Typography variant="h6" sx={{ marginBottom: 2 }}>
+          Avaliações:
+        </Typography>
+        <ComentariosPerfil 
+          fetchAvaliacoes={fetchAvaliacoes}
+          avaliacoes={avaliacoes} 
+          page={page} 
+          itemsPerPage={itemsPerPage} 
+          noOfPages={noOfPages} 
+          handleChange={handleChange} 
+          tipo="estabelecimentos"
+        />
+        {avaliacoes.length > itemsPerPage && (
+          <Pagination
+            count={noOfPages}
+            page={page}
+            onChange={handleChange}
+            sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}
+          />
+        )}
+      </Paper>
+      <EditarPerfil
+        open={isDialogOpen}
+        onClose={handleDialogClose}
+        utilizador={utilizador}
+        onUpdate={handleUpdate}
+      />
     </Box>
   );
 };

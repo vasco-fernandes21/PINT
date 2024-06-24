@@ -27,7 +27,7 @@ function EditarEvento({ open, handleClose }) {
         const response = await api.get('/areas');
         setAreas(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar áreas:', error);
+        console.error('Erro ao procurar áreas:', error);
       }
     };
 
@@ -41,7 +41,7 @@ function EditarEvento({ open, handleClose }) {
           const response = await api.get(`/areas/${selectedArea}`);
           setSubareas(response.data.data);
         } catch (error) {
-          console.error('Erro ao buscar subáreas:', error);
+          console.error('Erro ao procurar subáreas:', error);
         }
       } else {
         setSubareas([]);
@@ -60,7 +60,7 @@ function EditarEvento({ open, handleClose }) {
           setValue(key, evento[key]);
         });
       } catch (error) {
-        console.error('Erro ao buscar evento:', error);
+        console.error('Erro ao procurar evento:', error);
       }
     };
 
@@ -69,9 +69,10 @@ function EditarEvento({ open, handleClose }) {
 
   const onSubmit = async (data) => {
     handleClose();
+  
     Swal.fire({
       title: 'Tem certeza?',
-      text: "Você deseja editar este evento?",
+      text: 'Você deseja editar este evento?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#1d324f',
@@ -87,34 +88,34 @@ function EditarEvento({ open, handleClose }) {
         if (selectedFile) {
           formData.append('foto', selectedFile);
         }
-
+  
         try {
           const response = await api.put(`/eventos/${id}`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
-
+  
           Swal.fire({
-            title: "Sucesso",
-            text: "Evento atualizado com sucesso!",
-            icon: "success",
+            title: 'Sucesso',
+            text: 'Evento atualizado com sucesso!',
+            icon: 'success',
             confirmButtonColor: '#1D324F',
           }).then((result) => {
             if (result.isConfirmed) {
-                console.log('Evento atualizado:', response.data);
-                handleClose(); 
-                window.location.reload(); // Recarrega a página para exibir as alterações
+              console.log('Evento atualizado:', response.data);
+              handleClose();
+              window.location.reload(); // Recarrega a página para exibir as alterações
             }
           });
         } catch (error) {
           Swal.fire({
-            title: "Erro",
-            text: "Erro ao atualizar evento, tente mais tarde.",
-            icon: "error",
+            title: 'Erro',
+            text: 'Erro ao atualizar evento, tente mais tarde.',
+            icon: 'error',
             confirmButtonColor: '#1D324F',
           });
-
+  
           console.error('Erro ao atualizar evento:', error);
         }
       } else {
@@ -122,11 +123,12 @@ function EditarEvento({ open, handleClose }) {
           title: 'Cancelado',
           text: 'A edição do evento foi cancelada',
           icon: 'error',
-          confirmButtonColor: '#1d324f', 
-        })
+          confirmButtonColor: '#1d324f',
+        });
       }
     });
   };
+  
 
   const apagarEvento = async (id) => {
     handleClose();
@@ -236,15 +238,17 @@ function EditarEvento({ open, handleClose }) {
           fullWidth
           sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }}
         />
-        <InputLabel htmlFor="latitude">Latitude</InputLabel>
+        <InputLabel htmlFor="telemovel">Telemóvel</InputLabel>
           <TextField 
-            {...register('latitude')} 
+            {...register('telemovel')} 
+            label="Telemovel" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
-          <InputLabel htmlFor="longitude">Longitude</InputLabel>
+          <InputLabel htmlFor="email">Email</InputLabel>
           <TextField 
-            {...register('longitude')} 
+            {...register('email')} 
+            label="Email" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
@@ -274,6 +278,17 @@ function EditarEvento({ open, handleClose }) {
                 {subarea.nome}
               </MenuItem>
             ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel id="inscricaoAberta-label">Estado da Inscrição</InputLabel>
+          <Select
+            {...register('inscricaoAberta')}
+            labelId="inscricaoAberta-label"
+            sx={{ backgroundColor: '#f2f2f2', borderRadius: 1 }}
+          >
+            <MenuItem value={true}>Aberta</MenuItem>
+            <MenuItem value={false}>Fechada</MenuItem>
           </Select>
         </FormControl>
         <Button

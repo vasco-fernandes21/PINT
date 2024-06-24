@@ -51,14 +51,6 @@ const Evento = sequelize.define('Evento', {
       key: 'id'
     }
   },
-  latitude : {
-    type: DataTypes.FLOAT,
-    allowNull: true
-  },
-  longitude : {
-    type: DataTypes.FLOAT,
-    allowNull: true
-  },
   titulo: {
     type: DataTypes.STRING,
     allowNull: false
@@ -77,7 +69,15 @@ const Evento = sequelize.define('Evento', {
   },
   morada: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true,
+  },
+  telemovel : {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  email : {
+    type: DataTypes.STRING,
+    allowNull: true
   },
   estado: {
     type: DataTypes.BOOLEAN,
@@ -86,10 +86,14 @@ const Evento = sequelize.define('Evento', {
   foto : {
     type: DataTypes.STRING,
     allowNull: true
-  }
-
+  },
+  inscricaoAberta: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
 },
 {
+  tableName: 'Evento',
   freezeTableName: true,
   timestamps: false
 });

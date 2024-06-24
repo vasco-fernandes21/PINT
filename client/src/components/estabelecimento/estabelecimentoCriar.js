@@ -16,7 +16,7 @@ function CriarEstabelecimento({ handleClose }) {
         const response = await api.get('/areas');
         setAreas(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar áreas:', error);
+        console.error('Erro ao procurar áreas:', error);
       }
     };
 
@@ -30,7 +30,7 @@ function CriarEstabelecimento({ handleClose }) {
           const response = await api.get(`/areas/${selectedArea}`);
           setSubareas(response.data.data);
         } catch (error) {
-          console.error('Erro ao buscar subáreas:', error);
+          console.error('Erro ao procurar subáreas:', error);
         }
       } else {
         setSubareas([]);
@@ -43,38 +43,17 @@ function CriarEstabelecimento({ handleClose }) {
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key === 'latitude' || key === 'longitude') {
-        formData.append(key, data[key] || null);
-      } else {
+      Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
-      }
-    });
-
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token de autenticação não encontrado.');
-      }
-
-      // Get user data
-      const userResponse = await api.get('/utilizador', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
       });
 
       formData.append('estado', false);
       formData.append('idArea', selectedArea);
       formData.append('idSubarea', data.subarea);
-      formData.append('idCriador', userResponse.data.id);
-      formData.append('idPosto', userResponse.data.idPosto)
+      formData.append('telemovel', response.data.telemovel);
+      formData.append('email', response.data.email);
 
-      const response = await api.post('/estabelecimentos', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`
-        },
-      });
+      const response = await api.post('/estabelecimentos', formData);
 
       Swal.fire({
         title: "Sucesso",
@@ -125,19 +104,15 @@ function CriarEstabelecimento({ handleClose }) {
         sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
       />
       <TextField 
-        {...register('latitude')} 
-        label="Latitude" 
+        {...register('telemovel')} 
+        label="Telemovel" 
         fullWidth 
-        multiline
-        rows={4}
         sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
       />
       <TextField 
-        {...register('longitude')} 
-        label="Longitude" 
+        {...register('email')} 
+        label="Email" 
         fullWidth 
-        multiline
-        rows={4}
         sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
       />
       <FormControl fullWidth sx={{ mb: 2 }}>

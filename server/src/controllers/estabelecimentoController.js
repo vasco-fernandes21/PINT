@@ -5,6 +5,7 @@ const Posto = require('../models/postoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const notificacaoController = require('./notificacaoController');
+const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 
 
 
@@ -53,7 +54,7 @@ exports.estabelecimentosMobile = async (req, res) => {
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
-    let whereClause = {};
+    let whereClause = { estado: true };
     if (areaId) {
         whereClause.idArea = areaId;
     }
@@ -89,60 +90,119 @@ exports.estabelecimentosMobile = async (req, res) => {
 
 exports.criarEstabelecimento = async (req, res) => {
     const {
-      nome,
-      idArea,
-      idSubarea,
-      idPosto,
-      morada,
-      descricao,
-      idAdmin,
-      idCriador,
-      latitude, 
-      longitude
-    } = req.body;
-
-    const foto = req.file ? req.file.filename : null; 
-
-    try {
-      const newEstabelecimento = await Estabelecimento.create({
         nome,
         idArea,
         idSubarea,
-        idPosto,
         morada,
         descricao,
-        idAdmin,
-        idCriador,
-        foto, 
-        latitude,
-        longitude
-      });
+        telemovel,
+        email,
+        idAdmin
+    } = req.body;
 
-      // Criar notificação após a criação do estabelecimento
-      const mockRes = {
-          status: () => mockRes,
-          json: (data) => { return data; }
-      };
+    const foto = req.file ? req.file.filename : null;
+    const idCriador = req.user.id;
+    const idPosto = req.user.idPosto;
 
-      const notificacao = await notificacaoController.criarNotificacao({
-          body: {
-              titulo: 'Estabelecimento criado',
-              descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
-          },
-          user: {
-              id: idCriador
-          }
-      }, mockRes);
+    try {
+        const newEstabelecimento = await Estabelecimento.create({
+            nome,
+            idArea,
+            idSubarea,
+            idPosto,
+            morada,
+            descricao,
+            telemovel,
+            email,
+            idAdmin,
+            idCriador,
+            foto
+        });
 
-      res.status(200).json({
-        success: true,
-        message: 'Estabelecimento criado com sucesso!',
-        data: newEstabelecimento,
-        notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
-      });
+        // Criar notificação após a criação do estabelecimento
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => { return data; }
+        };
+
+        const notificacao = await notificacaoController.criarNotificacao({
+            body: {
+                titulo: 'Estabelecimento criado',
+                descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
+            },
+            user: {
+                id: idCriador
+            }
+        }, mockRes);
+
+        res.status(200).json({
+            success: true,
+            message: 'Estabelecimento criado com sucesso!',
+            data: newEstabelecimento,
+            notificacao: notificacao 
+        });
     } catch (error) {
-      console.log('Error: ', error);
-      res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
+    }
+};
+
+exports.criarEstabelecimentoMobile = async (req, res) => {
+    const {
+        nome,
+        idArea,
+        idSubarea,
+        morada,
+        idPosto,
+        descricao,
+        telemovel,
+        email,
+        idAdmin
+    } = req.body;
+
+    const foto = req.file ? req.file.filename : null;
+    const idCriador = req.user.id;
+
+    try {
+        const newEstabelecimento = await Estabelecimento.create({
+            nome,
+            idArea,
+            idSubarea,
+            idPosto,
+            morada,
+            descricao,
+            telemovel,
+            email,
+            idAdmin,
+            idCriador,
+            foto
+        });
+
+        // Criar notificação após a criação do estabelecimento
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => { return data; }
+        };
+
+        const notificacao = await notificacaoController.criarNotificacao({
+            body: {
+                titulo: 'Estabelecimento criado',
+                descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
+            },
+            user: {
+                id: idCriador
+            }
+        }, mockRes);
+
+        res.status(200).json({
+            success: true,
+            message: 'Estabelecimento criado com sucesso!',
+            data: newEstabelecimento,
+            notificacao: notificacao 
+        });
+    } catch (error) {
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
     }
 };
 
@@ -182,9 +242,9 @@ exports.getFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const fotos = await FotoEstabelecimento.findAll({
-            where: { 
+            where: {
                 idEstabelecimento: id,
-                estado: true, 
+                estado: true,
             },
             include: [
                 {
@@ -229,27 +289,27 @@ exports.editarEstabelecimento = async (req, res) => {
         idPosto,
         morada,
         descricao,
+        telemovel,
+        email,
         idAdmin,
         idCriador,
-        latitude, 
-        longitude
     } = req.body;
 
-    const foto = req.file ? req.file.filename : null; 
+    const foto = req.file ? req.file.filename : null;
 
     let updateData = {};
 
-    if (nome) updateData.nome = nome;
-    if (idArea) updateData.idArea = idArea;
-    if (idSubarea) updateData.idSubarea = idSubarea;
-    if (idPosto) updateData.idPosto = idPosto;
-    if (morada) updateData.morada = morada;
-    if (descricao) updateData.descricao = descricao;
-    if (idAdmin) updateData.idAdmin = idAdmin;
-    if (idCriador) updateData.idCriador = idCriador;
-    if (foto) updateData.foto = foto;
-    if (latitude) updateData.latitude = latitude;
-    if (longitude) updateData.longitude = longitude;
+    if (nome !== undefined) updateData.nome = nome;
+    if (idArea !== undefined) updateData.idArea = idArea;
+    if (idSubarea !== undefined) updateData.idSubarea = idSubarea;
+    if (idPosto !== undefined) updateData.idPosto = idPosto;
+    if (morada !== undefined) updateData.morada = morada;
+    if (descricao !== undefined) updateData.descricao = descricao;
+    if (telemovel !== undefined) updateData.telemovel = telemovel;
+    if (email !== undefined) updateData.email = email;
+    if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
+    if (idCriador !== undefined) updateData.idCriador = idCriador;
+    if (foto !== undefined) updateData.foto = foto;
 
     try {
         const [updated] = await Estabelecimento.update(updateData, {
@@ -263,8 +323,7 @@ exports.editarEstabelecimento = async (req, res) => {
             res.status(404).json({ success: false, message: 'Não foi possível atualizar o estabelecimento.' });
         }
     } catch (error) {
-        co
-        nsole.log('Error: ', error);
+        console.log('Error: ', error);
         res.status(500).json({ success: false, message: "Erro ao atualizar o estabelecimento!" });
     }
 };
@@ -297,7 +356,7 @@ exports.deleteFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const [apagado] = await FotoEstabelecimento.update({
-            estado: false,
+        estado: false,
         }, {
             where: { id: id }
         });
@@ -341,3 +400,36 @@ exports.apagarEstabelecimento = async (req, res) => {
         res.status(500).json({ success: false, message: "Erro ao apagar o estabelecimento!" });
     }
 };
+
+exports.EstabelecimentosPorValidar = async (req, res) => {
+    let idPosto;
+    if (req.user) {
+        idPosto = req.user.idPosto;
+    }
+
+    let whereClause = { estado: false };
+
+    if (idPosto) {
+        whereClause.idPosto = idPosto;
+    }
+
+    try {
+        const data = await Estabelecimento.findAll({
+            where: whereClause,
+            include: [
+                { model: Utilizador, as: 'criador', attributes: ['nome'] },
+            ]
+        });
+
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        console.error('Erro ao listar estabelecimentos:', err.message);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
-import { Card, CardMedia, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box} from "@mui/material";
+import { Card, CardMedia, Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Alert} from "@mui/material";
 import api from "../api/api";
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import { alpha } from '@mui/material/styles';
 
 function FotoSlider({ descricao, tipo, id }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -93,17 +92,9 @@ function FotoSlider({ descricao, tipo, id }) {
 
   return (
     <>
-      {fotosState.length > 0 && (
-        <Box sx={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          width: '100%', 
-          height: { xs: '52%', sm: '62%', md: '62%', lg: '62%', xl: '72%' }, 
-          backgroundColor: alpha('#808080', 0.1),
-          zIndex: -1 
-        }} />
-      )}
+    {fotosState.length === 0 && (
+      <Alert severity="info">Ainda não existem fotos disponíveis.</Alert>
+    )}
       {fotosState.length === 0 ? null : fotosState.length === 1 ? (
         <div onClick={() => handleClick(0)} style={{ cursor: "pointer" }}>
           <Card sx={{ boxSizing: "border-box", height: { xs: '300px', sm: '400px', md: '400px', lg: '400px', xl: '500px' } }}>

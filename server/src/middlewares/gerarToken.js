@@ -9,7 +9,7 @@ function gerarToken(user) {
     telemovel: user.telemovel,
     email: user.email,
     cargo: user.cargo,
-    idPosto: user.idPosto
+    idPosto: user.idPosto,
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });

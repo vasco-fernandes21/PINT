@@ -30,7 +30,7 @@ function EditarEstabelecimento({ open, handleClose }) {
         const response = await api.get('/areas');
         setAreas(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar áreas:', error);
+        console.error('Erro ao procurar áreas:', error);
       }
     };
 
@@ -45,7 +45,7 @@ function EditarEstabelecimento({ open, handleClose }) {
           const response = await api.get(`/areas/${selectedArea}`);
           setSubareas(response.data.data);
         } catch (error) {
-          console.error('Erro ao buscar subáreas:', error);
+          console.error('Erro ao procurar subáreas:', error);
         }
       } else {
         setSubareas([]);
@@ -65,7 +65,7 @@ function EditarEstabelecimento({ open, handleClose }) {
           setValue(key, estabelecimento[key]);
         });
       } catch (error) {
-        console.error('Erro ao buscar estabelecimento:', error);
+        console.error('Erro ao procurar estabelecimento:', error);
       }
     };
 
@@ -222,15 +222,17 @@ const apagarEstabelecimento = async (id) => {
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
-          <InputLabel htmlFor="latitude">Latitude</InputLabel>
+          <InputLabel htmlFor="telemovel">Telemóvel</InputLabel>
           <TextField 
-            {...register('latitude')} 
+            {...register('telemovel')} 
+            label="Telemovel" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />
-          <InputLabel htmlFor="longitude">Longitude</InputLabel>
+          <InputLabel htmlFor="email">Email</InputLabel>
           <TextField 
-            {...register('longitude')} 
+            {...register('email')} 
+            label="Email" 
             fullWidth 
             sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
           />

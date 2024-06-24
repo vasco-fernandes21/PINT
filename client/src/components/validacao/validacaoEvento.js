@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import api from '../api/api';
-import { IconButton } from '@mui/material';
+import { IconButton, Dialog, DialogActions, DialogTitle, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const ValidacaoEventos = () => {
-  const [eventos, setEventos] = useState([]); // Inicializa como um array vazio
+  const [eventos, setEventos] = useState([]);
+  const [open, setOpen] = useState(false); // Estado para controlar a abertura do diálogo
+  const [eventoSelecionado, setEventoSelecionado] = useState(null); // Estado para armazenar o evento selecionado
 
   useEffect(() => {
     fetchEventos();
@@ -14,20 +17,90 @@ const ValidacaoEventos = () => {
 
   const fetchEventos = async () => {
     try {
-      const response = await api.get('/eventos');
+      const response = await api.get('/eventos/validar');
       if (response.data.success && Array.isArray(response.data.data)) {
         setEventos(response.data.data);
       } else {
         console.error('Erro: a resposta da API não é um array');
       }
     } catch (error) {
-      console.error('Erro ao buscar eventos:', error);
+      console.error('Erro ao procurar eventos:', error);
     }
   };
 
   const handleClickOpen = (row) => {
-    console.log("Row clicked: ", row);
-    // Adicione sua lógica aqui
+    setEventoSelecionado(row); // Armazena o evento selecionado
+    setOpen(true); // Abre o diálogo
+  };
+
+  const handleClose = () => {
+    setOpen(false); // Fecha o diálogo
+  };
+
+  const handlevalidar = () => {
+    handleClose(); // fecha o diálogo para vermos o alerta
+    // Exibe um diálogo de confirmação
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: 'Deseja realmente validar este evento?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#1d324f', 
+      cancelButtonColor: '#6c757d', 
+      confirmButtonText: 'Sim, validar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // Lógica para validar o evento (PUT /eventos/:id)
+          const id = eventoSelecionado.id; // Supondo que o eventoSelecionado tenha um ID
+          await api.put(`/eventos/${id}`, { estado: true });
+          handleClose();
+          fetchEventos(); // Atualiza a lista de eventos após a alteração
+            Swal.fire({
+            title: 'Validado!',
+            text: 'O evento foi validado com sucesso.',
+            icon: 'success',
+            confirmButtonColor: '#1d324f',
+            });
+          } catch (error) {
+            console.error('Erro ao validar o evento:', error);
+            Swal.fire({
+            title: 'Erro',
+            text: 'Erro ao validar o evento. Por favor, tente novamente.',
+            icon: 'error',
+            confirmButtonColor: '#1d324f',
+            });
+        }
+      }
+    });
+  };
+
+  const handleRecusar = () => {
+    handleClose(); // fecha o diálogo para vermos o alerta
+    // Exibe um diálogo de confirmação
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: 'Deseja realmente recusar este evento?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#1d324f',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sim, Recusar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // Lógica para recusar o evento (DELETE /eventos/:id)
+          const id = eventoSelecionado.id; // Supondo que o eventoSelecionado tenha um ID
+          await api.delete(`/eventos/${id}`);
+          handleClose();
+          fetchEventos(); // Atualiza a lista de eventos após a alteração
+          Swal.fire('Recusado!', 'O evento foi recusado com sucesso.', 'success');
+        } catch (error) {
+          console.error('Erro ao recusar o evento:', error);
+          Swal.fire('Erro', 'Erro ao recusar o evento. Por favor, tente novamente.', 'error');
+        }
+      }
+    });
   };
 
   const columns = [
@@ -40,7 +113,7 @@ const ValidacaoEventos = () => {
         <Link to={`/eventos/${params.row.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
           {params.value}
         </Link>
-      )
+      ),
     },
     { field: 'descricao', headerName: 'Descrição', width: 250 },
     { field: 'data', headerName: 'Data', width: 150 },
@@ -70,6 +143,18 @@ const ValidacaoEventos = () => {
         rowsPerPageOptions={[5, 10, 20]}
         disableSelectionOnClick
       />
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Editar Evento</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleRecusar} color="error">
+            Recusar
+          </Button>
+          <Button onClick={handlevalidar} color="primary">
+            validar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

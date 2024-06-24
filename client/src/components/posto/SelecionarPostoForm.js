@@ -17,7 +17,7 @@ function SelecionarPosto() {
         const response = await api.get('/postos');
         setPostos(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar postos:', error);
+        console.error('Erro ao procurar postos:', error);
       }
     };
     fetchPostos();
@@ -26,10 +26,9 @@ function SelecionarPosto() {
 
   const handlePostoSelection = async () => {
     try {
-      const userResponse = await api.get('/utilizador');
-      const userId = userResponse.data.id;
-      console.log('userId:', userId);
-      const response = await api.post('/utilizador/associar-posto', { id: userId, idPosto: selectedPosto });
+      const resposta = await api.get('/utilizador/completo');
+      const id = resposta.data.id;
+      const response = await api.post('/utilizador/associar-posto', { id: id, idPosto: selectedPosto });
 
       const rememberUser = localStorage.getItem('rememberUser') === 'true';
       const token = response.data.token;

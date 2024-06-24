@@ -1,9 +1,9 @@
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
+const Evento = require('../models/eventoModel');
+const Estabelecimento = require('../models/estabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const Sequelize = require('sequelize');
-const Estabelecimento = require('../models/estabelecimentoModel');
-const Evento = require('../models/eventoModel');
 
 exports.listarAvaliacoesEstabelecimento = async (req, res) => {
     try {
@@ -12,7 +12,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
         const data = await AvaliacaoEstabelecimento.findAll({
             where: { 
                 idEstabelecimento: idEstabelecimento,
-                estado: 'aceite'
+                estado: true,
             }, 
             include: [
                 { 
@@ -25,6 +25,11 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                {
+                    model: Estabelecimento,
+                    as: 'estabelecimento',
+                    attributes: ['nome','idPosto']
+                }
             ],
         });
 
@@ -32,7 +37,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
         const media = await AvaliacaoEstabelecimento.findOne({
             where: { 
                 idEstabelecimento: idEstabelecimento,
-                estado: 'aceite'
+                estado: true,
             },
             attributes: [[Sequelize.fn('avg', Sequelize.col('classificacao')), 'media']]
         });
@@ -77,7 +82,7 @@ exports.CriarAvaliacaoEstabelecimento = async (req, res) => {
             idEstabelecimento,
             classificacao,
             comentario,
-            estado: 'pendente'
+            estado: false
         });
 
         res.json({
@@ -94,7 +99,7 @@ exports.CriarAvaliacaoEstabelecimento = async (req, res) => {
 
 exports.editarAvaliacaoEstabelecimento = async (req, res) => {
     try {
-        const { classificacao, comentario } = req.body;
+        const { classificacao, comentario, estado } = req.body;
         const idAvaliacao = req.params.id;
 
         const avaliacao = await AvaliacaoEstabelecimento.findByPk(idAvaliacao);
@@ -111,6 +116,11 @@ exports.editarAvaliacaoEstabelecimento = async (req, res) => {
 
         if (comentario) {
             avaliacao.comentario = comentario;
+        }
+
+        // Verifica se o estado foi fornecido e atualiza
+        if (estado !== undefined) { // Verifica se estado foi fornecido
+            avaliacao.estado = estado;
         }
 
         await avaliacao.save();
@@ -160,7 +170,7 @@ exports.listarAvaliacoesEvento = async (req, res) => {
         const data = await AvaliacaoEvento.findAll({
             where: { 
                 idEvento,
-                estado: 'aceite'
+                estado: true,
             },
             include: [
                 { 
@@ -173,6 +183,11 @@ exports.listarAvaliacoesEvento = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                {
+                    model: Evento,
+                    as: 'evento',
+                    attributes: ['titulo','idPosto']
+                }
             ],
         });
         res.json({
@@ -212,7 +227,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             idEvento,
             classificacao,
             comentario,
-            estado: 'pendente'
+            estado: false,
         });
 
         res.json({
@@ -229,7 +244,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
 
 exports.editarAvaliacaoEvento = async (req, res) => {
     try {
-        const { classificacao, comentario } = req.body;
+        const { classificacao, comentario, estado } = req.body; 
         const idAvaliacao = req.params.id;
 
         const avaliacao = await AvaliacaoEvento.findByPk(idAvaliacao);
@@ -246,6 +261,11 @@ exports.editarAvaliacaoEvento = async (req, res) => {
 
         if (comentario) {
             avaliacao.comentario = comentario;
+        }
+
+        // Verifica se o estado foi fornecido e atualiza
+        if (estado !== undefined) { // Verifica se estado foi fornecido
+            avaliacao.estado = estado;
         }
 
         await avaliacao.save();
@@ -293,7 +313,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         const idUtilizador = req.params.idUtilizador;
         
         const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
-            where: { idUtilizador },
+            where: { idUtilizador, estado: true, },
             include: [
                 { 
                     model: Utilizador, 
@@ -305,12 +325,16 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                { 
+                    model: Estabelecimento, 
+                    as: 'estabelecimento', 
+                    attributes: ['nome'] 
+                },
             ],
         });
 
-        // Buscar avaliações de eventos
         const avaliacoesEvento = await AvaliacaoEvento.findAll({
-            where: { idUtilizador },
+            where: { idUtilizador, estado: true, },
             include: [
                 { 
                     model: Utilizador, 
@@ -322,10 +346,14 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
                     as: 'admin', 
                     attributes: ['nome'] 
                 },
+                { 
+                    model: Evento, 
+                    as: 'evento', 
+                    attributes: ['titulo'] 
+                },
             ],
         });
 
-        // Combinar os resultados
         const data = [...avaliacoesEstabelecimento, ...avaliacoesEvento];
 
         res.json({
@@ -339,6 +367,61 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         });
     }
 }
+
+
+exports.AvaliacaoEventoPorValidar = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: "Utilizador não autenticado." });
+    }
+
+    const idPosto = req.user.idPosto;
+
+    try {
+        const avaliacoesEvento = await AvaliacaoEvento.findAll({
+            include: [{
+                model: Evento,
+                as: 'evento',
+                where: { idPosto: idPosto }, 
+            }, {
+                model: Utilizador,
+                as: 'utilizador',
+                attributes: ['id', 'nome', 'email']
+            }],
+            where: { estado: false }
+        });
+
+        res.json({ success: true, data: avaliacoesEvento });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Erro ao procurar avaliações: " + error.message });
+    }
+};
+
+exports.AvaliacaoEstabelecimentoPorValidar = async (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: "Utilizador não autenticado." });
+    }
+
+    const idPosto = req.user.idPosto;
+
+    try {
+        const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
+            include: [{
+                model: Estabelecimento,
+                as: 'estabelecimento',
+                where: { idPosto: idPosto }, 
+            }, {
+                model: Utilizador,
+                as: 'utilizador',
+                attributes: ['id', 'nome', 'email']
+            }],
+            where: { estado: false }
+        });
+
+        res.json({ success: true, data: avaliacoesEstabelecimento });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Erro ao procurar avaliações: " + error.message });
+    }
+};
 
 exports.obterMaisAvaliacoes = async (req, res) => {
     try {

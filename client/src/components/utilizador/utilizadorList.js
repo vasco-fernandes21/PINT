@@ -119,15 +119,30 @@ const ListaUtilizadores = () => {
       <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', marginBottom: 4, fontWeight: 'bold' }}>
         Gerir Utilizadores
       </Typography>
+      
       <DataGrid
         rows={rows}
         columns={columns}
+        rowsPerPageOptions={[]}
         pageSize={5}
-        rowsPerPageOptions={[5, 10, 20]}
-        checkboxSelection
         disableSelectionOnClick
-        localeText={{ rowsPerPage: 'Linhas por página' }}
-        sx={{ maxHeight: '500px' }} // Adicione esta linha
+        sx={{
+          maxHeight: '100vh',
+          '.MuiTablePagination-selectRoot': {
+            display: 'none',
+          },
+        }}
+        disableColumnSelector
+        localeText={{
+          footerRowSelected: (count) => `${count} linha(s) selecionada(s)`,
+          rowsPerPage: 'Linhas por página:',
+          noRowsLabel: 'Nenhuma linha',
+          paginationFirstPage: 'Primeira página',
+          paginationLastPage: 'Última página',
+          paginationNextPage: 'Próxima página',
+          paginationPreviousPage: 'Página anterior',
+          paginationRangeLabel: (params) => `${params.from}-${params.to} de ${params.count !== -1 ? params.count : `mais de ${params.to}`}`,
+        }}
       />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{isEdit ? 'Editar Utilizador' : 'Adicionar Utilizador'}</DialogTitle>
