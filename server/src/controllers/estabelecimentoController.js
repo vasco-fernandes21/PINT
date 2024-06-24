@@ -356,7 +356,7 @@ exports.deleteFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const [apagado] = await FotoEstabelecimento.update({
-            estado: false,
+        estado: false,
         }, {
             where: { id: id }
         });

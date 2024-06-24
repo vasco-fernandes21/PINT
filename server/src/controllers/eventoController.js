@@ -342,8 +342,19 @@ exports.getFotoEvento = async (req, res) => {
                 idEvento: id,
                 estado: true,
             },
+            include: [
+                {
+                    model: Utilizador,
+                    as: 'criador',
+                    attributes: ['nome'],
+                },
+                {
+                    model: Utilizador,
+                    as: 'admin',
+                    attributes: ['nome'],
+                },
+            ],
         });
-
         if (fotos.length > 0) {
             res.status(200).json({
                 success: true,

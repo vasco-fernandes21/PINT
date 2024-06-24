@@ -9,6 +9,7 @@ const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
+const Notificacao = require('../models/notificacaoModel');
 const { sequelize } = require('./database');
 
 const utilizadores = [
@@ -111,39 +112,39 @@ const postos = [
 const eventos = [
   // Saúde
   { idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', morada: 'Viseu', estado: true, foto: 'cufViseu.jpg' },
-  { idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, titulo: 'Check-up Dentário', descricao: 'Check-up Dentário na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', morada: 'Tomar', estado: true },
+  { idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, titulo: 'Check-up Dentário', descricao: 'Check-up Dentário na cidade de Tomar', data: '2024-07-01', hora: '11:00:00', morada: 'Tomar', estado: true },
   { idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', morada: 'Fundão', estado: true },
 
   // Desporto
   { idArea: 2, idSubarea: 3, idCriador: 4, idAdmin: 4, idPosto: 4, titulo: 'Competição de Ginástica', descricao: 'Competição de Ginástica na cidade de Portalegre', data: '2024-03-01', hora: '10:00:00', morada: 'Portalegre', estado: true },
-  { idArea: 2, idSubarea: 4, idCriador: 5, idAdmin: 5, idPosto: 5, titulo: 'Atividades ao Ar Livre', descricao: 'Atividades ao Ar Livre na cidade de Vila Real', data: '2024-04-01', hora: '11:00:00', morada: 'Vila Real', estado: true },
+  { idArea: 2, idSubarea: 4, idCriador: 5, idAdmin: 5, idPosto: 5, titulo: 'Atividades ao Ar Livre', descricao: 'Atividades ao Ar Livre na cidade de Vila Real', data: '2024-07-01', hora: '11:00:00', morada: 'Vila Real', estado: true },
   { idArea: 2, idSubarea: 3, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Torneio de Futebol', descricao: 'Torneio de Futebol na cidade de Viseu', data: '2024-05-01', hora: '12:00:00', morada: 'Viseu', estado: true, foto: 'campode7.jpg' },
 
   // Formação
   { idArea: 3, idSubarea: 5, idCriador: 2, idAdmin: 3, idPosto: 2, titulo: 'Workshop de Programação', descricao: 'Workshop de Programação na cidade de Tomar', data: '2024-03-01', hora: '10:00:00', morada: 'Tomar', estado: true },
-  { idArea: 3, idSubarea: 6, idCriador: 3, idAdmin: 4, idPosto: 3, titulo: 'Feira Educacional', descricao: 'Feira Educacional na cidade de Fundão', data: '2024-04-01', hora: '11:00:00', morada: 'Fundão', estado: true },
+  { idArea: 3, idSubarea: 6, idCriador: 3, idAdmin: 4, idPosto: 3, titulo: 'Feira Educacional', descricao: 'Feira Educacional na cidade de Fundão', data: '2024-07-01', hora: '11:00:00', morada: 'Fundão', estado: true },
   { idArea: 3, idSubarea: 5, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Seminário de Educação', descricao: 'Seminário de Educação na cidade de Portalegre', data: '2024-05-01', hora: '12:00:00', morada: 'Portalegre', estado: true },
 
   // Gastronomia
   { idArea: 4, idSubarea: 7, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Festival de Gastronomia', descricao: 'Festival de Gastronomia na cidade de Vila Real', data: '2024-03-01', hora: '10:00:00', morada: 'Vila Real', estado: true },
-  { idArea: 4, idSubarea: 8, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Feira de Shoppings', descricao: 'Feira de Shoppings na cidade de Viseu', data: '2024-04-01', hora: '11:00:00', morada: 'Viseu', estado: true },
+  { idArea: 4, idSubarea: 8, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Feira de Vinhos', descricao: 'Venha testar o seu paladar na 24ª Feira de Vinhos da cidade de Viseu. Preparámos uma grande tarde que não pode perder!', data: '2024-07-01', hora: '11:00:00', morada: 'Parque de estacionamento da feira semanal, Viseu', estado: true, foto: 'vinho.jpg'},
   { idArea: 4, idSubarea: 7, idCriador: 2, idAdmin: 3, idPosto: 2, titulo: 'Degustação de Pratos', descricao: 'Degustação de Pratos na cidade de Tomar', data: '2024-05-01', hora: '12:00:00', morada: 'Tomar', estado: true },
 
   // Alojamento
   { idArea: 5, idSubarea: 9, idCriador: 3, idAdmin: 4, idPosto: 3, titulo: 'Feira de Quartos', descricao: 'Feira de Quartos na cidade de Fundão', data: '2024-03-01', hora: '10:00:00', morada: 'Fundão', estado: true },
-  { idArea: 5, idSubarea: 10, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Mostra de Casas para Alugar', descricao: 'Mostra de Casas para Alugar na cidade de Portalegre', data: '2024-04-01', hora: '11:00:00', morada: 'Portalegre', estado: true },
+  { idArea: 5, idSubarea: 10, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Mostra de Casas para Alugar', descricao: 'Mostra de Casas para Alugar na cidade de Portalegre', data: '2024-07-01', hora: '11:00:00', morada: 'Portalegre', estado: true },
   { idArea: 5, idSubarea: 9, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Exposição de Alojamento', descricao: 'Exposição de Alojamento na cidade de Vila Real', data: '2024-05-01', hora: '12:00:00', morada: 'Vila Real', estado: true },
 
   // Transportes
-  { idArea: 6, idSubarea: 12, idCriador: 2, idAdmin: 3, idPosto: 2, titulo: 'Exposição de Transportes Públicos', descricao: 'Exposição de Transportes Públicos na cidade de Tomar', data: '2024-04-01', hora: '11:00:00', morada: 'Tomar', estado: true },
+  { idArea: 6, idSubarea: 12, idCriador: 2, idAdmin: 3, idPosto: 2, titulo: 'Exposição de Transportes Públicos', descricao: 'Exposição de Transportes Públicos na cidade de Tomar', data: '2024-07-01', hora: '11:00:00', morada: 'Tomar', estado: true },
   { idArea: 6, idSubarea: 11, idCriador: 3, idAdmin: 4, idPosto: 3, titulo: 'Carpooling Meetup', descricao: 'Carpooling Meetup na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', morada: 'Fundão', estado: true },
 
   // Lazer
   { idArea: 7, idSubarea: 13, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Festival de Cinema', descricao: 'Festival de Cinema na cidade de Portalegre', data: '2024-03-01', hora: '10:00:00', morada: 'Portalegre', estado: true },
-  { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Passeio no Parque', descricao: 'Passeio no Parque na cidade de Vila Real', data: '2024-04-01', hora: '11:00:00', morada: 'Vila Real', estado: true },
+  { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Passeio no Parque', descricao: 'Passeio no Parque na cidade de Vila Real', data: '2024-07-01', hora: '11:00:00', morada: 'Vila Real', estado: true },
   { idArea: 7, idSubarea: 13, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Noite de Cinema ao Ar Livre', descricao: 'Noite de Cinema ao Ar Livre na cidade de Viseu', data: '2024-05-01', hora: '12:00:00', morada: 'Viseu', estado: true, foto: 'cinemaPg.jpg' },
   { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 6, idPosto: 1, titulo: 'Verão no Parque', descricao: 'Em contagem decrescente para o verão na Cidade-Jardim, está tudo a postos para mais uma edição de sucesso da iniciativa municipal “Verão no Parque”, que regressa ao Parque Aquilino Ribeiro entre os dias 29 de maio e 28 de julho.', data: '2024-06-25', hora: '12:00:00', morada: 'Parque Aquilino Ribeiro, Viseu', estado: true, foto: 'viseuverao.jpg' },
-  { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 6, idPosto: 1, titulo: 'Feira de São Mateus', descricao: 'A Feira de São Mateus é a mais antiga feira popular de Portugal, e uma das mais antigas do mundo. Realiza-se anualmente em Viseu, Portugal, desde 1394.', data: '2024-08-08', hora: '12:00:00', morada: 'Viseu', estado: true, foto: 'feiraSaoMateus.jpg' },
+  { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 6, idPosto: 1, titulo: 'Feira de São Mateus', descricao: 'A Feira de São Mateus é a mais antiga feira popular de Portugal, e uma das mais antigas do mundo. Realiza-se anualmente em Viseu, Portugal, desde 1394.', data: '2024-08-08', hora: '12:00:00', morada: 'Pavilhão Multiusos de Viseu, Viseu', estado: true, foto: 'feirasaomateus.jpg' },
 ];
 
 const estabelecimentos = [
@@ -386,6 +387,8 @@ const AvaliacoesEstabelecimento = [
   { idUtilizador: 5, idAdmin: 5, idEstabelecimento: 1, classificacao: 1, estado: true },
   { idUtilizador: 1, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, estado: true },
   { idUtilizador: 2, idAdmin: 2, idEstabelecimento: 1, classificacao: 4, estado: true },
+  { idUtilizador: 6, idAdmin: 1, idEstabelecimento: 1, classificacao: 5, comentario: 'O meu sítio de eleição para cuidar da minha saúde, sempre fui bastante bem recebido', estado: true },
+
 ];
 
 // Gerar novas avaliações para estabelecimentos de 2 a 20
@@ -404,7 +407,9 @@ for (let estabelecimentoIndex = 2; estabelecimentoIndex <= 18; estabelecimentoIn
 
 const FotosEvento = [
   { idEvento: 1, foto: 'cufViseu.jpg', idAdmin: 1, idCriador: 1, estado: 1 },
-  { idEvento: 22, foto: 'viseuverao.jpg', idAdmin: 1, idCriador: 1, estado: 1 },
+  { idEvento: 21, foto: 'viseuverao.jpg', idAdmin: 1, idCriador: 1, estado: 1 },
+  { idEvento: 11, foto: 'vinho.jpg', idAdmin: 1, idCriador: 1, estado: 1 },
+  { idEvento: 22, foto: 'feirasaomateus.jpg', idAdmin: 1, idCriador: 1, estado: 1 },
 ];
 
 const FotosEstabelecimento = [
@@ -420,6 +425,7 @@ const AvaliacoesEvento = [
   { idUtilizador: 5, idAdmin: 5, idEvento: 1, classificacao: 1, estado: true },
   { idUtilizador: 1, idAdmin: 1, idEvento: 1, classificacao: 5, estado: true },
   { idUtilizador: 2, idAdmin: 2, idEvento: 1, classificacao: 4, estado: true },
+  { idUtilizador: 6, idAdmin: 1, idEvento: 21, classificacao: 5, comentario: 'Perfeito para levar a família e amigos, especialmente com este calor que temos sentido nos últimos dias', estado: true },
 ];
 
 // Gerar novas avaliações para eventos de 2 a 20
@@ -446,6 +452,12 @@ for (let eventoIndex = 1; eventoIndex <= 22; eventoIndex++) {
     });
   }
 }
+
+const Notificacoes = [
+  { idUtilizador: 6, titulo: "Nova avaliação!", descricao: 'Tem uma nova avaliação no evento "Campanha de Saúde"', estado: false },
+  { idUtilizador: 6, titulo: "Nova inscrição no seu evento!", descricao: 'Tem uma nova inscrição no evento "Campanha de Saúde"', estado: true },
+  { idUtilizador: 6, titulo: "Quase a chegar!", descricao: 'Falta menos de uma semana para "Campanha de Saúde"!', estado: false },
+]
 
 const carregarTabelas = () => {
   sequelize.sync({ force: true })
@@ -481,6 +493,9 @@ const carregarTabelas = () => {
     })
     .then(() => {
       return Inscricao.bulkCreate(Inscricoes);
+    })
+    .then(() => {
+      return Notificacao.bulkCreate(Notificacoes);
     })
     .catch((error) => {
       console.error('Erro ao carregar tabelas:', error);

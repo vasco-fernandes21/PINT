@@ -21,10 +21,22 @@ const storageEstabelecimentos = multer.diskStorage({
     }
 });
 
+//Configuração do Multer para utilizadores
+const storageUtilizadores = multer.diskStorage({
+    destination: './uploads/utilizador',
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const filename = file.fieldname + '-' + Date.now() + '-' + path.basename(file.originalname, ext) + ext;
+        cb(null, filename);
+    }
+});
+
 const uploadEventos = multer({ storage: storageEventos });
 const uploadEstabelecimentos = multer({ storage: storageEstabelecimentos });
+const uploadUtilizadores = multer({ storage: storageUtilizadores });
 
 module.exports = {
     uploadEventos,
-    uploadEstabelecimentos
+    uploadEstabelecimentos,
+    uploadUtilizadores
 };
