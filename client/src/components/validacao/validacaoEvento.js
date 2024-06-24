@@ -24,7 +24,7 @@ const ValidacaoEventos = () => {
         console.error('Erro: a resposta da API não é um array');
       }
     } catch (error) {
-      console.error('Erro ao buscar eventos:', error);
+      console.error('Erro ao procurar eventos:', error);
     }
   };
 

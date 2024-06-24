@@ -17,7 +17,7 @@ function SelecionarPosto() {
         const response = await api.get('/postos');
         setPostos(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar postos:', error);
+        console.error('Erro ao procurar postos:', error);
       }
     };
     fetchPostos();

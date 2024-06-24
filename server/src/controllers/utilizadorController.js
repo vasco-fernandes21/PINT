@@ -24,7 +24,7 @@ exports.getUtilizadorCompleto = async (req, res) => {
 
     res.send(utilizador);
   } catch (error) {
-    console.error('Erro ao buscar utilizador:', error);
+    console.error('Erro ao procurar utilizador:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
@@ -57,7 +57,7 @@ exports.utilizadorPorId = async (req, res) => {
 
     res.send(utilizador);
   } catch (error) {
-    console.error('Erro ao buscar utilizador:', error);
+    console.error('Erro ao procurar utilizador:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 }
@@ -146,7 +146,7 @@ exports.associarPosto = async (req, res) => {
 
     return res.status(200).send({ message: 'Utilizador associado ao posto com sucesso', token });
   } catch (error) {
-    console.log(error); // Adicione esta linha
+    console.log(error); 
     return res.status(500).send({ message: 'Erro ao associar utilizador ao posto', error });
   }
 };

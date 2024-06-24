@@ -27,7 +27,7 @@ function EditarEvento({ open, handleClose }) {
         const response = await api.get('/areas');
         setAreas(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar áreas:', error);
+        console.error('Erro ao procurar áreas:', error);
       }
     };
 
@@ -41,7 +41,7 @@ function EditarEvento({ open, handleClose }) {
           const response = await api.get(`/areas/${selectedArea}`);
           setSubareas(response.data.data);
         } catch (error) {
-          console.error('Erro ao buscar subáreas:', error);
+          console.error('Erro ao procurar subáreas:', error);
         }
       } else {
         setSubareas([]);
@@ -60,7 +60,7 @@ function EditarEvento({ open, handleClose }) {
           setValue(key, evento[key]);
         });
       } catch (error) {
-        console.error('Erro ao buscar evento:', error);
+        console.error('Erro ao procurar evento:', error);
       }
     };
 

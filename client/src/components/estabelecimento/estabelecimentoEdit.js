@@ -30,7 +30,7 @@ function EditarEstabelecimento({ open, handleClose }) {
         const response = await api.get('/areas');
         setAreas(response.data.data);
       } catch (error) {
-        console.error('Erro ao buscar áreas:', error);
+        console.error('Erro ao procurar áreas:', error);
       }
     };
 
@@ -45,7 +45,7 @@ function EditarEstabelecimento({ open, handleClose }) {
           const response = await api.get(`/areas/${selectedArea}`);
           setSubareas(response.data.data);
         } catch (error) {
-          console.error('Erro ao buscar subáreas:', error);
+          console.error('Erro ao procurar subáreas:', error);
         }
       } else {
         setSubareas([]);
@@ -65,7 +65,7 @@ function EditarEstabelecimento({ open, handleClose }) {
           setValue(key, estabelecimento[key]);
         });
       } catch (error) {
-        console.error('Erro ao buscar estabelecimento:', error);
+        console.error('Erro ao procurar estabelecimento:', error);
       }
     };
 

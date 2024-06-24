@@ -16,10 +16,10 @@ exports.listarEventos = async (req, res) => {
         idPosto = req.user.idPosto;
     }
 
-    let whereClause = {estado: true };
+    let whereClause = { estado: true };
     if (areaId) {
         whereClause.idArea = areaId;
-    }   
+    }
     if (subareaId) {
         whereClause.idSubarea = subareaId;
     }
@@ -71,8 +71,8 @@ exports.eventosMobile = async (req, res) => {
             where: whereClause,
             include: [
                 { model: Area, as: 'area', attributes: ['nome'] },
-                { model: Subarea, as: 'subarea', attributes: ['nome'] }, 
-                { model: Posto, as: 'posto', attributes: ['nome'] }, 
+                { model: Subarea, as: 'subarea', attributes: ['nome'] },
+                { model: Posto, as: 'posto', attributes: ['nome'] },
                 { model: Utilizador, as: 'criador', attributes: ['nome'] },
                 { model: Utilizador, as: 'admin', attributes: ['nome'] }
             ]
@@ -139,9 +139,9 @@ exports.CriarEvento = async (req, res) => {
         idSubarea
     } = req.body;
 
-    const idPosto = req.user.idPosto; 
+    const idPosto = req.user.idPosto;
     const idCriador = req.user.id;
-    const foto = req.file ? req.file.filename : null; 
+    const foto = req.file ? req.file.filename : null;
 
     try {
         const newEvento = await Evento.create({
@@ -196,7 +196,7 @@ exports.CriarEventoMobile = async (req, res) => {
     } = req.body;
 
     const idCriador = req.user.id;
-    const foto = req.file ? req.file.filename : null; 
+    const foto = req.file ? req.file.filename : null;
 
     try {
 
@@ -236,7 +236,7 @@ exports.CriarEventoMobile = async (req, res) => {
             success: true,
             message: 'Evento criado com sucesso!',
             data: newEvento,
-            notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
+            notificacao: notificacao 
         });
     } catch (error) {
         console.log('Error: ', error);
@@ -264,7 +264,7 @@ exports.editarEvento = async (req, res) => {
         inscricaoAberta
     } = req.body;
 
-    const foto = req.file ? req.file.filename : null; 
+    const foto = req.file ? req.file.filename : null;
 
     let updateData = {};
 
@@ -329,18 +329,18 @@ exports.apagarEvento = async (req, res) => {
             res.status(404).json({ success: false, message: 'Evento não encontrado.' });
         }
     } catch (error) {
-        console.error('Erro ao apagar evento:', error); 
+        console.error('Erro ao apagar evento:', error);
         res.status(500).json({ success: false, message: "Erro ao apagar o evento!" });
     }
 };
 
-    exports.getFotoEvento = async (req, res) => {
+exports.getFotoEvento = async (req, res) => {
     const { id } = req.params;
     try {
         const fotos = await FotoEvento.findAll({
-            where: { 
+            where: {
                 idEvento: id,
-                estado: true, 
+                estado: true,
             },
         });
 
@@ -446,7 +446,7 @@ exports.getInscricaoEvento = async (req, res) => {
     const { id } = req.params;
     try {
         const inscricoes = await Inscricao.findAll({
-            where: { 
+            where: {
                 idEvento: id,
                 estado: true,
 
@@ -482,7 +482,7 @@ exports.inscreverEvento = async (req, res) => {
     const idUtilizador = req.user.id;
 
     try {
-        // Verifica se o usuário já está inscrito no evento
+        // Verifica se o utilizador já está inscrito no evento
         const inscricaoExistente = await Inscricao.findOne({
             where: {
                 idEvento: id,

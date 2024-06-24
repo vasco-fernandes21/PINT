@@ -90,119 +90,119 @@ exports.estabelecimentosMobile = async (req, res) => {
 
 exports.criarEstabelecimento = async (req, res) => {
     const {
-      nome,
-      idArea,
-      idSubarea,
-      morada,
-      descricao,
-      telemovel,
-      email,
-      idAdmin
-    } = req.body;
-
-    const foto = req.file ? req.file.filename : null; 
-    const idCriador = req.user.id;
-    const idPosto = req.user.idPosto;
-
-    try {
-      const newEstabelecimento = await Estabelecimento.create({
         nome,
         idArea,
         idSubarea,
-        idPosto,
         morada,
         descricao,
         telemovel,
         email,
-        idAdmin,
-        idCriador,
-        foto
-      });
+        idAdmin
+    } = req.body;
 
-      // Criar notificação após a criação do estabelecimento
-      const mockRes = {
-          status: () => mockRes,
-          json: (data) => { return data; }
-      };
+    const foto = req.file ? req.file.filename : null;
+    const idCriador = req.user.id;
+    const idPosto = req.user.idPosto;
 
-      const notificacao = await notificacaoController.criarNotificacao({
-          body: {
-              titulo: 'Estabelecimento criado',
-              descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
-          },
-          user: {
-              id: idCriador
-          }
-      }, mockRes);
+    try {
+        const newEstabelecimento = await Estabelecimento.create({
+            nome,
+            idArea,
+            idSubarea,
+            idPosto,
+            morada,
+            descricao,
+            telemovel,
+            email,
+            idAdmin,
+            idCriador,
+            foto
+        });
 
-      res.status(200).json({
-        success: true,
-        message: 'Estabelecimento criado com sucesso!',
-        data: newEstabelecimento,
-        notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
-      });
+        // Criar notificação após a criação do estabelecimento
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => { return data; }
+        };
+
+        const notificacao = await notificacaoController.criarNotificacao({
+            body: {
+                titulo: 'Estabelecimento criado',
+                descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
+            },
+            user: {
+                id: idCriador
+            }
+        }, mockRes);
+
+        res.status(200).json({
+            success: true,
+            message: 'Estabelecimento criado com sucesso!',
+            data: newEstabelecimento,
+            notificacao: notificacao 
+        });
     } catch (error) {
-      console.log('Error: ', error);
-      res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
     }
 };
 
 exports.criarEstabelecimentoMobile = async (req, res) => {
     const {
-      nome,
-      idArea,
-      idSubarea,
-      morada,
-      idPosto,
-      descricao,
-      telemovel,
-      email,
-      idAdmin
-    } = req.body;
-
-    const foto = req.file ? req.file.filename : null; 
-    const idCriador = req.user.id;
-
-    try {
-      const newEstabelecimento = await Estabelecimento.create({
         nome,
         idArea,
         idSubarea,
-        idPosto,
         morada,
+        idPosto,
         descricao,
         telemovel,
         email,
-        idAdmin,
-        idCriador,
-        foto
-      });
+        idAdmin
+    } = req.body;
 
-      // Criar notificação após a criação do estabelecimento
-      const mockRes = {
-          status: () => mockRes,
-          json: (data) => { return data; }
-      };
+    const foto = req.file ? req.file.filename : null;
+    const idCriador = req.user.id;
 
-      const notificacao = await notificacaoController.criarNotificacao({
-          body: {
-              titulo: 'Estabelecimento criado',
-              descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
-          },
-          user: {
-              id: idCriador
-          }
-      }, mockRes);
+    try {
+        const newEstabelecimento = await Estabelecimento.create({
+            nome,
+            idArea,
+            idSubarea,
+            idPosto,
+            morada,
+            descricao,
+            telemovel,
+            email,
+            idAdmin,
+            idCriador,
+            foto
+        });
 
-      res.status(200).json({
-        success: true,
-        message: 'Estabelecimento criado com sucesso!',
-        data: newEstabelecimento,
-        notificacao: notificacao // Adicione esta linha para enviar a notificação como resposta
-      });
+        // Criar notificação após a criação do estabelecimento
+        const mockRes = {
+            status: () => mockRes,
+            json: (data) => { return data; }
+        };
+
+        const notificacao = await notificacaoController.criarNotificacao({
+            body: {
+                titulo: 'Estabelecimento criado',
+                descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
+            },
+            user: {
+                id: idCriador
+            }
+        }, mockRes);
+
+        res.status(200).json({
+            success: true,
+            message: 'Estabelecimento criado com sucesso!',
+            data: newEstabelecimento,
+            notificacao: notificacao 
+        });
     } catch (error) {
-      console.log('Error: ', error);
-      res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
+        console.log('Error: ', error);
+        res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
     }
 };
 
@@ -242,9 +242,9 @@ exports.getFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const fotos = await FotoEstabelecimento.findAll({
-            where: { 
+            where: {
                 idEstabelecimento: id,
-                estado: true, 
+                estado: true,
             },
             include: [
                 {
@@ -295,7 +295,7 @@ exports.editarEstabelecimento = async (req, res) => {
         idCriador,
     } = req.body;
 
-    const foto = req.file ? req.file.filename : null; 
+    const foto = req.file ? req.file.filename : null;
 
     let updateData = {};
 

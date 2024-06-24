@@ -361,7 +361,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
 
 exports.AvaliacaoEventoPorValidar = async (req, res) => {
     if (!req.user) {
-        return res.status(401).json({ success: false, message: "Usuário não autenticado." });
+        return res.status(401).json({ success: false, message: "Utilizador não autenticado." });
     }
 
     const idPosto = req.user.idPosto;
@@ -387,13 +387,13 @@ exports.AvaliacaoEventoPorValidar = async (req, res) => {
 
         res.json({ success: true, data: avaliacoesEvento });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Erro ao buscar avaliações: " + error.message });
+        res.status(500).json({ success: false, message: "Erro ao procurar avaliações: " + error.message });
     }
 };
 
 exports.AvaliacaoEstabelecimentoPorValidar = async (req, res) => {
     if (!req.user) {
-        return res.status(401).json({ success: false, message: "Usuário não autenticado." });
+        return res.status(401).json({ success: false, message: "Utilizador não autenticado." });
     }
 
     const idPosto = req.user.idPosto;
@@ -415,6 +415,6 @@ exports.AvaliacaoEstabelecimentoPorValidar = async (req, res) => {
 
         res.json({ success: true, data: avaliacoesEstabelecimento });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Erro ao buscar avaliações: " + error.message });
+        res.status(500).json({ success: false, message: "Erro ao procurar avaliações: " + error.message });
     }
 }
