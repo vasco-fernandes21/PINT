@@ -27,12 +27,10 @@ const Grafico = () => {
         console.error('Erro ao buscar eventos:', error.response || error.message);
       }
     };
-
     fetchEventos();
   }, []);
 
   useEffect(() => {
-    // Load the Google Charts library
     const script = document.createElement('script');
     script.src = 'https://www.gstatic.com/charts/loader.js';
     script.async = true;
@@ -63,7 +61,7 @@ const Grafico = () => {
         hAxis: { title: 'Mês' },
         legend: 'none',
         bar: { groupWidth: '90%' },
-        colors: ['#1b9e77'], // Cor das colunas
+        colors: ['#1d324f'], // Cor das colunas
       };
 
       const chart = new window.google.visualization.ColumnChart(document.getElementById('chart_div'));

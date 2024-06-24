@@ -4,8 +4,6 @@ const Evento = require('../models/eventoModel');
 const Estabelecimento = require('../models/estabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const Sequelize = require('sequelize');
-const Estabelecimento = require('../models/estabelecimentoModel');
-const Evento = require('../models/eventoModel');
 
 exports.listarAvaliacoesEstabelecimento = async (req, res) => {
     try {
@@ -463,7 +461,7 @@ exports.obterMaisAvaliacoes = async (req, res) => {
         if (eventoMaisAvaliado) {
             const evento = await Evento.findByPk(eventoMaisAvaliado.idEvento);
             if (evento) {
-                nomeEventoMaisAvaliado = evento.nome;
+                nomeEventoMaisAvaliado = evento.titulo;
             }
         }
 

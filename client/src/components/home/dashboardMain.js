@@ -29,11 +29,11 @@ const DashboardMain = () => {
   useEffect(() => {
     const currentHour = new Date().getHours();
     if (currentHour >= 6 && currentHour < 13) {
-      setGreeting('Bom dia');
+      setGreeting('Bom dia,');
     } else if (currentHour >= 13 && currentHour < 20) {
-      setGreeting('Boa tarde');
+      setGreeting('Boa tarde,');
     } else {
-      setGreeting('Boa noite');
+      setGreeting('Boa noite,');
     }
   }, []);
 
@@ -45,7 +45,7 @@ const DashboardMain = () => {
     <Box sx={{ height: '80vh', display: 'flex', flexDirection: 'column' }}>
 
       <Typography variant="h4" sx={{ marginBottom: 2 }}>
-        {greeting} {nomeUsuario}
+       {greeting}  <strong>{nomeUsuario}</strong>
       </Typography>
 
       <Box sx={{ flexGrow: 1 }}>
