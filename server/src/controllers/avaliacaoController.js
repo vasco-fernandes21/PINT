@@ -378,7 +378,7 @@ exports.obterMaisAvaliacoes = async (req, res) => {
         if (eventoMaisAvaliado) {
             const evento = await Evento.findByPk(eventoMaisAvaliado.idEvento);
             if (evento) {
-                nomeEventoMaisAvaliado = evento.nome;
+                nomeEventoMaisAvaliado = evento.titulo;
             }
         }
 

@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="203e3d05-6255-4397-b082-90b0cd5fe24d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/64c979f3-ea2b-41bb-9995-d908fc478b16.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/64c979f3-ea2b-41bb-9995-d908fc478b16/storage_v2/_src_/database/pint.f4E0AA.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/64c979f3-ea2b-41bb-9995-d908fc478b16/storage_v2/_src_/database/pint.f4E0AA/schema/public.abK9xQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/home/dashBoardTopicos.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/home/dashBoardTopicos.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/home/dashboardComentada.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/home/dashboardComentada.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/home/dashboardGrafico.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/home/dashboardGrafico.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/home/dashboardValidacoes.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/home/dashboardValidacoes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/controllers/avaliacaoController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/controllers/avaliacaoController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/controllers/validacaoController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/controllers/validacaoController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/routes/avaliacaoRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/avaliacaoRoutes.js" afterDir="false" />
-    </list>
+    <list default="true" id="203e3d05-6255-4397-b082-90b0cd5fe24d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
