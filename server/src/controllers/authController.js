@@ -140,7 +140,7 @@ exports.criarConta = async (req, res) => {
 
     const token = gerarToken(novoUser);
 
-    const verificationUrl = `${process.env.REACT_APP_API_URL}/verificar-conta?token=${verificationToken}`;
+    const verificationUrl = `${process.env.REACT_APP_FRONTEND}/verificar-conta?token=${verificationToken}`;
     await enviarEmail({  
       email,
       subject: 'Verifique o seu email',
@@ -156,7 +156,11 @@ exports.criarConta = async (req, res) => {
 
 exports.verificarEmail = async (req, res) => {
   try {
-    const { token } = req.query;
+    const { token } = req.body || req.query; 
+
+    if (!token) {
+      return res.status(400).send({ error: 'Token de verificação não fornecido' });
+    }
 
     const user = await Utilizador.findOne({ where: { verificationToken: token } });
     if (!user) {
@@ -167,12 +171,13 @@ exports.verificarEmail = async (req, res) => {
     user.verificationToken = null;
     await user.save();
 
-    res.send({ message: 'Email verificado com sucesso. Pode seguir para o login' });
+    res.status(200).send({ message: 'Email verificado com sucesso. Pode seguir para o login' });
   } catch (error) {
-    console.error('Error during email verification:', error);
+    console.error('Erro durante a verificação de email:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
+ 
 
 exports.recuperarPasse = async (req, res) => {
   try {
@@ -194,7 +199,7 @@ exports.recuperarPasse = async (req, res) => {
       message: `Clique no link a seguir para redefinir a sua palavra-passe: ${resetUrl}`
     });
 
-    res.send({ message: 'Email enviado com sucesso. Verifique a sua caixa de entrada' });
+    res.send({ message: 'Email enviado com sucesso. Verifique o seu email para recuperar a password ' });
   } catch (error) {
     console.error('Error during password recovery:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });

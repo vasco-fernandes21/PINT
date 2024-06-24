@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { FaCalendarAlt, FaBell, FaHome, FaBars, FaUser } from "react-icons/fa";
+import { FaCalendarAlt, FaBell, FaHome, FaBars, FaUser, FaCheck} from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsBuildings } from "react-icons/bs";
 import { MdEvent, MdAddCircle } from "react-icons/md";
@@ -92,7 +92,7 @@ const Sidebar = () => {
             <ContadorNotificacoes className='icone' /> Notificações
           </NavLink>
           <NavLink className={location.pathname === "/validacao" ? "menu-item text-white d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
-            <MdAddCircle className='icone' /> Validações
+            <FaCheck className='icone' /> Validações
           </NavLink>
           {utilizador && (
             <NavLink 

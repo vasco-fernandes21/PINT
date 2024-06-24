@@ -99,7 +99,7 @@ exports.CriarAvaliacaoEstabelecimento = async (req, res) => {
 
 exports.editarAvaliacaoEstabelecimento = async (req, res) => {
     try {
-        const { classificacao, comentario } = req.body;
+        const { classificacao, comentario, estado } = req.body;
         const idAvaliacao = req.params.id;
 
         const avaliacao = await AvaliacaoEstabelecimento.findByPk(idAvaliacao);
@@ -116,6 +116,11 @@ exports.editarAvaliacaoEstabelecimento = async (req, res) => {
 
         if (comentario) {
             avaliacao.comentario = comentario;
+        }
+
+        // Verifica se o estado foi fornecido e atualiza
+        if (estado !== undefined) { // Verifica se estado foi fornecido
+            avaliacao.estado = estado;
         }
 
         await avaliacao.save();
@@ -239,7 +244,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
 
 exports.editarAvaliacaoEvento = async (req, res) => {
     try {
-        const { classificacao, comentario } = req.body;
+        const { classificacao, comentario, estado } = req.body; 
         const idAvaliacao = req.params.id;
 
         const avaliacao = await AvaliacaoEvento.findByPk(idAvaliacao);
@@ -256,6 +261,11 @@ exports.editarAvaliacaoEvento = async (req, res) => {
 
         if (comentario) {
             avaliacao.comentario = comentario;
+        }
+
+        // Verifica se o estado foi fornecido e atualiza
+        if (estado !== undefined) { // Verifica se estado foi fornecido
+            avaliacao.estado = estado;
         }
 
         await avaliacao.save();
@@ -370,19 +380,14 @@ exports.AvaliacaoEventoPorValidar = async (req, res) => {
         const avaliacoesEvento = await AvaliacaoEvento.findAll({
             include: [{
                 model: Evento,
-                as: 'Evento',
-                include: [{
-                    model: Estabelecimento, // Inclui o modelo Estabelecimento
-                    as: 'estabelecimento', // Assumindo que esta é a associação definida
-                    where: { idPosto: idPosto }, // Aplica a condição where ao Estabelecimento
-                    include: [{
-                        model: Utilizador,
-                        as: 'utilizador',
-                        attributes: ['id', 'titulo', 'idPosto']
-                    }]
-                }]
+                as: 'evento',
+                where: { idPosto: idPosto }, 
+            }, {
+                model: Utilizador,
+                as: 'utilizador',
+                attributes: ['id', 'nome', 'email']
             }],
-            where: { estado: false } // Mantém a condição para listar apenas avaliações com estado false
+            where: { estado: false }
         });
 
         res.json({ success: true, data: avaliacoesEvento });
@@ -402,19 +407,18 @@ exports.AvaliacaoEstabelecimentoPorValidar = async (req, res) => {
         const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
             include: [{
                 model: Estabelecimento,
-                as: 'Estabelecimento', 
-                where: { idPosto: idPosto },
-                include: [{
-                    model: Utilizador,
-                    as: 'utilizador', 
-                    attributes: ['id', 'nome', 'idPosto']
-                }]
+                as: 'estabelecimento',
+                where: { idPosto: idPosto }, 
+            }, {
+                model: Utilizador,
+                as: 'utilizador',
+                attributes: ['id', 'nome', 'email']
             }],
-            where: { estado: false } 
+            where: { estado: false }
         });
 
         res.json({ success: true, data: avaliacoesEstabelecimento });
     } catch (error) {
         res.status(500).json({ success: false, message: "Erro ao procurar avaliações: " + error.message });
     }
-}
+};

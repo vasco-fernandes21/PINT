@@ -64,13 +64,15 @@ const utilizadores = [
     cargo: 'Gestor de Dados',
   },
   {
-    nome: 'Teste',
+    nome: 'Utilizador Teste',
     email: 'teste@email.com',
     palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     estado: true,
     isAdmin: true,
     isPrimeiroLogin: false,
     idPosto: 1,
+    cargo: 'Gestor de Dados',
+    descricao: 'Utilizador de teste',
   },
 ];
 

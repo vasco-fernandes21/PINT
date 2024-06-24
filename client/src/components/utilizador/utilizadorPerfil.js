@@ -5,6 +5,7 @@ import api from '../api/api';
 import AvatarImagem from "../utils/avatarImagem";
 import BotaoUpload from "../utils/botaoUpload";
 import ComentariosPerfil from "./comentariosPerfil";
+import EditarPerfil from './utilizadorEditar'; 
 
 const Perfil = () => {
   const [utilizador, setUtilizador] = useState(null);
@@ -13,6 +14,7 @@ const Perfil = () => {
   const itemsPerPage = 5;
   const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
   const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
 
   useEffect(() => {
     const fetchUtilizador = async () => {
@@ -40,7 +42,7 @@ const Perfil = () => {
   useEffect(() => {
     fetchAvaliacoes();
   }, [utilizador]);
-    
+
   const handleChange = (event, value) => {
     setPage(value);
   };
@@ -49,8 +51,20 @@ const Perfil = () => {
     setUtilizador({ ...utilizador, foto: novaFoto });
   };
 
+  const handleDialogOpen = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleUpdate = (updatedUtilizador) => {
+    setUtilizador(updatedUtilizador);
+  };
+
   return (
-        <Box sx={{ padding: 2, maxWidth: { xl: '10' } }}>
+    <Box sx={{ padding: 2, maxWidth: { xl: '10' } }}>
       <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
           <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pl: 1 }}>
@@ -58,7 +72,7 @@ const Perfil = () => {
               src={utilizador && utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador ? utilizador.foto : ''}`}
               alt={utilizador?.nome} sx={{ width: 200, height: 200, mb: 2 }} 
             />
-            <Button variant="contained" sx={{ mb: 2, backgroundColor: '#1D324F' }} onClick={() => navigate('/perfil/editar')}>
+            <Button variant="contained" sx={{ mb: 2, backgroundColor: '#1D324F' }} onClick={handleDialogOpen}>
               Editar Perfil
             </Button>
             {utilizador && <BotaoUpload tipo="utilizador" id={utilizador.id} idUtilizador={utilizador.id} updateFotos={updateFotoPerfil} />}
@@ -71,9 +85,11 @@ const Perfil = () => {
               <Typography variant="h6" sx={{ marginTop: 2 }}>
                 Sobre:
               </Typography>
-              <Typography variant="body1" sx={{ marginTop: 1 }}>
-                {utilizador?.descricao || <span onClick={() => alert('Descricao não definida')}>Pequena descrição do user.</span>}
-              </Typography>
+              {utilizador?.descricao && (
+                <Typography variant="body1" sx={{ marginTop: 2 }}>
+                  <strong>Descrição:</strong> {utilizador.descricao}
+                </Typography>
+              )}
               {utilizador?.nif && (
                 <Typography variant="body1" sx={{ marginTop: 2 }}>
                   <strong>NIF:</strong> {utilizador.nif}
@@ -131,6 +147,12 @@ const Perfil = () => {
           />
         )}
       </Paper>
+      <EditarPerfil
+        open={isDialogOpen}
+        onClose={handleDialogClose}
+        utilizador={utilizador}
+        onUpdate={handleUpdate}
+      />
     </Box>
   );
 };

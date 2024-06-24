@@ -5,6 +5,7 @@ import Login from './components/auth/loginForm';
 import Registar from './components/auth/registarForm';
 import RecuperarPasseForm from './components/auth/recuperarPasseForm';
 import NovaPasseForm from './components/auth/novaPasseForm';
+import ContaConfirmada from './components/auth/confirmarConta';
 import Sidebar from './components/home/sidebar';
 import Eventos from './views/eventos/eventos';
 import CriarEvento from './components/eventos/eventoCriar';
@@ -59,6 +60,7 @@ function App() {
           <Route path="registar" element={<Registar />} />
           <Route path="recuperar-passe" element={<RecuperarPasseForm />} />
           <Route path="reset-passe" element={<NovaPasseForm />} />
+          <Route path="verificar-conta" element={<ContaConfirmada />} />
           <Route path="posto" element={<SelecionarPosto />} />
         </Route>
 
