@@ -387,6 +387,7 @@ exports.EstabelecimentosPorValidar = async (req, res) => {
     if (req.user) {
         idPosto = req.user.idPosto;
     }
+    console.log('ID Posto:', idPosto);
     let whereClause = { estado: false };
 
     if (idPosto) {
@@ -403,6 +404,7 @@ exports.EstabelecimentosPorValidar = async (req, res) => {
         res.json({
             success: true,
             data: data,
+            contador: data.length, 
         });
     } catch (err) {
         console.error('Erro ao listar estabelecimentos:', err.message);

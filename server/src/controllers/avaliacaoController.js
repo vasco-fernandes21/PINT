@@ -388,7 +388,7 @@ exports.AvaliacaoEventoPorValidar = async (req, res) => {
             where: { estado: false }
         });
 
-        res.json({ success: true, data: avaliacoesEvento });
+        res.json({ success: true, data: avaliacoesEvento, contador: avaliacoesEvento.length,});
     } catch (error) {
         res.status(500).json({ success: false, message: "Erro ao procurar avaliações: " + error.message });
     }
@@ -415,7 +415,8 @@ exports.AvaliacaoEstabelecimentoPorValidar = async (req, res) => {
             where: { estado: false }
         });
 
-        res.json({ success: true, data: avaliacoesEstabelecimento });
+        res.json({ success: true, data: avaliacoesEstabelecimento, contador: avaliacoesEstabelecimento.length, 
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: "Erro ao procurar avaliações: " + error.message });
     }
