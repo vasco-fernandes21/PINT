@@ -442,6 +442,7 @@ exports.EventosPorValidar = async (req, res) => {
         res.json({
             success: true,
             data: data,
+            contador: data.length, 
         });
     } catch (err) {
         console.error('Erro ao listar eventos:', err.message);
