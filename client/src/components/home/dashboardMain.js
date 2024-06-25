@@ -6,25 +6,25 @@ import Comentadas from './dashboardComentada';
 import Vista from './dashboardVista';
 import Grafico from './dashboardGrafico';
 import Topicos from './dashBoardTopicos';
-import api from '../api/api'; // Importe o módulo da sua API
+import api from '../api/api'; 
 
 const DashboardMain = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [greeting, setGreeting] = useState('');
-  const [nomeUsuario, setNomeUsuario] = useState(''); // Estado para armazenar o nome do utilizador
+  const [nomeUsuario, setNomeUsuario] = useState(''); 
 
   useEffect(() => {
     const fetchUtilizador = async () => {
       try {
         const response = await api.get('/utilizador');
-        setNomeUsuario(response.data.nome); // Definir o nome do utilizador no estado
+        setNomeUsuario(response.data.nome); 
       } catch (error) {
         console.error('Erro ao encontrar utilizador:', error);
       }
     };
 
-    fetchUtilizador(); // Chamar a função fetchUtilizador para buscar o utilizador
-  }, []); // Executar apenas uma vez ao montar o componente
+    fetchUtilizador();
+  }, []); 
 
   useEffect(() => {
     const currentHour = new Date().getHours();

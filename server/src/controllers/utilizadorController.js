@@ -62,7 +62,6 @@ exports.utilizadorPorId = async (req, res) => {
   }
 }
 
-// Para adicionar um novo utilizador
 exports.criarUtilizador = async (req, res) => {
   const { nome, email, estado, isAdmin, idPosto } = req.body;
 
@@ -75,7 +74,6 @@ exports.criarUtilizador = async (req, res) => {
   }
 };
 
-// Para apagar um utilizador
 exports.apagarUtilizador = async (req, res) => {
   const { id } = req.params;
 

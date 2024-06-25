@@ -7,6 +7,7 @@ router.get('/eventos/:areaId', auth, estatisticaController.eventosPorAreaPosto);
 router.get('/estabelecimentos/:areaId', auth, estatisticaController.estabelecimentosPorAreaPosto);
 router.get('/eventos', auth, estatisticaController.contadorEventosPorArea);
 router.get('/estabelecimentos', auth, estatisticaController.contadorEstabelecimentosPorArea);
+router.get('/mais-avaliados', estatisticaController.maisAvaliados);
 
 
 module.exports = router;

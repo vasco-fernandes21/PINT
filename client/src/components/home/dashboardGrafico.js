@@ -35,22 +35,18 @@ const Grafico = () => {
     script.src = 'https://www.gstatic.com/charts/loader.js';
     script.async = true;
     script.onload = () => {
-      // Once the library is loaded, set up the chart
       window.google.charts.load('current', { packages: ['corechart'] });
       window.google.charts.setOnLoadCallback(drawVisualization);
     };
     document.body.appendChild(script);
 
-    // Function to draw the chart
     const drawVisualization = () => {
-      // Calcular a contagem de eventos por mês
       const eventosPorMes = calcularEventosPorMes(eventos);
 
       const data = new window.google.visualization.DataTable();
       data.addColumn('string', 'Mês');
       data.addColumn('number', 'Eventos');
 
-      // Preencher os dados do gráfico com os eventos por mês
       eventosPorMes.forEach(item => {
         data.addRow([item.mes, item.total]);
       });
@@ -61,15 +57,14 @@ const Grafico = () => {
         hAxis: { title: 'Mês' },
         legend: 'none',
         bar: { groupWidth: '90%' },
-        colors: ['#1d324f'], // Cor das colunas
+        colors: ['#1d324f'], 
       };
 
       const chart = new window.google.visualization.ColumnChart(document.getElementById('chart_div'));
       chart.draw(data, options);
     };
-  }, [eventos]); // Executar sempre que eventos mudar
+  }, [eventos]); 
 
-  // Função para calcular eventos por mês
   const calcularEventosPorMes = (eventos) => {
     const eventosPorMes = {};
 
