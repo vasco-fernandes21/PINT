@@ -13,7 +13,7 @@ const DashboardComentadas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get('/avaliacao/maisavaliacoes');
+        const response = await api.get('/estatistica/mais-avaliados');
         const { estabelecimentoMaisAvaliado, eventoMaisAvaliado } = response.data;
         setMaisAvaliados({
           estabelecimento: estabelecimentoMaisAvaliado,

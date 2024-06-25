@@ -3,6 +3,8 @@ const Estabelecimento = require('../models/estabelecimentoModel');
 const Posto = require('../models/postoModel');
 const Area = require ('../models/areaModel');
 const Sequelize = require('sequelize');
+const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
+const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
 
 exports.contadorEventosPorArea = async (req, res) => {
     try {
@@ -121,3 +123,61 @@ exports.estabelecimentosPorAreaPosto = async (req, res) => {
         });
     }
 }
+
+exports.maisAvaliados = async (req, res) => {
+    try {
+        const estabelecimentoMaisAvaliado = await AvaliacaoEstabelecimento.findOne({
+            attributes: [
+                'idEstabelecimento', 
+                [Sequelize.fn('count', Sequelize.col('AvaliacaoEstabelecimento.id')), 'totalAvaliacoes']
+            ],
+            group: ['idEstabelecimento'],
+            order: [[Sequelize.fn('count', Sequelize.col('AvaliacaoEstabelecimento.id')), 'DESC']],
+            limit: 1
+        });
+
+        const eventoMaisAvaliado = await AvaliacaoEvento.findOne({
+            attributes: [
+                'idEvento', 
+                [Sequelize.fn('count', Sequelize.col('AvaliacaoEvento.id')), 'totalAvaliacoes']
+            ],
+            group: ['idEvento'],
+            order: [[Sequelize.fn('count', Sequelize.col('AvaliacaoEvento.id')), 'DESC']],
+            limit: 1
+        });
+
+        let nomeEstabelecimentoMaisAvaliado = null;
+        if (estabelecimentoMaisAvaliado) {
+            const estabelecimento = await Estabelecimento.findByPk(estabelecimentoMaisAvaliado.idEstabelecimento);
+            if (estabelecimento) {
+                nomeEstabelecimentoMaisAvaliado = estabelecimento.nome;
+            }
+        }
+
+        let nomeEventoMaisAvaliado = null;
+        if (eventoMaisAvaliado) {
+            const evento = await Evento.findByPk(eventoMaisAvaliado.idEvento);
+            if (evento) {
+                nomeEventoMaisAvaliado = evento.titulo;
+            }
+        }
+        res.json({
+            success: true,
+            estabelecimentoMaisAvaliado: {
+                idEstabelecimento: estabelecimentoMaisAvaliado ? estabelecimentoMaisAvaliado.idEstabelecimento : null,
+                nome: nomeEstabelecimentoMaisAvaliado,
+                totalAvaliacoes: estabelecimentoMaisAvaliado ? estabelecimentoMaisAvaliado.dataValues.totalAvaliacoes : 0
+            },
+            eventoMaisAvaliado: {
+                idEvento: eventoMaisAvaliado ? eventoMaisAvaliado.idEvento : null,
+                nome: nomeEventoMaisAvaliado,
+                totalAvaliacoes: eventoMaisAvaliado ? eventoMaisAvaliado.dataValues.totalAvaliacoes : 0
+            }
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+};

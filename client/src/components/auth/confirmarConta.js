@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 const ContaConfirmada = () => {
   const location = useLocation();
 
-  // Função para analisar a query string e extrair o token
   const query = new URLSearchParams(location.search);
   const token = query.get('token');
   console.log(token);

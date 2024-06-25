@@ -7,19 +7,47 @@ const Utilizador = require('../models/utilizadorModel');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 require('dotenv').config();
 const gerarToken = require('../middlewares/gerarToken');
-const { log } = require('console');
 
-
-exports.getUtilizador = (req, res) => {
-  res.send(req.user);
-};
-
-exports.listar_utilizadores = async (req, res) => {
+exports.login = async (req, res) => {
   try {
-    const utilizadores = await Utilizador.findAll();
-    res.send(utilizadores);
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).send({ error: 'Preencha todos os campos' });
+    }
+
+    const user = await Utilizador.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(401).send({ error: 'Utilizador não encontrado' });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(401).send({ error: 'Acesso negado' });
+    }
+
+    if (!user.estado) {
+      return res.status(401).send({ error: 'Conta não verificada. Verifique o seu email para ativar a sua conta.' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.palavra_passe);
+    if (!isPasswordValid) {
+      return res.status(401).send({ error: 'Palavra Passe incorreta' });
+    }
+
+    const token = gerarToken(user);
+
+    if (user.isPrimeiroLogin) {
+      const recoveryToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+
+      await user.update({ recoveryToken, isPrimeiroLogin: false });
+    }
+
+    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
   } catch (error) {
-    console.error('Erro ao listar utilizadores:', error);
+    console.error('Erro durante o login:', error);
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 };
@@ -68,49 +96,6 @@ exports.loginMobile = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).send({ error: 'Preencha todos os campos' });
-    }
-
-    const user = await Utilizador.findOne({ where: { email } });
-
-    if (!user) {
-      return res.status(401).send({ error: 'Utilizador não encontrado' });
-    }
-
-    if (!user.isAdmin) {
-      return res.status(401).send({ error: 'Acesso negado' });
-    }
-
-    if (!user.estado) {
-      return res.status(401).send({ error: 'Conta não verificada. Verifique o seu email para ativar a sua conta.' });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.palavra_passe);
-    if (!isPasswordValid) {
-      return res.status(401).send({ error: 'Palavra Passe incorreta' });
-    }
-
-    const token = gerarToken(user);
-
-    if (user.isPrimeiroLogin) {
-      const recoveryToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: '1h',
-      });
-
-      await user.update({ recoveryToken, isPrimeiroLogin: false });
-    }
-
-    res.send({ message: 'Login realizado com sucesso', token, recoveryToken: user.recoveryToken });
-  } catch (error) {
-    console.error('Erro durante o login:', error);
-    res.status(500).send({ error: 'Erro interno do servidor' });
-  }
-};
 
 exports.criarConta = async (req, res) => {
   try {

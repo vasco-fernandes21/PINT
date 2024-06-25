@@ -8,7 +8,6 @@ const notificacaoController = require('./notificacaoController');
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 
 
-
 exports.listarEstabelecimentos = async (req, res) => {
     const { areaId, subareaId } = req.query;
     let idPosto;
@@ -119,27 +118,19 @@ exports.criarEstabelecimento = async (req, res) => {
             foto
         });
 
-        // Criar notificação após a criação do estabelecimento
-        const mockRes = {
-            status: () => mockRes,
-            json: (data) => { return data; }
-        };
-
-        const notificacao = await notificacaoController.criarNotificacao({
-            body: {
-                titulo: 'Estabelecimento criado',
-                descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
-            },
-            user: {
-                id: idCriador
-            }
-        }, mockRes);
+        const notificacao = await Notificacao.create({
+            idUtilizador: idCriador,
+            titulo: 'Estabelecimento criado',
+            descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`,
+            estado: false,
+            data: new Date()
+        });
 
         res.status(200).json({
             success: true,
             message: 'Estabelecimento criado com sucesso!',
             data: newEstabelecimento,
-            notificacao: notificacao 
+            notificacao: notificacao
         });
     } catch (error) {
         console.log('Error: ', error);
@@ -178,27 +169,19 @@ exports.criarEstabelecimentoMobile = async (req, res) => {
             foto
         });
 
-        // Criar notificação após a criação do estabelecimento
-        const mockRes = {
-            status: () => mockRes,
-            json: (data) => { return data; }
-        };
-
-        const notificacao = await notificacaoController.criarNotificacao({
-            body: {
-                titulo: 'Estabelecimento criado',
-                descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`
-            },
-            user: {
-                id: idCriador
-            }
-        }, mockRes);
+        const notificacao = await Notificacao.create({
+            idUtilizador: idCriador,
+            titulo: 'Estabelecimento criado',
+            descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`,
+            estado: false,
+            data: new Date()
+        });
 
         res.status(200).json({
             success: true,
             message: 'Estabelecimento criado com sucesso!',
             data: newEstabelecimento,
-            notificacao: notificacao 
+            notificacao: notificacao
         });
     } catch (error) {
         console.log('Error: ', error);
@@ -206,7 +189,7 @@ exports.criarEstabelecimentoMobile = async (req, res) => {
     }
 };
 
-exports.estabelecimento_id = async (req, res) => {
+exports.getEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const data = await Estabelecimento.findOne({
@@ -347,7 +330,7 @@ exports.uploadFotoEstabelecimento = async (req, res) => {
             data: newFoto
         });
     } catch (error) {
-        console.error('Erro ao criar nova foto:', error); // Adicione essa linha para registrar o erro no console
+        console.error('Erro ao criar nova foto:', error);
         res.status(500).json({ success: false, message: "Erro ao adicionar a foto!" });
     }
 };
@@ -356,7 +339,7 @@ exports.deleteFotoEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
         const [apagado] = await FotoEstabelecimento.update({
-        estado: false,
+            estado: false,
         }, {
             where: { id: id }
         });
@@ -367,25 +350,23 @@ exports.deleteFotoEstabelecimento = async (req, res) => {
             res.status(404).json({ success: false, message: 'Foto não encontrada.' });
         }
     } catch (error) {
-        console.error('Erro ao remover foto:', error); // Adicione essa linha para registrar o erro no console
+        console.error('Erro ao remover foto:', error);
         res.status(500).json({ success: false, message: "Erro ao remover a foto!" });
     }
 };
 
 exports.apagarEstabelecimento = async (req, res) => {
     const { id } = req.params;
+    
     try {
-        // Apagar todas as avaliações associadas ao estabelecimento
         await AvaliacaoEstabelecimento.destroy({
             where: { idEstabelecimento: id }
         });
 
-        // Apagar todas as fotos associadas ao estabelecimento
         await FotoEstabelecimento.destroy({
             where: { idEstabelecimento: id }
         });
 
-        // Apagar o estabelecimento
         const apagado = await Estabelecimento.destroy({
             where: { id: id }
         });
@@ -406,13 +387,11 @@ exports.EstabelecimentosPorValidar = async (req, res) => {
     if (req.user) {
         idPosto = req.user.idPosto;
     }
-
     let whereClause = { estado: false };
 
     if (idPosto) {
         whereClause.idPosto = idPosto;
     }
-
     try {
         const data = await Estabelecimento.findAll({
             where: whereClause,

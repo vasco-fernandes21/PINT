@@ -153,27 +153,26 @@ exports.CriarEvento = async (req, res) => {
             telemovel,
             email,
             foto,
-            estado: false, // Estado inicial definido como falso
+            estado: false, 
             idArea,
             idSubarea,
             idCriador,
             idPosto
         });
 
-        // Criar notificação após a criação do evento
         const notificacao = await Notificacao.create({
             idUtilizador: idCriador,
             titulo: 'Evento criado',
             descricao: `O seu evento ${titulo} foi criado e enviado para validação!`,
-            estado: false, // Supondo que 'estado' indica se a notificação foi lida
-            data: new Date() // Supondo que 'data' é a data da criação da notificação
+            estado: false, 
+            data: new Date() 
         });
 
         res.status(200).json({
             success: true,
             message: 'Evento criado com sucesso!',
             data: newEvento,
-            notificacao: notificacao // Enviar a notificação como parte da resposta
+            notificacao: notificacao 
         });
     } catch (error) {
         console.log('Error: ', error);
