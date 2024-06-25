@@ -4,9 +4,8 @@ const Subarea = require('../models/subareaModel');
 const Posto = require('../models/postoModel');
 const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
-const notificacaoController = require('./notificacaoController');
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
-
+const Notificacao = require('../models/notificacaoModel');
 
 exports.listarEstabelecimentos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -96,7 +95,6 @@ exports.criarEstabelecimento = async (req, res) => {
         descricao,
         telemovel,
         email,
-        idAdmin
     } = req.body;
 
     const foto = req.file ? req.file.filename : null;
@@ -111,9 +109,8 @@ exports.criarEstabelecimento = async (req, res) => {
             idPosto,
             morada,
             descricao,
-            telemovel,
-            email,
-            idAdmin,
+            telemovel: String(telemovel), // Garantindo que seja uma string
+            email: String(email), // Garantindo que seja uma string
             idCriador,
             foto
         });
@@ -137,6 +134,7 @@ exports.criarEstabelecimento = async (req, res) => {
         res.status(500).json({ success: false, message: "Erro ao criar o estabelecimento!" });
     }
 };
+
 
 exports.criarEstabelecimentoMobile = async (req, res) => {
     const {

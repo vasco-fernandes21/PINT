@@ -50,8 +50,8 @@ function CriarEstabelecimento({ handleClose }) {
       formData.append('estado', false);
       formData.append('idArea', selectedArea);
       formData.append('idSubarea', data.subarea);
-      formData.append('telemovel', response.data.telemovel);
-      formData.append('email', response.data.email);
+      formData.append('telemovel', String(data.telemovel)); 
+      formData.append('email', String(data.email)); 
 
       const response = await api.post('/estabelecimentos', formData);
 
@@ -63,7 +63,7 @@ function CriarEstabelecimento({ handleClose }) {
       });
 
       console.log('Estabelecimento criado:', response.data);
-      handleClose();  // Close the dialog on successful submission
+      handleClose();  
     } catch (error) {
       Swal.fire({
         title: "Erro",
