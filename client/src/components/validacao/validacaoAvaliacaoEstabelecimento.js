@@ -41,7 +41,7 @@ const handleAceitar = async () => {
     handleClose();
     try {
         const id = avaliacaoSelecionada.id;
-        await api.put(`/avaliacao/estabelecimento/${id}`, { estado: true });
+        await api.put(`/avaliacao/estabelecimentos/${id}`, { estado: true });
         fetchAvaliacoes();
         Swal.fire({
             title: 'Aceite!',
