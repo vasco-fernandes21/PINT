@@ -51,6 +51,16 @@
       allowNull: false,
       defaultValue: DataTypes.NOW
     },
+    upvotes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    downvotes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
   }, {
     freezeTableName: true,
     timestamps: false

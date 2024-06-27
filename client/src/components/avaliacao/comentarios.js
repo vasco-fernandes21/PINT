@@ -59,8 +59,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
       try {
         await api.delete(`/avaliacao/${tipo}/${selectedAvaliacao.id}`);
         handleClose();
-        await fetchAvaliacoes(); // Atualiza a lista de avaliações
-
+        await fetchAvaliacoes(); 
         Swal.fire({
           icon: 'success',
           title: 'Operação concluída',
