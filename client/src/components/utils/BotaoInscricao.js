@@ -11,7 +11,7 @@ const BotaoInscricaoEvento = ({ idEvento, inscricaoAberta }) => {
 
     const verificarInscricao = async () => {
         try {
-            const response = await api.get(`/eventos/${idEvento}/inscricao`);
+            const response = await api.get(`/eventos/${idEvento}/inscricao/verificar`); // Ajuste o endpoint conforme necessário
             setInscrito(response.data.inscrito);
         } catch (error) {
             console.error('Erro ao verificar inscrição:', error);
@@ -19,18 +19,14 @@ const BotaoInscricaoEvento = ({ idEvento, inscricaoAberta }) => {
     };
 
     const toggleInscricao = async () => {
+        if (inscrito) {
+            console.log('Já está inscrito no evento.');
+            return; // Prevenir ação se já estiver inscrito
+        }
         try {
-            if (inscrito) {
-                // Se já estiver inscrito, remove a inscrição
-                await api.delete(`/eventos/inscrever/${idEvento}`);
-                console.log('Inscrição removida com sucesso');
-            } else {
-                // Se não estiver inscrito, faz a inscrição
-                await api.post(`/eventos/inscrever/${idEvento}`);
-                console.log('Inscrição realizada com sucesso');
-            }
-            // Após a ação ser concluída com sucesso, atualiza o estado de inscrito
-            setInscrito(!inscrito);
+            await api.post(`/eventos/inscrever/${idEvento}`);
+            console.log('Inscrição realizada com sucesso');
+            setInscrito(true); // Atualiza o estado para refletir a inscrição
         } catch (error) {
             console.error('Erro ao alterar inscrição:', error.message);
         }
@@ -40,7 +36,7 @@ const BotaoInscricaoEvento = ({ idEvento, inscricaoAberta }) => {
         <Button
             variant="contained"
             onClick={toggleInscricao}
-            disabled={!inscricaoAberta}
+            disabled={!inscricaoAberta || inscrito} // Desabilita o botão se inscrições estiverem fechadas ou se já estiver inscrito
             style={{
                 backgroundColor: !inscricaoAberta ? '#6c757d' : (inscrito ? '#ccc' : '#1d324f'),
                 color: '#fff',
@@ -48,7 +44,7 @@ const BotaoInscricaoEvento = ({ idEvento, inscricaoAberta }) => {
                 marginTop: 25,
             }}
         >
-            {!inscricaoAberta ? 'Inscrições desativadas' : (inscrito ? 'Remover Inscrição' : 'Inscrever-se no Evento')}
+            {!inscricaoAberta ? 'Inscrições desativadas' : (inscrito ? 'Inscrito' : 'Inscrever-se no Evento')}
         </Button>
     );
 };

@@ -244,7 +244,6 @@ exports.CriarEventoMobile = async (req, res) => {
 };
 
 
-
 exports.editarEvento = async (req, res) => {
     const { id } = req.params;
     const {
@@ -263,7 +262,10 @@ exports.editarEvento = async (req, res) => {
         inscricaoAberta
     } = req.body;
 
-    const foto = req.file ? req.file.filename : null;
+    const eventoAtual = await Evento.findOne({ where: { id: id } });
+    const fotoExistente = eventoAtual ? eventoAtual.foto : null;
+
+    const foto = req.file ? req.file.filename : fotoExistente;
 
     let updateData = {};
 
@@ -279,7 +281,7 @@ exports.editarEvento = async (req, res) => {
     if (idCriador !== undefined) updateData.idCriador = idCriador;
     if (estado !== undefined) updateData.estado = estado;
     if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
-    if (foto !== undefined) updateData.foto = foto;
+    if (foto !== undefined) updateData.foto = foto; 
     if (inscricaoAberta !== undefined) updateData.inscricaoAberta = inscricaoAberta;
 
     try {

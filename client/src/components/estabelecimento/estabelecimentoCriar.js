@@ -3,9 +3,21 @@ import { useForm, Controller } from 'react-hook-form';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
 import Swal from 'sweetalert2';
 import api from '../api/api';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+const schema = yup.object().shape({
+  nome: yup.string().required('Nome do Estabelecimento é obrigatório'),
+  descricao: yup.string().required('Descrição é obrigatória'),
+  morada: yup.string().required('Morada é obrigatória'),
+  area: yup.string().required('Área é obrigatória'),
+  subarea: yup.string().required('Subárea é obrigatória'),
+});
 
 function CriarEstabelecimento({ handleClose }) {
-  const { register, handleSubmit, watch, control } = useForm();
+  const { register, handleSubmit, watch, control, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
   const [areas, setAreas] = useState([]);
   const [subareas, setSubareas] = useState([]);
   const selectedArea = watch('area');

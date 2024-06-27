@@ -14,7 +14,7 @@ exports.listarEstabelecimentos = async (req, res) => {
         idPosto = req.user.idPosto;
     }
 
-    let whereClause = {};
+    let whereClause = { estado: true }; 
     if (areaId) {
         whereClause.idArea = areaId;
     }
@@ -272,25 +272,30 @@ exports.editarEstabelecimento = async (req, res) => {
         descricao,
         telemovel,
         email,
+        estado,
         idAdmin,
         idCriador,
     } = req.body;
 
-    const foto = req.file ? req.file.filename : null;
+    const estabelecimentoAtual = await Estabelecimento.findOne({ where: { id: id } });
+    const fotoExistente = estabelecimentoAtual ? estabelecimentoAtual.foto : null;
 
-    let updateData = {};
+    const foto = req.file ? req.file.filename : fotoExistente;
 
-    if (nome !== undefined) updateData.nome = nome;
-    if (idArea !== undefined) updateData.idArea = idArea;
-    if (idSubarea !== undefined) updateData.idSubarea = idSubarea;
-    if (idPosto !== undefined) updateData.idPosto = idPosto;
-    if (morada !== undefined) updateData.morada = morada;
-    if (descricao !== undefined) updateData.descricao = descricao;
-    if (telemovel !== undefined) updateData.telemovel = telemovel;
-    if (email !== undefined) updateData.email = email;
-    if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
-    if (idCriador !== undefined) updateData.idCriador = idCriador;
-    if (foto !== undefined) updateData.foto = foto;
+    let updateData = {
+        nome,
+        idArea,
+        idSubarea,
+        idPosto,
+        morada,
+        descricao,
+        telemovel,
+        email,
+        estado,
+        idAdmin,
+        idCriador,
+        foto 
+    };
 
     try {
         const [updated] = await Estabelecimento.update(updateData, {

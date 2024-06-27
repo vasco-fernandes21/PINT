@@ -7,6 +7,7 @@ import api from '../api/api';
 import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+
 function EditarEvento({ open, handleClose }) {
   const { id } = useParams(); 
   const { register, handleSubmit, watch, setValue } = useForm();

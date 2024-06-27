@@ -9,8 +9,21 @@ import * as yup from 'yup';
 const schema = yup.object().shape({
   titulo: yup.string().required('Nome do Evento é obrigatório'),
   descricao: yup.string().required('Descrição é obrigatória'),
-  data: yup.date().required('Data é obrigatória'),
-  hora: yup.string().required('Hora é obrigatória'),
+  data: yup.date().min(new Date(new Date().setHours(0, 0, 0, 0)), 'A data deve ser hoje ou no futuro').required('Data é obrigatória'),
+  hora: yup.string().required('Hora é obrigatória').test(
+    'is-time-past',
+    'A hora já passou',
+    function(value) {
+      const { data } = this.parent;
+      const selectedDate = new Date(data);
+      const currentDate = new Date();
+      const selectedTime = value.split(':');
+      selectedDate.setHours(selectedTime[0], selectedTime[1], 0);
+
+      // Verifica se a data selecionada é igual à data atual e se a hora já passou
+      return !(selectedDate.toDateString() === currentDate.toDateString() && selectedDate < currentDate);
+    }
+  ),
   morada: yup.string().required('Morada é obrigatória'),
   area: yup.string().required('Tipo de Evento é obrigatório'),
   subarea: yup.string().required('Subtipo é obrigatório'),

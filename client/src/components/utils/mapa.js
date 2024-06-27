@@ -15,13 +15,14 @@ const options = {
 
 const Mapa = ({ morada }) => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8',  
+    googleMapsApiKey: 'AIzaSyBkvnVEmV_pwnsc52AqcPmx5giZmVu7LpU',
   });
 
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
     if (morada) {
+      console.log("Received morada:", morada);
       geocodeAddress(morada);
     }
   }, [morada]);
@@ -31,16 +32,24 @@ const Mapa = ({ morada }) => {
       const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
         params: {
           address: address,
-          key: 'AIzaSyBGoIGa0Z6BgVc0LO59A5Ye8cpake0s9L8'  
+          key: 'AIzaSyBkvnVEmV_pwnsc52AqcPmx5giZmVu7LpU'
         }
       });
 
-      const results = response.data.results;
+      console.log("Geocode response:", response); // Debugging line
+      const status = response.data.status;
+      if (status === "OK") {
+        const results = response.data.results;
+        console.log("Geocode results:", results); // Debugging line
 
-      if (results.length > 0) {
-        const location = results[0].geometry.location;
-        setLocation(location);
+        if (results.length > 0) {
+          const location = results[0].geometry.location;
+          setLocation(location);
+        } else {
+          setLocation(null);
+        }
       } else {
+        console.error("Geocode error status:", status); // Log error status
         setLocation(null);
       }
     } catch (error) {
@@ -49,26 +58,24 @@ const Mapa = ({ morada }) => {
     }
   };
 
-  if (!morada) {
-    return <Alert severity="info">Por favor, forneça uma morada para mostrar no mapa.</Alert>;
-  }
-
-  if (!location) {
-    return <Alert severity="info">Não foi possível encontrar a localização para a morada fornecida.</Alert>;
-  }
-
   if (loadError) return <div>Erro ao carregar mapas</div>;
   if (!isLoaded) return <div>A carregar...</div>;
 
   return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      zoom={15}
-      center={location || { lat: 0, lng: 0 }}
-      options={options}
-    >
-      {location && <Marker position={location} />}
-    </GoogleMap>
+    <>
+      {!location ? (
+        <Alert severity="info">Não foi possível encontrar a localização para a morada fornecida.</Alert>
+      ) : (
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          zoom={15}
+          center={location}
+          options={options}
+        >
+          <Marker position={location} />
+        </GoogleMap>
+      )}
+    </>
   );
 };
 
