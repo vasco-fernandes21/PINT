@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Avatar, Typography, Button, Grid, Paper, Pagination } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, Grid, Paper, Pagination } from '@mui/material';
 import api from '../api/api';
 import AvatarImagem from "../utils/avatarImagem";
 import BotaoUpload from "../utils/botaoUpload";
@@ -13,7 +12,6 @@ const Perfil = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
-  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
 
   useEffect(() => {

@@ -491,8 +491,8 @@ exports.getInscricaoEvento = async (req, res) => {
 }
 
 exports.inscreverEvento = async (req, res) => {
-    const { id } = req.params;
-    const idUtilizador = req.user.id;
+    const { id } = req.params; // ID do evento
+    const idUtilizador = req.user.id; // ID do utilizador a partir do token de autenticação
 
     try {
         // Verifica se o utilizador já está inscrito no evento
@@ -503,76 +503,104 @@ exports.inscreverEvento = async (req, res) => {
             }
         });
 
+        console.log('Inscrição existente:', inscricaoExistente);
+
         if (inscricaoExistente) {
-            // Se já estiver inscrito, remove a inscrição
-            await Inscricao.destroy({
-                where: {
-                    idEvento: id,
-                    idUtilizador: idUtilizador
-                }
-            });
-
-            res.status(200).json({
-                success: true,
-                message: 'Inscrição removida com sucesso!'
-            });
-        } else {
-            // Se não estiver inscrito, faz a inscrição
-            const novaInscricao = await Inscricao.create({
-                idEvento: id,
-                idUtilizador: idUtilizador,
-                estado: true
-            });
-
-            const evento = await Evento.findByPk(id);
-
-            await Notificacao.create({
-                idUtilizador: idUtilizador,
-                titulo: 'Inscrição realizada com sucesso!',
-                descricao: `Inscrito com sucesso no evento '${evento.titulo}'.`,
-                data: new Date(),
-                estado: false
-            });
-
-            await Notificacao.create({
-                idUtilizador: evento.idCriador,
-                titulo: 'Nova inscrição no seu evento',
-                descricao: `Tem uma nova inscrição no seu evento '${evento.titulo}'.`,
-                data: new Date(),
-                estado: false
-            });
-
-            res.status(200).json({
-                success: true,
-                message: 'Inscrição realizada com sucesso!'
+            return res.status(400).json({
+                success: false,
+                message: 'Utilizador já inscrito no evento.'
             });
         }
+
+        // Cria uma nova inscrição
+        await Inscricao.create({
+            idEvento: id,
+            idUtilizador: idUtilizador,
+            estado: true
+        });
+
+        // Adiciona lógica para notificações aqui, se necessário
+
+        res.status(200).json({
+            success: true,
+            message: 'Inscrição realizada com sucesso!'
+        });
     } catch (error) {
-        console.error('Erro ao realizar inscrição:', error);
-        res.status(500).json({ success: false, message: "Erro ao realizar a inscrição!" });
+        console.error('Erro ao inscrever:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro ao realizar a inscrição!'
+        });
     }
 };
 
 exports.desinscreverEvento = async (req, res) => {
-    const { id } = req.params;
-    const idUtilizador = req.user.id;
+    const { id } = req.params; // ID do evento
+    const idUtilizador = req.user.id; // ID do utilizador a partir do token de autenticação
 
     try {
-        const inscricaoRemovida = await Inscricao.destroy({
+        // Verifica se o utilizador está inscrito no evento
+        const inscricaoExistente = await Inscricao.findOne({
             where: {
                 idEvento: id,
                 idUtilizador: idUtilizador
             }
         });
 
-        if (inscricaoRemovida) {
-            res.status(200).json({ success: true, message: 'Inscrição removida com sucesso!' });
-        } else {
-            res.status(404).json({ success: false, message: 'Inscrição não encontrada.' });
+        if (!inscricaoExistente) {
+            return res.status(404).json({
+                success: false,
+                message: 'Nenhuma inscrição encontrada para o evento com o ID ' + id,
+            });
         }
+
+        await Inscricao.destroy({
+            where: {
+                idEvento: id,
+                idUtilizador: idUtilizador
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Inscrição removida com sucesso!'
+        });
     } catch (error) {
-        console.error('Erro ao remover inscrição:', error);
-        res.status(500).json({ success: false, message: "Erro ao remover a inscrição!" });
+        console.error('Erro ao desinscrever:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro ao realizar a desinscrição!'
+        });
     }
 };
 
+exports.verificarInscricao = async (req, res) => {
+    const { id } = req.params; 
+    const idUtilizador = req.user.id; 
+    try {
+        const inscricao = await Inscricao.findOne({
+            where: {
+                idEvento: id,
+                idUtilizador: idUtilizador
+            }
+        });
+
+        if (inscricao) {
+            res.status(200).json({
+                success: true,
+                data: inscricao,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Nenhuma inscrição encontrada para o evento com o ID ' + id,
+            });
+        }
+    } catch (error) {
+        console.error('Erro ao verificar inscrição:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro ao verificar a inscrição!'
+        });
+    }
+}

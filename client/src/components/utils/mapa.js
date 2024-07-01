@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker as GoogleMarker  } from "@react-google-maps/api";
 import Alert from '@mui/material/Alert';
 import axios from 'axios';
 
@@ -22,7 +22,6 @@ const Mapa = ({ morada }) => {
 
   useEffect(() => {
     if (morada) {
-      console.log("Received morada:", morada);
       geocodeAddress(morada);
     }
   }, [morada]);
@@ -36,11 +35,9 @@ const Mapa = ({ morada }) => {
         }
       });
 
-      console.log("Geocode response:", response); // Debugging line
       const status = response.data.status;
       if (status === "OK") {
         const results = response.data.results;
-        console.log("Geocode results:", results); // Debugging line
 
         if (results.length > 0) {
           const location = results[0].geometry.location;
@@ -72,7 +69,8 @@ const Mapa = ({ morada }) => {
           center={location}
           options={options}
         >
-          <Marker position={location} />
+          {/* Replace Marker with GoogleMarker */}
+          <GoogleMarker position={location} />
         </GoogleMap>
       )}
     </>

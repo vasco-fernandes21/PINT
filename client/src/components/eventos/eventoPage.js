@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { Grid, CardContent, Typography, Box, Divider, Button } from "@mui/material";
 import api from "../api/api";
 import Mapa from "../utils/mapa";
@@ -13,6 +13,12 @@ import BotaoUpload from "../utils/botaoUpload";
 import BotaoInscricaoEvento from "../utils/BotaoInscricao";
 import EditarEvento from "./eventoEdit";
 import InscricoesGrelha from "./eventoInscricoes";
+import BotoesPartilha from "../utils/botaoPartilha";
+const apiUrl = process.env.REACT_APP_API_URL;
+const frontendUrl = process.env.REACT_APP_FRONTEND;
+
+console.log(apiUrl); 
+console.log(frontendUrl); 
 
 function EventoPage() {
     const { id } = useParams();
@@ -25,6 +31,10 @@ function EventoPage() {
     const itemsPerPage = 5;
     const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
     const [open, setOpen] = useState(false);
+
+    const url = `${frontendUrl}/eventos/${id}`;
+    console.log(url);
+    const title = 'Estou interessado neste evento!';
 
     useEffect(() => {
         const fetchUtilizador = async () => {
@@ -104,6 +114,10 @@ function EventoPage() {
         setPage(value);
     };
 
+    const atualizarInscricoes = async () => {
+        await fetchInscricoes();
+    };
+
     if (!evento) {
         return <div>A carregar...</div>;
     }
@@ -112,7 +126,12 @@ function EventoPage() {
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
                 <Box sx={{ padding: 0, paddingTop: 0 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>{evento.titulo}</Typography>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 0 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginRight: 1 }}>
+                        {evento.titulo}
+                    </Typography>
+                    <BotoesPartilha url={url} title={title} />
+                    </div>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3 }}>
                         {utilizador && (
                             <>
@@ -162,7 +181,12 @@ function EventoPage() {
                        <Grid item xs={12}>
                             <InscricoesGrelha inscricoes={inscricoes} />
                             <Grid item xs={12} sx={{ position: 'relative' }}>
-                                <BotaoInscricaoEvento sx={{ position: 'absolute', marginLeft: 0, marginTop: 2 }} idEvento={id} idUtilizador={utilizador?.id} inscricaoAberta={evento.inscricaoAberta}/>
+                            <BotaoInscricaoEvento 
+                                atualizarInscricoes={atualizarInscricoes} 
+                                idEvento={id} 
+                                idUtilizador={utilizador?.id} 
+                                inscricaoAberta={evento.inscricaoAberta}
+                            />  
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

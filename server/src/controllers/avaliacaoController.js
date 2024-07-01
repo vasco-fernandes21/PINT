@@ -3,6 +3,7 @@ const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
 const Evento = require('../models/eventoModel');
 const Estabelecimento = require('../models/estabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
+const Voto = require('../models/VotoModel');
 const Sequelize = require('sequelize');
 
 exports.listarAvaliacoesEstabelecimento = async (req, res) => {
@@ -13,6 +14,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
             where: { 
                 idEstabelecimento: idEstabelecimento,
                 estado: true,
+                idPai: null
             }, 
             include: [
                 { 
@@ -140,27 +142,66 @@ exports.apagarAvaliacaoEstabelecimento = async (req, res) => {
     try {
         const idAvaliacao = req.params.id;
 
-        const avaliacao = await AvaliacaoEstabelecimento.findByPk(idAvaliacao);
-        if (!avaliacao) {
-            return res.status(404).json({
-                success: false,
-                error: 'Avaliação não encontrada.',
-            });
-        }
+        const apagarVotos = async (avaliacaoId) => {
+            try {
+                // Substitua 'Voto' pelo nome correto do seu modelo de Voto, se for diferente
+                await Voto.destroy({
+                    where: { idEstabelecimento: avaliacaoId }
+                });
+            } catch (err) {
+                throw new Error(`Erro ao apagar votos da avaliação ${avaliacaoId}: ${err.message}`);
+            }
+        };
 
-        await avaliacao.destroy();
+        const apagarFilhos = async (avaliacaoId) => {
+            let respostas;
+            try {
+                respostas = await AvaliacaoEstabelecimento.findAll({
+                    where: { idPai: avaliacaoId }
+                });
+            } catch (err) {
+                throw new Error(`Erro ao buscar respostas da avaliação ${avaliacaoId}: ${err.message}`);
+            }
+
+            for (const resposta of respostas) {
+                try {
+                    await apagarFilhos(resposta.id);
+                } catch (err) {
+                    throw new Error(`Erro ao apagar respostas filhas da resposta ${resposta.id}: ${err.message}`);
+                }
+                try {
+                    await resposta.destroy();
+                } catch (err) {
+                    throw new Error(`Erro ao apagar resposta ${resposta.id}: ${err.message}`);
+                }
+            }
+
+            // Primeiro, apagar os votos associados à avaliação
+            await apagarVotos(avaliacaoId);
+
+            try {
+                const avaliacao = await AvaliacaoEstabelecimento.findByPk(avaliacaoId);
+                await avaliacao.destroy();
+            } catch (err) {
+                throw new Error(`Erro ao apagar avaliação ${avaliacaoId}: ${err.message}`);
+            }
+        };
+
+        await apagarFilhos(idAvaliacao);
 
         res.json({
             success: true,
-            data: avaliacao,
+            message: 'Avaliação, todas as respostas e votos relacionados deletados com sucesso.',
         });
     } catch (err) {
         res.status(500).json({
             success: false,
-            error: 'Erro: ' + err.message,
+            error: `Erro ao apagar avaliação, respostas e votos: ${err.message}`,
         });
     }
-}
+};
+
+
 
 exports.listarAvaliacoesEvento = async (req, res) => {
     try {
@@ -170,6 +211,7 @@ exports.listarAvaliacoesEvento = async (req, res) => {
             where: { 
                 idEvento,
                 estado: true,
+                idPai: null
             },
             include: [
                 { 
@@ -422,4 +464,190 @@ exports.AvaliacaoEstabelecimentoPorValidar = async (req, res) => {
     }
 };
 
+exports.upvote = async (req, res) => {
+    try {
+        const { tipoEntidade, idEntidade } = req.body;
+        const userId = req.user.id;
 
+        const Avaliacao = tipoEntidade === 'estabelecimentos' ? AvaliacaoEstabelecimento : AvaliacaoEvento;
+
+        let voto = await Voto.findOne({
+            where: {
+                idUtilizador: userId,
+                ...(tipoEntidade === 'estabelecimentos' ? { idEstabelecimento: idEntidade } : { idEvento: idEntidade }),
+            },
+        });
+
+        if (voto) {
+            if (voto.tipo === true) {
+                await voto.destroy();
+                await Avaliacao.decrement('upvotes', { where: { id: idEntidade } });
+                res.json({ message: 'Upvote removido', voted: false });
+            } else {
+                voto.tipo = true;
+                await voto.save();
+                await Avaliacao.increment('upvotes', { where: { id: idEntidade } });
+                await Avaliacao.decrement('downvotes', { where: { id: idEntidade } });
+                res.json({ message: 'Alterado para upvote', voted: true });
+            }
+        } else {
+            voto = await Voto.create({ idUtilizador: userId, [tipoEntidade === 'estabelecimentos' ? 'idEstabelecimento' : 'idEvento']: idEntidade, tipo: true });
+            await Avaliacao.increment('upvotes', { where: { id: idEntidade } });
+            res.json({ message: 'Upvote adicionado', voted: true });
+        }
+    } catch (error) {
+        console.error('Error upvoting:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+exports.downvote = async (req, res) => {
+    try {
+        const { tipoEntidade, idEntidade } = req.body;
+        const userId = req.user.id;
+
+        const Avaliacao = tipoEntidade === 'estabelecimentos' ? AvaliacaoEstabelecimento : AvaliacaoEvento;
+
+        let voto = await Voto.findOne({
+            where: {
+                idUtilizador: userId,
+                ...(tipoEntidade === 'estabelecimentos' ? { idEstabelecimento: idEntidade } : { idEvento: idEntidade }),
+            },
+        });
+
+        if (voto) {
+            if (voto.tipo === false) {
+                await voto.destroy();
+                await Avaliacao.decrement('downvotes', { where: { id: idEntidade } });
+                res.json({ message: 'Downvote removido', voted: false });
+            } else {
+                voto.tipo = false;
+                await voto.save();
+                await Avaliacao.increment('downvotes', { where: { id: idEntidade } });
+                await Avaliacao.decrement('upvotes', { where: { id: idEntidade } });
+                res.json({ message: 'Alterado para downvote', voted: true });
+            }
+        } else {
+            voto = await Voto.create({ idUtilizador: userId, [tipoEntidade === 'estabelecimentos' ? 'idEstabelecimento' : 'idEvento']: idEntidade, tipo: false });
+            await Avaliacao.increment('downvotes', { where: { id: idEntidade } });
+            res.json({ message: 'Downvote adicionado', voted: true });
+        }
+    } catch (error) {
+        console.error('Error downvoting:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+exports.responderAvaliacaoEvento = async(req, res) => {
+    try {
+        const { idAvaliacao } = req.params;
+        const { comentario, classificacao} = req.body;
+        const idUtilizador = req.user.id;
+        
+
+        const avaliacao = await AvaliacaoEvento.findByPk(idAvaliacao);
+        if (!avaliacao) {
+            return res.status(404).json({ success: false, message: 'Avaliação não encontrada.' });
+        }
+
+        const user = await Utilizador.findByPk(idUtilizador);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });
+        }
+
+        const resposta = await AvaliacaoEvento.create({
+            idUtilizador,
+            idEvento: avaliacao.idEvento,
+            idPai: idAvaliacao,
+            comentario,
+            classificacao,
+            estado: true,
+        });
+
+        res.json({ success: true, data: resposta });
+    } catch (error) {
+        console.error('Erro ao responder ao comentário:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+} 
+
+exports.getFilhosEvento = async(req, res) => {
+    try {
+        const { idAvaliacao } = req.params;
+
+        const filhos = await AvaliacaoEvento.findAll({
+            where: { idPai: idAvaliacao },
+            include: [
+                { 
+                    model: Utilizador, 
+                    as: 'utilizador', 
+                    attributes: ['nome', 'foto'] 
+                },
+            ],
+        });
+
+        const contador = filhos.length;
+
+        res.json({ success: true, data: filhos, contador });
+    } catch (error) {
+        console.error('Erro ao obter respostas:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+exports.responderAvaliacaoEstabelecimento = async(req, res) => {
+    try {
+        const { idAvaliacao } = req.params;
+        const { comentario, classificacao} = req.body;
+        const idUtilizador = req.user.id;
+
+        const avaliacao = await AvaliacaoEstabelecimento.findByPk(idAvaliacao);
+        if (!avaliacao) {
+            return res.status(404).json({ success: false, message: 'Avaliação não encontrada.' });
+        }
+
+        const user = await Utilizador.findByPk(idUtilizador);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });
+        }
+
+        const resposta = await AvaliacaoEstabelecimento.create({
+            idUtilizador,
+            idEstabelecimento: avaliacao.idEstabelecimento,
+            idPai: idAvaliacao,
+            comentario,
+            classificacao,
+            estado: true,
+        });
+
+        res.json({ success: true, data: resposta });
+    } catch (error) {
+        console.error('Erro ao responder ao comentário:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+} 
+
+exports.getFilhosEstabelecimento = async(req, res) => {
+    try {
+        const { idAvaliacao } = req.params;
+
+        const filhos = await AvaliacaoEstabelecimento.findAll({
+            where: { idPai: idAvaliacao },
+            include: [
+                { 
+                    model: Utilizador, 
+                    as: 'utilizador', 
+                    attributes: ['nome', 'foto'] 
+                },
+            ],
+        });
+
+        res.json({ success: true, data: filhos });
+    } catch (error) {
+        console.error('Erro ao obter respostas:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}

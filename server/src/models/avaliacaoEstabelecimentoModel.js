@@ -60,7 +60,15 @@
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
-    }
+    }, 
+    idPai: {
+  type: DataTypes.INTEGER,
+  allowNull: true, 
+  references: {
+    model: 'AvaliacaoEstabelecimento',
+    key: 'id'
+  }
+}
   }, {
     freezeTableName: true,
     timestamps: false

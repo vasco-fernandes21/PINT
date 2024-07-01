@@ -10,8 +10,6 @@ export default function ContadorNotificacoes({ className }) {
         const fetchNotificacoes = async () => {
             try {
                 const response = await api.get('/notificacao/contador');
-                console.log(response.data);
-                console.log('Notificações:', response.data.data.contador);
                 if (response.data.status === 'success') {
                     setNotificacoes(response.data.data.contador);
                 } else {

@@ -450,7 +450,7 @@ for (let eventoIndex = 1; eventoIndex <= 22; eventoIndex++) {
     Inscricoes.push({
       idUtilizador: utilizadorIndex,
       idEvento: eventoIndex,
-      estado: Math.random() < 0.5
+      estado: true,
     });
   }
 }

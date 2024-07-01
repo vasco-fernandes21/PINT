@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import api from "../api/api";
 
 function NovaAvaliacao({ tipo, id, idUtilizador, handleUpdateAvaliacoes }) {
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(1);
   const [comentario, setComentario] = useState('');
 
   const handleSubmitAvaliacao = async () => {
@@ -84,7 +84,7 @@ function NovaAvaliacao({ tipo, id, idUtilizador, handleUpdateAvaliacoes }) {
         name="rating"
         value={rating}
         onChange={(event, newValue) => {
-          setRating(newValue);
+          setRating(Math.max(1, newValue)); 
         }}
       />
       <TextField
