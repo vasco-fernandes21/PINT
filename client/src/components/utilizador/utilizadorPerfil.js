@@ -12,7 +12,7 @@ const Perfil = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
   const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
+  const [isDialogOpen, setIsDialogOpen] = useState(false); 
 
   useEffect(() => {
     const fetchUtilizador = async () => {

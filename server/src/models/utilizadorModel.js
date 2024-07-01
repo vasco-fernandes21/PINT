@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../utils/database');
 const Posto = require('./postoModel');
+const Area = require('./areaModel');
+const Subarea = require('./subareaModel');
 
 const Utilizador = sequelize.define('Utilizador', {
   id: {
@@ -54,6 +56,24 @@ const Utilizador = sequelize.define('Utilizador', {
     type: DataTypes.INTEGER,
     references: {
       model: 'Posto',
+      key: 'id',
+      defaultValue: null
+    }
+  },
+  idArea: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Area',
+      key: 'id',
+      defaultValue: null
+    }
+  },
+  idSubarea: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Subarea',
       key: 'id',
       defaultValue: null
     }
