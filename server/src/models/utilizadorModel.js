@@ -77,6 +77,11 @@ const Utilizador = sequelize.define('Utilizador', {
       key: 'id',
       defaultValue: null
     }
+  },
+  ultimoLogin: {
+    type: DataTypes.DATE,
+    allowNull: true, 
+    defaultValue: null, 
   }
 }, 
 {
@@ -85,5 +90,7 @@ const Utilizador = sequelize.define('Utilizador', {
 });
 
 Utilizador.belongsTo(Posto, {foreignKey: 'idPosto'});
+Utilizador.belongsTo(Area, {foreignKey: 'idArea'});
+Utilizador.belongsTo(Subarea, {foreignKey: 'idSubarea'});
 
 module.exports = Utilizador;

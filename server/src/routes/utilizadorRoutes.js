@@ -11,5 +11,6 @@ router.post('/', utilizadorController.criarUtilizador);
 router.put('/:id', utilizadorController.atualizarUtilizador);
 router.delete('/:id', utilizadorController.apagarUtilizador);
 router.post('/associar-posto', auth, utilizadorController.associarPosto);
+router.post('/preferencias', auth, utilizadorController.associarPreferencias);
 
 module.exports = router;

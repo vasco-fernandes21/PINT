@@ -5,12 +5,13 @@ import AvatarImagem from "../utils/avatarImagem";
 import BotaoUpload from "../utils/botaoUpload";
 import ComentariosPerfil from "./comentariosPerfil";
 import EditarPerfil from './utilizadorEditar'; 
+import moment from 'moment';
 
 const Perfil = () => {
   const [utilizador, setUtilizador] = useState(null);
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [page, setPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 3;
   const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
   const [isDialogOpen, setIsDialogOpen] = useState(false); 
 
@@ -62,63 +63,44 @@ const Perfil = () => {
   };
 
   return (
-    <Box sx={{ padding: 2, maxWidth: { xl: '10' } }}>
+    <Box sx={{ padding: 2 }}>
       <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-          <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pl: 1 }}>
+          <Grid item xs={12} sx={{ textAlign: 'center', marginBottom: 2 }}>
             <AvatarImagem 
               src={utilizador && utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador ? utilizador.foto : ''}`}
-              alt={utilizador?.nome} sx={{ width: 200, height: 200, mb: 2 }} 
+              alt={utilizador?.nome} 
+              sx={{ width: 150, height: 150, margin: '0 auto', mb: 2 }} 
             />
-            <Button variant="contained" sx={{ mb: 2, backgroundColor: '#1D324F' }} onClick={handleDialogOpen}>
-              Editar Perfil
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              {utilizador?.nome}
+            </Typography>
+            <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+              {utilizador?.cargo}
+            </Typography>
+            {utilizador && (
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Última vez online: {moment(utilizador.ultimoLogin).subtract(1, 'hours').fromNow()}
+              </Typography>
+            )}
+          </Grid>
+          <Grid item xs={4} sx={{ textAlign: 'center' }}>
+            <Typography variant="h6">Inscrições ativas</Typography>
+            <Typography variant="h4">24</Typography>
+          </Grid>
+          <Grid item xs={4} sx={{ textAlign: 'center' }}>
+            <Typography variant="h6">Avaliações feitas</Typography>
+            <Typography variant="h4">11</Typography>
+          </Grid>
+          <Grid item xs={4} sx={{ textAlign: 'center' }}>
+            <Typography variant="h6">Áreas de preferência</Typography>
+            <Typography variant="h4">2</Typography>
+          </Grid>
+          <Grid item xs={12} sx={{ textAlign: 'center', marginTop: 2 }}>
+            <Button variant="contained" sx={{ backgroundColor: '#1D324F' }} onClick={handleDialogOpen}>
+              Edit Profile
             </Button>
             {utilizador && <BotaoUpload tipo="utilizador" id={utilizador.id} idUtilizador={utilizador.id} updateFotos={updateFotoPerfil} />}
-          </Grid>
-          <Grid item xs={12} md={8}>
-            <Paper elevation={2} sx={{ padding: 2, backgroundColor: '#f0f0f0', minHeight: '30vh' }}>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                {utilizador?.nome}
-              </Typography>
-              <Typography variant="h6" sx={{ marginTop: 2 }}>
-                Sobre:
-              </Typography>
-              {utilizador?.descricao && (
-                <Typography variant="body1" sx={{ marginTop: 2 }}>
-                  <strong>Descrição:</strong> {utilizador.descricao}
-                </Typography>
-              )}
-              {utilizador?.nif && (
-                <Typography variant="body1" sx={{ marginTop: 2 }}>
-                  <strong>NIF:</strong> {utilizador.nif}
-                </Typography>
-              )}
-              {utilizador?.localidade && (
-                <Typography variant="body1" sx={{ marginTop: 1 }}>
-                  <strong>Localidade:</strong> {utilizador.localidade}
-                </Typography>
-              )}
-              {utilizador?.telemovel && (
-                <Typography variant="body1" sx={{ marginTop: 1 }}>
-                  <strong>Telemóvel:</strong> {utilizador.telemovel}
-                </Typography>
-              )}
-              {utilizador?.email && (
-                <Typography variant="body1" sx={{ marginTop: 1 }}>
-                  <strong>Email:</strong> {utilizador.email}
-                </Typography>
-              )}
-              {utilizador?.cargo && (
-                <Typography variant="body1" sx={{ marginTop: 1 }}>
-                  <strong>Cargo:</strong> {utilizador.cargo}
-                </Typography>
-              )}
-              {utilizador?.Posto?.nome && (
-                <Typography variant="body1" sx={{ marginTop: 1 }}>
-                  <strong>Posto:</strong> {utilizador.Posto.nome}
-                </Typography>
-              )}
-            </Paper>
           </Grid>
         </Grid>
       </Paper>

@@ -6,7 +6,6 @@ const Posto = require('../models/postoModel');
 const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
 const Notificacao = require('../models/notificacaoModel');
-const notificacaoController = require('../controllers/notificacaoController');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
 
 exports.listarEventos = async (req, res) => {
@@ -55,6 +54,7 @@ exports.eventosMobile = async (req, res) => {
     const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idEvento = req.body.idEvento || req.params.idEvento || req.query.idEvento;
+    const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
     let whereClause = { estado: true };
     if (areaId) {
@@ -65,6 +65,9 @@ exports.eventosMobile = async (req, res) => {
     }
     if (idEvento) {
         whereClause.idEvento = idEvento;
+    }
+    if (idPosto) { 
+        whereClause.idPosto = idPosto; 
     }
     try {
         const data = await Evento.findAll({
@@ -160,23 +163,34 @@ exports.CriarEvento = async (req, res) => {
             idPosto
         });
 
-        const notificacao = await Notificacao.create({
-            idUtilizador: idCriador,
-            titulo: 'Evento criado',
-            descricao: `O seu evento ${titulo} foi criado e enviado para validação!`,
-            estado: false, 
-            data: new Date() 
+        //aqui encontra os utilizadores com as preferências do evento
+        const utilizadores = await Utilizador.findAll({
+            where: {
+                idArea,
+                idSubarea
+            }
         });
+
+        // Criar e enviar notificações para cada utilizador encontrado
+        const notificacoes = await Promise.all(utilizadores.map(utilizador => {
+            return Notificacao.create({
+                idUtilizador: utilizador.id,
+                titulo: 'Novo Evento Criado',
+                descricao: `Um novo evento, ${titulo}, foi criado na sua área de interesse!`,
+                estado: false, 
+                data: new Date()
+            });
+        }));
 
         res.status(200).json({
             success: true,
-            message: 'Evento criado com sucesso!',
+            message: 'Evento criado com sucesso e notificações enviadas!',
             data: newEvento,
-            notificacao: notificacao 
+            notificacoes: notificacoes 
         });
     } catch (error) {
         console.log('Error: ', error);
-        res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
+        res.status(500).json({ success: false, message: "Erro ao criar o evento e enviar notificações!" });
     }
 };
 

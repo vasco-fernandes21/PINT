@@ -208,3 +208,31 @@ exports.getFotoUtilizador = async (req, res) => {
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 }
+
+exports.associarPreferencias = async (req, res) => {
+  const { idArea, idSubarea } = req.body;
+  const id = req.user.id;
+
+  if (!idArea || !idSubarea) {
+    return res.status(400).send({ message: 'idArea e idSubarea são obrigatórios' });
+  }
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    utilizador.idArea = idArea;
+    utilizador.idSubarea = idSubarea;
+
+    await utilizador.save();
+
+    res.status(200).send({ message: 'Preferências do utilizador atualizadas com sucesso' });
+  } catch (error) {
+    console.error('Erro ao atualizar preferências do utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor', message: error.message });
+  }
+};
+

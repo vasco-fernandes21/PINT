@@ -35,6 +35,10 @@ exports.login = async (req, res) => {
       return res.status(401).send({ error: 'Palavra Passe incorreta' });
     }
 
+    const hora = new Date();
+    const horaAtual = new Date(hora.getTime() + 3600000); //fuso horário estava 1h atrás
+    await user.update({ ultimoLogin: horaAtual });
+
     const token = gerarToken(user);
 
     if (user.isPrimeiroLogin) {
