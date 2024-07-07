@@ -30,7 +30,6 @@ const Sidebar = () => {
       try {
         const response = await api.get('/utilizador/completo');
         setUtilizador(response.data); 
-        console.log(response.data);
       } catch (error) {
         console.error('Erro ao encontrar utilizador:', error);
       }

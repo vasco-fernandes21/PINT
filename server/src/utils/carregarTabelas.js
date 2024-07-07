@@ -455,11 +455,6 @@ for (let eventoIndex = 1; eventoIndex <= 22; eventoIndex++) {
   }
 }
 
-const Notificacoes = [
-  { idUtilizador: 6, titulo: "Nova avaliação!", descricao: 'Tem uma nova avaliação no evento "Campanha de Saúde"', estado: false },
-  { idUtilizador: 6, titulo: "Nova inscrição no seu evento!", descricao: 'Tem uma nova inscrição no evento "Campanha de Saúde"', estado: true },
-  { idUtilizador: 6, titulo: "Quase a chegar!", descricao: 'Falta menos de uma semana para "Campanha de Saúde"!', estado: false },
-]
 
 const carregarTabelas = () => {
   sequelize.sync({ force: true })
@@ -495,9 +490,6 @@ const carregarTabelas = () => {
     })
     .then(() => {
       return Inscricao.bulkCreate(Inscricoes);
-    })
-    .then(() => {
-      return Notificacao.bulkCreate(Notificacoes);
     })
     .catch((error) => {
       console.error('Erro ao carregar tabelas:', error);

@@ -353,7 +353,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         const idUtilizador = req.params.idUtilizador;
         
         const avaliacoesEstabelecimento = await AvaliacaoEstabelecimento.findAll({
-            where: { idUtilizador, estado: true, },
+            where: { idUtilizador, estado: true },
             include: [
                 { 
                     model: Utilizador, 
@@ -374,7 +374,7 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
         });
 
         const avaliacoesEvento = await AvaliacaoEvento.findAll({
-            where: { idUtilizador, estado: true, },
+            where: { idUtilizador, estado: true },
             include: [
                 { 
                     model: Utilizador, 
@@ -394,11 +394,17 @@ exports.listarAvaliacoesUtilizador = async (req, res) => {
             ],
         });
 
+        // Contadores
+        const contadorAvaliacoesEstabelecimento = avaliacoesEstabelecimento.length;
+        const contadorAvaliacoesEvento = avaliacoesEvento.length;
+        const contadorAvaliacoes = contadorAvaliacoesEstabelecimento + contadorAvaliacoesEvento;
+
         const data = [...avaliacoesEstabelecimento, ...avaliacoesEvento];
 
         res.json({
             success: true,
             data,
+            contadorAvaliacoes,
         });
     } catch (err) {
         res.status(500).json({

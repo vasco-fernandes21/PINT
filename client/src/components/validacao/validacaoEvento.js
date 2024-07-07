@@ -51,9 +51,8 @@ const ValidacaoEventos = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Lógica para validar o evento (PUT /eventos/:id)
-          const id = eventoSelecionado.id; // Supondo que o eventoSelecionado tenha um ID
-          await api.put(`/eventos/${id}`, { estado: true });
+          const id = eventoSelecionado.id; 
+          await api.put(`/eventos/validar/${id}`);
           handleClose();
           fetchEventos(); // Atualiza a lista de eventos após a alteração
             Swal.fire({

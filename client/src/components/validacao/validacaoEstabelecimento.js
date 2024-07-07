@@ -51,11 +51,10 @@ const ValidacaoEstabelecimentos = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Lógica para validar o estabelecimento (PUT /estabelecimentos/:id)
-          const id = estabelecimentoSelecionado.id; // Supondo que o estabelecimentoSelecionado tenha um ID
-          await api.put(`/estabelecimentos/${id}`, { estado: true });
+          const id = estabelecimentoSelecionado.id; 
+          await api.put(`/estabelecimentos/validar/${id}`);
           handleClose();
-          fetchEstabelecimentos(); // Atualiza a lista de estabelecimentos após a alteração
+          fetchEstabelecimentos(); 
           Swal.fire({
             title: 'Validado!',
             text: 'O estabelecimento foi validado com sucesso.',
@@ -89,11 +88,10 @@ const ValidacaoEstabelecimentos = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Lógica para recusar o estabelecimento (DELETE /estabelecimentos/:id)
-          const id = estabelecimentoSelecionado.id; // Supondo que o estabelecimentoSelecionado tenha um ID
+          const id = estabelecimentoSelecionado.id; 
           await api.delete(`/estabelecimentos/${id}`);
           handleClose();
-          fetchEstabelecimentos(); // Atualiza a lista de estabelecimentos após a alteração
+          fetchEstabelecimentos(); 
           Swal.fire('Recusado!', 'O estabelecimento foi recusado com sucesso.', 'success');
         } catch (error) {
           console.error('Erro ao recusar o estabelecimento:', error);

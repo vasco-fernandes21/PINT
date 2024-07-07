@@ -7,7 +7,7 @@ import {
   TwitterIcon,
   WhatsappIcon
 } from 'react-share';
-import { Button, Menu, MenuItem, IconButton } from '@mui/material';
+import { Menu, MenuItem, IconButton } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 
 const BotoesPartilha = ({ url, title }) => {
@@ -20,6 +20,7 @@ const BotoesPartilha = ({ url, title }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
 
   return (
     <div>
@@ -35,17 +36,26 @@ const BotoesPartilha = ({ url, title }) => {
       >
         <MenuItem onClick={handleClose}>
           <FacebookShareButton url={url} quote={title}>
-            <FacebookIcon size={32} round />
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <FacebookIcon size={32} round />
+              <span style={{ marginLeft: 10 }}>Facebook</span>
+            </div>
           </FacebookShareButton>
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <TwitterShareButton url={url} title={title}>
-            <TwitterIcon size={32} round />
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <TwitterIcon size={32} round />
+              <span style={{ marginLeft: 10 }}>Twitter</span>
+            </div>
           </TwitterShareButton>
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <WhatsappShareButton url={url} title={title} separator=": ">
-            <WhatsappIcon size={32} round />
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <WhatsappIcon size={32} round />
+              <span style={{ marginLeft: 10 }}>WhatsApp</span>
+            </div>
           </WhatsappShareButton>
         </MenuItem>
       </Menu>

@@ -163,12 +163,26 @@ exports.CriarEvento = async (req, res) => {
             idPosto
         });
 
-        //aqui encontra os utilizadores com as preferências do evento
+        // Notificação para o criador do evento
+        const notificacaoCriador = await Notificacao.create({
+            idUtilizador: idCriador,
+            titulo: 'Evento Enviado para Validação',
+            descricao: `O seu evento, ${titulo}, foi criado e enviado para validação.`,
+            estado: false,
+            data: new Date()
+        });
+
+        // Aqui encontra os utilizadores com as preferências do evento
+        const whereClause = {
+            idArea
+        };
+        
+        if (idSubarea) {
+            whereClause.idSubarea = idSubarea;
+        }
+        
         const utilizadores = await Utilizador.findAll({
-            where: {
-                idArea,
-                idSubarea
-            }
+            where: whereClause
         });
 
         // Criar e enviar notificações para cada utilizador encontrado
@@ -184,8 +198,9 @@ exports.CriarEvento = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Evento criado com sucesso e notificações enviadas!',
+            message: 'Evento criado com sucesso, notificação enviada ao criador e notificações enviadas aos utilizadores!',
             data: newEvento,
+            notificacaoCriador: notificacaoCriador,
             notificacoes: notificacoes 
         });
     } catch (error) {
@@ -202,8 +217,8 @@ exports.CriarEventoMobile = async (req, res) => {
         hora,
         morada,
         telemovel,
-        idPosto,
         email,
+        idPosto,
         idArea,
         idSubarea
     } = req.body;
@@ -212,7 +227,6 @@ exports.CriarEventoMobile = async (req, res) => {
     const foto = req.file ? req.file.filename : null;
 
     try {
-
         const newEvento = await Evento.create({
             titulo,
             descricao,
@@ -222,38 +236,54 @@ exports.CriarEventoMobile = async (req, res) => {
             telemovel,
             email,
             foto,
-            estado: false, // Estado inicial definido como falso
+            estado: false, 
             idArea,
             idSubarea,
             idCriador,
             idPosto
         });
 
-        // Criar notificação após a criação do evento
-        const mockRes = {
-            status: () => mockRes,
-            json: (data) => { return data; }
-        };
+        // Notificação para o criador do evento
+        const notificacaoCriador = await Notificacao.create({
+            idUtilizador: idCriador,
+            titulo: 'Evento Enviado para Validação',
+            descricao: `O seu evento, ${titulo}, foi criado e enviado para validação.`,
+            estado: false,
+            data: new Date()
+        });
 
-        const notificacao = await Notificacao.criarNotificacao({
-            body: {
-                titulo: 'Evento criado',
-                descricao: `O seu evento ${titulo} foi criado e enviado para validação!`
-            },
-            user: {
-                id: idCriador
-            }
-        }, mockRes);
+        const whereClause = {
+            idArea
+        };
+        
+        if (idSubarea) {
+            whereClause.idSubarea = idSubarea;
+        }
+        
+        const utilizadores = await Utilizador.findAll({
+            where: whereClause
+        });
+
+        const notificacoes = await Promise.all(utilizadores.map(utilizador => {
+            return Notificacao.create({
+                idUtilizador: utilizador.id,
+                titulo: 'Novo Evento Criado',
+                descricao: `Um novo evento, ${titulo}, foi criado na sua área de interesse!`,
+                estado: false, 
+                data: new Date()
+            });
+        }));
 
         res.status(200).json({
             success: true,
-            message: 'Evento criado com sucesso!',
+            message: 'Evento criado com sucesso, notificação enviada ao criador e notificações enviadas aos utilizadores!',
             data: newEvento,
-            notificacao: notificacao 
+            notificacaoCriador: notificacaoCriador,
+            notificacoes: notificacoes 
         });
     } catch (error) {
         console.log('Error: ', error);
-        res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
+        res.status(500).json({ success: false, message: "Erro ao criar o evento e enviar notificações!" });
     }
 };
 
@@ -469,6 +499,44 @@ exports.EventosPorValidar = async (req, res) => {
     }
 }
 
+exports.validarEvento = async (req, res) => {
+    const { id } = req.params;
+    const idAdmin = req.user.id;
+
+    try {
+        const evento = await Evento.findOne({ where: { id: id } });
+        if (!evento) {
+            return res.status(404).json({
+                success: false,
+                error: 'Evento não encontrado.',
+            });
+        }
+
+        evento.estado = true;
+        evento.idAdmin = idAdmin;
+        await evento.save();
+
+        const notificacao = await Notificacao.create({
+            idUtilizador: evento.idCriador,
+            titulo: 'Evento validado',
+            descricao: `O seu evento ${evento.titulo} foi validado com sucesso!`,
+            estado: false, 
+            data: new Date(),
+        });
+
+        res.json({
+            success: true,
+            data: evento,
+            notificacao: notificacao,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+};
+
 exports.getInscricaoEvento = async (req, res) => {
     const { id } = req.params;
     try {
@@ -618,3 +686,4 @@ exports.verificarInscricao = async (req, res) => {
         });
     }
 }
+

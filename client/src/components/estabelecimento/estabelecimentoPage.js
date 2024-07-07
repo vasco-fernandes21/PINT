@@ -11,6 +11,9 @@ import Comentarios from "../avaliacao/comentarios";
 import NovaAvaliacao from "../avaliacao/novaAvaliacao";
 import BotaoUpload from "../utils/botaoUpload";
 import EditarEstabelecimento from "./estabelecimentoEdit";
+import BotoesPartilha from "../utils/botaoPartilha";
+const apiUrl = process.env.REACT_APP_API_URL;
+const frontendUrl = process.env.REACT_APP_FRONTEND; 
 
 function EstabelecimentoPage() {
   const { id } = useParams();
@@ -22,6 +25,9 @@ function EstabelecimentoPage() {
   const itemsPerPage = 5;
   const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
   const [open, setOpen] = useState(false);
+
+  const url = `${frontendUrl}/estabelecimentos/${id}`;
+  const title = 'Achei este estabelecimento interessante!';
 
   useEffect(() => {
     const fetchUtilizador = async () => {
@@ -99,7 +105,16 @@ function EstabelecimentoPage() {
     <Grid container spacing={2} justifyContent="center" alignItems="center">
       <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
         <Box sx={{ padding: 0, paddingTop: 0 }}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>{estabelecimento.nome}</Typography>
+        <Grid container alignItems="center" spacing={2}>
+          <Grid item>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>
+              {estabelecimento.nome}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <BotoesPartilha url={url} title={title} />
+          </Grid>
+        </Grid>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3 }}>
             {utilizador && (
               <>

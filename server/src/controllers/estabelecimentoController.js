@@ -118,7 +118,7 @@ exports.criarEstabelecimento = async (req, res) => {
         const notificacao = await Notificacao.create({
             idUtilizador: idCriador,
             titulo: 'Estabelecimento criado',
-            descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`,
+            descricao: `O seu estabelecimento ${nome} foi criado com sucesso e enviado para validação!`,
             estado: false,
             data: new Date()
         });
@@ -170,7 +170,7 @@ exports.criarEstabelecimentoMobile = async (req, res) => {
         const notificacao = await Notificacao.create({
             idUtilizador: idCriador,
             titulo: 'Estabelecimento criado',
-            descricao: `O seu estabelecimento ${nome} foi criado com sucesso!`,
+            descricao: `O seu estabelecimento ${nome} foi criado com sucesso e enviado para validação!`,
             estado: false,
             data: new Date()
         });
@@ -417,3 +417,41 @@ exports.EstabelecimentosPorValidar = async (req, res) => {
         });
     }
 }
+
+exports.validarEstabelecimento = async (req, res) => {
+    const { id } = req.params;
+    const idAdmin = req.user.id;
+
+    try {
+        const estabelecimento = await Estabelecimento.findOne({ where: { id: id } });
+        if (!estabelecimento) {
+            return res.status(404).json({
+                success: false,
+                error: 'Estabelecimento não encontrado.',
+            });
+        }
+
+        estabelecimento.estado = true;
+        estabelecimento.idAdmin = idAdmin;
+        await estabelecimento.save();
+
+        const notificacao = await Notificacao.create({
+            idUtilizador: estabelecimento.idCriador,
+            titulo: 'Estabelecimento validado',
+            descricao: `O seu estabelecimento ${estabelecimento.nome} foi validado com sucesso!`,
+            estado: false, 
+            data: new Date(),
+        });
+
+        res.json({
+            success: true,
+            data: estabelecimento,
+            notificacao: notificacao,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+};

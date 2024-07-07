@@ -28,6 +28,7 @@
     "react-big-calendar": "^1.13.0",
     "react-date-range": "^2.0.1",
     "react-dom": "^18.2.0",
+    "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.2.2",
     "react-google-maps": "^9.4.5",
     "react-hook-form": "^7.51.5",

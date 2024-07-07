@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Grid, CardContent, Typography, Box, Divider, Button } from "@mui/material";
 import api from "../api/api";
 import Mapa from "../utils/mapa";
@@ -15,10 +15,7 @@ import EditarEvento from "./eventoEdit";
 import InscricoesGrelha from "./eventoInscricoes";
 import BotoesPartilha from "../utils/botaoPartilha";
 const apiUrl = process.env.REACT_APP_API_URL;
-const frontendUrl = process.env.REACT_APP_FRONTEND;
-
-console.log(apiUrl); 
-console.log(frontendUrl); 
+const frontendUrl = process.env.REACT_APP_FRONTEND; 
 
 function EventoPage() {
     const { id } = useParams();
@@ -33,7 +30,6 @@ function EventoPage() {
     const [open, setOpen] = useState(false);
 
     const url = `${frontendUrl}/eventos/${id}`;
-    console.log(url);
     const title = 'Estou interessado neste evento!';
 
     useEffect(() => {
@@ -100,7 +96,7 @@ function EventoPage() {
             const response = await api.get(`foto/eventos/${id}`);
             const fotoPaths = response.data.data.map(foto => ({
                 id: foto.id,
-                url: `${process.env.REACT_APP_API_URL}/uploads/eventos/${foto.foto}`,
+                url: `${apiUrl}/uploads/eventos/${foto.foto}`,
                 carregadaPor: foto.criador ? foto.criador.nome : 'Desconhecido',
                 validadaPor: foto.admin ? foto.admin.nome : 'Desconhecido',
             }));
@@ -126,12 +122,16 @@ function EventoPage() {
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
                 <Box sx={{ padding: 0, paddingTop: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 0 }}>
+                    <Grid item xs={12}>
                     <Typography variant="h4" sx={{ fontWeight: 'bold', marginRight: 1 }}>
                         {evento.titulo}
                     </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={8} md={6} lg={4} xl={3}> {/* Ajuste os tamanhos conforme necessário */}
                     <BotoesPartilha url={url} title={title} />
-                    </div>
+                    </Grid>
+                </div>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3 }}>
                         {utilizador && (
                             <>

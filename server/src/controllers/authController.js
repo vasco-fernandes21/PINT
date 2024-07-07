@@ -328,3 +328,4 @@ const criarContaGoogleHandler = async ({ nome, email, foto, id_google}) => {
     throw new Error('Erro ao criar conta com Google');
   }
 };
+
