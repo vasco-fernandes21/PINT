@@ -2,6 +2,9 @@
 const gerarToken = require('../middlewares/gerarToken');
 const Utilizador = require('../models/utilizadorModel');
 const Posto = require('../models/postoModel');
+const Inscricao = require('../models/inscricaoModel');
+const Evento = require('../models/eventoModel');
+
 require('dotenv').config();
 
 exports.getUtilizador = (req, res) => {
@@ -208,3 +211,52 @@ exports.getFotoUtilizador = async (req, res) => {
     res.status(500).send({ error: 'Erro interno do servidor' });
   }
 }
+
+exports.associarPreferencias = async (req, res) => {
+  const { idArea, idSubarea } = req.body;
+  const id = req.params.id;
+
+  try {
+    const utilizador = await Utilizador.findByPk(id);
+
+    if (!utilizador) {
+      return res.status(404).send({ message: 'Utilizador não encontrado' });
+    }
+
+    utilizador.idArea = idArea || null;
+    utilizador.idSubarea = idSubarea || null;
+
+    await utilizador.save();
+
+    res.status(200).send({ message: 'Preferências do utilizador atualizadas com sucesso' });
+  } catch (error) {
+    console.error('Erro ao atualizar preferências do utilizador:', error);
+    res.status(500).send({ error: 'Erro interno do servidor', message: error.message });
+  }
+};
+
+
+exports.listarInscricoes = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const inscricoes = await Inscricao.findAll({
+      where: { idUtilizador: id, estado: true },
+      include: {
+        model: Evento,
+        attributes: ['titulo', 'data'], 
+        as: 'evento',
+      },
+    });
+
+    const contador = inscricoes.length;
+    res.status(200).send({ inscricoes, contador });
+  } catch (error) {
+    console.error('Erro ao listar inscrições:', error);
+    res.status(500).send({ error: 'Erro interno do servidor' });
+  }
+};
+
+
+
+

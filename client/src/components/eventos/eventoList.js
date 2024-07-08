@@ -1,19 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Grid, Card, CardContent, Typography, MenuItem, CardMedia, Box, Dialog, Fab, Select, DialogActions, DialogContent, DialogTitle, DialogContentText } from "@mui/material";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  MenuItem,
+  CardMedia,
+  Box,
+  Dialog,
+  Fab,
+  Select,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  DialogContentText,
+  IconButton,
+  Menu
+} from "@mui/material";
 import { styled } from "@mui/system";
 import AddIcon from "@mui/icons-material/Add";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import api from "../api/api";
 import CriarEvento from "./eventoCriar";
 
 function EventoList() {
-  const [eventos, setEventos] = React.useState([]);
-  const [areas, setAreas] = React.useState([]);
-  const [subareas, setSubareas] = React.useState([]);
-  const [areaId, setAreaId] = React.useState("");
-  const [subareaId, setSubareaId] = React.useState("");
-  const [idPosto, setIdPosto] = React.useState(null);
+  const [eventos, setEventos] = useState([]);
+  const [filteredEventos, setFilteredEventos] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [subareas, setSubareas] = useState([]);
+  const [areaId, setAreaId] = useState("");
+  const [subareaId, setSubareaId] = useState("");
+  const [idPosto, setIdPosto] = useState(null);
   const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [filter, setFilter] = useState("Todos");
 
   useEffect(() => {
     const getAreas = async () => {
@@ -72,6 +93,7 @@ function EventoList() {
         const response = await api.get(`/eventos`, { params });
         console.log('Received response:', response);
         setEventos(response.data.data);
+        setFilteredEventos(response.data.data);
       } catch (error) {
         console.error('Error fetching eventos:', error.response || error.message);
       }
@@ -82,16 +104,42 @@ function EventoList() {
     }
   }, [areaId, subareaId, idPosto]);
 
+  useEffect(() => {
+    const today = new Date();
+    let filtered = eventos;
+
+    if (filter === "Passados") {
+      filtered = eventos.filter(evento => new Date(evento.data) < today);
+    } else if (filter === "Futuros") {
+      filtered = eventos.filter(evento => new Date(evento.data) > today);
+    }
+
+    setFilteredEventos(filtered);
+  }, [filter, eventos]);
+
   const handleAreaChange = (event) => {
     setAreaId(event.target.value);
     if (event.target.value === "") {
       setSubareaId("");
-      setEventos([]);
+      setFilteredEventos(eventos);
     }
   };
 
   const handleSubareaChange = (event) => {
     setSubareaId(event.target.value);
+  };
+
+  const handleFilterClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleFilterSelect = (selectedFilter) => {
+    setFilter(selectedFilter);
+    setAnchorEl(null);
   };
 
   const StyledSelectArea = styled(Select)({
@@ -159,8 +207,8 @@ function EventoList() {
   return (
     <Box sx={{ padding: 1, paddingTop: 0 }}>
       <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold' }}>Eventos</Typography>
-      <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }}>
-        <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }} sx={{marginBottom: 2}}>
+      <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }} alignItems="center">
+        <Grid container spacing={1} direction={{ xs: 'column', sm: 'row' }} sx={{ marginBottom: 2 }}>
           <Grid item xs={12} sm={2}>
             <StyledSelectArea value={areaId} onChange={handleAreaChange} displayEmpty fullWidth>
               <MenuItem value="">Todas</MenuItem>
@@ -177,10 +225,24 @@ function EventoList() {
               ))}
             </StyledSelectSubarea>
           </Grid>
+          <Grid item>
+            <IconButton onClick={handleFilterClick} style={{ marginLeft: 10 }}>
+              <FilterListIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleFilterClose}
+            >
+              <MenuItem onClick={() => handleFilterSelect("Todos")}>Todos</MenuItem>
+              <MenuItem onClick={() => handleFilterSelect("Passados")}>Passados</MenuItem>
+              <MenuItem onClick={() => handleFilterSelect("Futuros")}>Futuros</MenuItem>
+            </Menu>
+          </Grid>
         </Grid>
       </Grid>
       <Grid container spacing={3}>
-        {eventos.map((evento) => {
+        {filteredEventos.map((evento) => {
           const imageUrl = process.env.REACT_APP_API_URL + '/uploads/eventos/' + evento.foto;
           return (
             <Grid item xs={12} sm={6} md={4} key={evento.id}>
@@ -192,9 +254,9 @@ function EventoList() {
                 />
                 <StyledCardContent>
                   <Link to={`/eventos/${evento.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <StyledTypography variant="h5" component="h2">
-                    {evento.titulo}
-                  </StyledTypography>
+                    <StyledTypography variant="h5" component="h2">
+                      {evento.titulo}
+                    </StyledTypography>
                   </Link>
                   <Typography variant="body2" color="text.secondary">
                     Data: {new Date(evento.data).toLocaleDateString()}

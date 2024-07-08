@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form'; 
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
+import { TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, FormHelperText } from '@mui/material';
 import Swal from 'sweetalert2';
 import api from '../api/api';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -127,7 +127,7 @@ function CriarEstabelecimento({ handleClose }) {
         fullWidth 
         sx={{ mb: 2, backgroundColor: '#f2f2f2', borderRadius: 1 }} 
       />
-      <FormControl fullWidth sx={{ mb: 2 }}>
+      <FormControl fullWidth sx={{ mb: 2 }} error={Boolean(errors.area)}>
         <InputLabel id="area-label">Área</InputLabel>
         <Select 
           {...register('area')} 
@@ -140,8 +140,10 @@ function CriarEstabelecimento({ handleClose }) {
             </MenuItem>
           ))}
         </Select>
+        {errors.area && <FormHelperText>{errors.area.message}</FormHelperText>}
       </FormControl>
-      <FormControl fullWidth sx={{ mb: 2 }}>
+
+      <FormControl fullWidth sx={{ mb: 2 }} error={Boolean(errors.subarea)}>
         <InputLabel id="subarea-label">Subárea</InputLabel>
         <Select 
           {...register('subarea')} 
@@ -154,6 +156,7 @@ function CriarEstabelecimento({ handleClose }) {
             </MenuItem>
           ))}
         </Select>
+        {errors.subarea && <FormHelperText>{errors.subarea.message}</FormHelperText>}
       </FormControl>
       <Controller
         name="foto"

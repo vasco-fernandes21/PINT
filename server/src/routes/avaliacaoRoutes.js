@@ -8,6 +8,8 @@ router.get('/estabelecimentos/:id', avaliacaoController.listarAvaliacoesEstabele
 router.post('/estabelecimentos/criar/:id', avaliacaoController.CriarAvaliacaoEstabelecimento)
 router.put('/estabelecimentos/:id', avaliacaoController.editarAvaliacaoEstabelecimento)
 router.delete('/estabelecimentos/:id', avaliacaoController.apagarAvaliacaoEstabelecimento)
+router.post('/:id/upvote', auth, avaliacaoController.upvote)
+router.post('/:id/downvote', auth, avaliacaoController.downvote)
 
 router.get('/eventos/:id', avaliacaoController.listarAvaliacoesEvento)
 router.post('/eventos/criar/:id', avaliacaoController.CriarAvaliacaoEvento)
@@ -21,5 +23,11 @@ router.get('/validar/eventos', auth, avaliacaoController.AvaliacaoEventoPorValid
 router.get('/validar/estabelecimentos', auth, avaliacaoController.AvaliacaoEstabelecimentoPorValidar);
 
 
+//respostas
+router.post('/eventos/responder/:idAvaliacao', auth, avaliacaoController.responderAvaliacaoEvento)
+router.get('/eventos/respostas/:idAvaliacao', auth, avaliacaoController.getFilhosEvento)
+
+router.post('/estabelecimentos/responder/:idAvaliacao', auth, avaliacaoController.responderAvaliacaoEstabelecimento)
+router.get('/estabelecimentos/respostas/:idAvaliacao', auth, avaliacaoController.getFilhosEstabelecimento)
 
 module.exports = router;

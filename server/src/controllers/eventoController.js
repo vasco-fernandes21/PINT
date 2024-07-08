@@ -6,8 +6,8 @@ const Posto = require('../models/postoModel');
 const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
 const Notificacao = require('../models/notificacaoModel');
-const notificacaoController = require('../controllers/notificacaoController');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
+const { Op } = require('sequelize');
 
 exports.listarEventos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -55,6 +55,7 @@ exports.eventosMobile = async (req, res) => {
     const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idEvento = req.body.idEvento || req.params.idEvento || req.query.idEvento;
+    const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
     let whereClause = { estado: true };
     if (areaId) {
@@ -65,6 +66,9 @@ exports.eventosMobile = async (req, res) => {
     }
     if (idEvento) {
         whereClause.idEvento = idEvento;
+    }
+    if (idPosto) { 
+        whereClause.idPosto = idPosto; 
     }
     try {
         const data = await Evento.findAll({
@@ -91,6 +95,30 @@ exports.eventosMobile = async (req, res) => {
     }
 }
 
+exports.eventosCriador = async (req, res) => {
+    const idCriador = req.user.id;
+    try {
+        const data = await Evento.findAll({
+            where: { idCriador: idCriador },
+            include: [
+                { model: Area, as: 'area', attributes: ['nome'] },
+                { model: Subarea, as: 'subarea', attributes: ['nome'] },
+                { model: Utilizador, as: 'criador', attributes: ['nome'] },
+                { model: Utilizador, as: 'admin', attributes: ['nome'] }
+            ]
+        });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        console.error('Erro ao listar eventos:', err.message);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+};
 
 
 exports.getEvento = async (req, res) => {
@@ -160,23 +188,23 @@ exports.CriarEvento = async (req, res) => {
             idPosto
         });
 
-        const notificacao = await Notificacao.create({
+        const notificacaoCriador = await Notificacao.create({
             idUtilizador: idCriador,
-            titulo: 'Evento criado',
-            descricao: `O seu evento ${titulo} foi criado e enviado para validação!`,
-            estado: false, 
-            data: new Date() 
+            titulo: 'Evento Enviado para Validação',
+            descricao: `O seu evento, ${titulo}, foi criado e enviado para validação.`,
+            estado: false,
+            data: new Date()
         });
 
         res.status(200).json({
             success: true,
-            message: 'Evento criado com sucesso!',
+            message: 'Evento criado com sucesso, notificação enviada ao criador!',
             data: newEvento,
-            notificacao: notificacao 
+            notificacaoCriador: notificacaoCriador,
         });
     } catch (error) {
         console.log('Error: ', error);
-        res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
+        res.status(500).json({ success: false, message: "Erro ao criar o evento e enviar notificações!" });
     }
 };
 
@@ -188,8 +216,8 @@ exports.CriarEventoMobile = async (req, res) => {
         hora,
         morada,
         telemovel,
-        idPosto,
         email,
+        idPosto,
         idArea,
         idSubarea
     } = req.body;
@@ -198,7 +226,6 @@ exports.CriarEventoMobile = async (req, res) => {
     const foto = req.file ? req.file.filename : null;
 
     try {
-
         const newEvento = await Evento.create({
             titulo,
             descricao,
@@ -208,38 +235,54 @@ exports.CriarEventoMobile = async (req, res) => {
             telemovel,
             email,
             foto,
-            estado: false, // Estado inicial definido como falso
+            estado: false, 
             idArea,
             idSubarea,
             idCriador,
             idPosto
         });
 
-        // Criar notificação após a criação do evento
-        const mockRes = {
-            status: () => mockRes,
-            json: (data) => { return data; }
-        };
+        // Notificação para o criador do evento
+        const notificacaoCriador = await Notificacao.create({
+            idUtilizador: idCriador,
+            titulo: 'Evento Enviado para Validação',
+            descricao: `O seu evento, ${titulo}, foi criado e enviado para validação.`,
+            estado: false,
+            data: new Date()
+        });
 
-        const notificacao = await Notificacao.criarNotificacao({
-            body: {
-                titulo: 'Evento criado',
-                descricao: `O seu evento ${titulo} foi criado e enviado para validação!`
-            },
-            user: {
-                id: idCriador
-            }
-        }, mockRes);
+        const whereClause = {
+            idArea
+        };
+        
+        if (idSubarea) {
+            whereClause.idSubarea = idSubarea;
+        }
+        
+        const utilizadores = await Utilizador.findAll({
+            where: whereClause
+        });
+
+        const notificacoes = await Promise.all(utilizadores.map(utilizador => {
+            return Notificacao.create({
+                idUtilizador: utilizador.id,
+                titulo: 'Novo Evento Criado',
+                descricao: `Um novo evento, ${titulo}, foi criado na sua área de interesse!`,
+                estado: false, 
+                data: new Date()
+            });
+        }));
 
         res.status(200).json({
             success: true,
-            message: 'Evento criado com sucesso!',
+            message: 'Evento criado com sucesso, notificação enviada ao criador e notificações enviadas aos utilizadores!',
             data: newEvento,
-            notificacao: notificacao 
+            notificacaoCriador: notificacaoCriador,
+            notificacoes: notificacoes 
         });
     } catch (error) {
         console.log('Error: ', error);
-        res.status(500).json({ success: false, message: "Erro ao criar o evento!" });
+        res.status(500).json({ success: false, message: "Erro ao criar o evento e enviar notificações!" });
     }
 };
 
@@ -455,6 +498,66 @@ exports.EventosPorValidar = async (req, res) => {
     }
 }
 
+exports.validarEvento = async (req, res) => {
+    const { id } = req.params;
+    const idAdmin = req.user.id;
+
+    try {
+        const evento = await Evento.findOne({ where: { id: id } });
+        if (!evento) {
+            return res.status(404).json({
+                success: false,
+                error: 'Evento não encontrado.',
+            });
+        }
+
+        evento.estado = true;
+        evento.idAdmin = idAdmin;
+        await evento.save();
+
+        const notificacaoCriador = await Notificacao.create({
+            idUtilizador: evento.idCriador,
+            titulo: 'Evento validado',
+            descricao: `O seu evento ${evento.titulo} foi validado com sucesso!`,
+            estado: false, 
+            data: new Date(),
+        });
+
+        const utilizadores = await Utilizador.findAll({
+            where: {
+                idArea: evento.idArea,
+                idSubarea: evento.idSubarea ? { [Op.or]: [evento.idSubarea, null] } : null
+            }
+        });
+        
+        console.log('Utilizadores:', utilizadores);
+
+        const notificacoesUtilizadores = await Promise.all(utilizadores.map(utilizador => {
+            return Notificacao.create({
+                idUtilizador: utilizador.id,
+                titulo: 'Evento Validado',
+                descricao: `Um evento de seu interesse, ${evento.titulo}, foi criado!`,
+                estado: false, 
+                data: new Date()
+            });
+        }));
+
+
+        res.json({
+            success: true,
+            data: evento,
+            message: 'Evento validado com sucesso!',
+            notificacaoCriador: notificacaoCriador,
+            notificacoesUtilizadores: notificacoesUtilizadores
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+};
+
 exports.getInscricaoEvento = async (req, res) => {
     const { id } = req.params;
     try {
@@ -492,10 +595,9 @@ exports.getInscricaoEvento = async (req, res) => {
 
 exports.inscreverEvento = async (req, res) => {
     const { id } = req.params;
-    const idUtilizador = req.user.id;
+    const idUtilizador = req.user.id; 
 
     try {
-        // Verifica se o utilizador já está inscrito no evento
         const inscricaoExistente = await Inscricao.findOne({
             where: {
                 idEvento: id,
@@ -503,76 +605,112 @@ exports.inscreverEvento = async (req, res) => {
             }
         });
 
+        console.log('Inscrição existente:', inscricaoExistente);
+
         if (inscricaoExistente) {
-            // Se já estiver inscrito, remove a inscrição
-            await Inscricao.destroy({
-                where: {
-                    idEvento: id,
-                    idUtilizador: idUtilizador
-                }
-            });
-
-            res.status(200).json({
-                success: true,
-                message: 'Inscrição removida com sucesso!'
-            });
-        } else {
-            // Se não estiver inscrito, faz a inscrição
-            const novaInscricao = await Inscricao.create({
-                idEvento: id,
-                idUtilizador: idUtilizador,
-                estado: true
-            });
-
-            const evento = await Evento.findByPk(id);
-
-            await Notificacao.create({
-                idUtilizador: idUtilizador,
-                titulo: 'Inscrição realizada com sucesso!',
-                descricao: `Inscrito com sucesso no evento '${evento.titulo}'.`,
-                data: new Date(),
-                estado: false
-            });
-
-            await Notificacao.create({
-                idUtilizador: evento.idCriador,
-                titulo: 'Nova inscrição no seu evento',
-                descricao: `Tem uma nova inscrição no seu evento '${evento.titulo}'.`,
-                data: new Date(),
-                estado: false
-            });
-
-            res.status(200).json({
-                success: true,
-                message: 'Inscrição realizada com sucesso!'
+            return res.status(400).json({
+                success: false,
+                message: 'Utilizador já inscrito no evento.'
             });
         }
+
+        await Inscricao.create({
+            idEvento: id,
+            idUtilizador: idUtilizador,
+            estado: true
+        });
+
+        const evento = await Evento.findOne({ where: { id: id } });
+
+        const notificacao = await Notificacao.create({
+            idUtilizador: evento.idCriador,
+            titulo: 'Nova Inscrição',
+            descricao: `Tem uma nova inscrição no evento ${evento.titulo}!`,
+            estado: false,
+            data: new Date()
+        });
+        res.status(200).json({
+            success: true,
+            message: 'Inscrição realizada com sucesso!',
+            notificacao: notificacao
+        });
     } catch (error) {
-        console.error('Erro ao realizar inscrição:', error);
-        res.status(500).json({ success: false, message: "Erro ao realizar a inscrição!" });
+        console.error('Erro ao inscrever:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro ao realizar a inscrição!'
+        });
     }
 };
 
 exports.desinscreverEvento = async (req, res) => {
-    const { id } = req.params;
-    const idUtilizador = req.user.id;
+    const { id } = req.params; // ID do evento
+    const idUtilizador = req.user.id; // ID do utilizador a partir do token de autenticação
 
     try {
-        const inscricaoRemovida = await Inscricao.destroy({
+        // Verifica se o utilizador está inscrito no evento
+        const inscricaoExistente = await Inscricao.findOne({
             where: {
                 idEvento: id,
                 idUtilizador: idUtilizador
             }
         });
 
-        if (inscricaoRemovida) {
-            res.status(200).json({ success: true, message: 'Inscrição removida com sucesso!' });
-        } else {
-            res.status(404).json({ success: false, message: 'Inscrição não encontrada.' });
+        if (!inscricaoExistente) {
+            return res.status(404).json({
+                success: false,
+                message: 'Nenhuma inscrição encontrada para o evento com o ID ' + id,
+            });
         }
+
+        await Inscricao.destroy({
+            where: {
+                idEvento: id,
+                idUtilizador: idUtilizador
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: 'Inscrição removida com sucesso!'
+        });
     } catch (error) {
-        console.error('Erro ao remover inscrição:', error);
-        res.status(500).json({ success: false, message: "Erro ao remover a inscrição!" });
+        console.error('Erro ao desinscrever:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro ao realizar a desinscrição!'
+        });
     }
 };
+
+exports.verificarInscricao = async (req, res) => {
+    const { id } = req.params; 
+    const idUtilizador = req.user.id; 
+    try {
+        const inscricao = await Inscricao.findOne({
+            where: {
+                idEvento: id,
+                idUtilizador: idUtilizador
+            }
+        });
+
+        if (inscricao) {
+            res.status(200).json({
+                success: true,
+                data: inscricao,
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Nenhuma inscrição encontrada para o evento com o ID ' + id,
+            });
+        }
+    } catch (error) {
+        console.error('Erro ao verificar inscrição:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro ao verificar a inscrição!'
+        });
+    }
+}
 

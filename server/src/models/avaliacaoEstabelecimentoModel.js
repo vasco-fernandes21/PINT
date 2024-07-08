@@ -51,6 +51,24 @@
       allowNull: false,
       defaultValue: DataTypes.NOW
     },
+    upvotes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    downvotes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }, 
+    idPai: {
+  type: DataTypes.INTEGER,
+  allowNull: true, 
+  references: {
+    model: 'AvaliacaoEstabelecimento',
+    key: 'id'
+  }
+}
   }, {
     freezeTableName: true,
     timestamps: false

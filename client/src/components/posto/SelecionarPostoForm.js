@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import api from '../api/api';
 import logo from '../../assets/softinsa.svg';
-import { Select, MenuItem, FormControl, Button, Box, InputLabel, Typography } from '@mui/material';
+import { Select, MenuItem, FormControl, Button, InputLabel, Typography } from '@mui/material';
 
 function SelecionarPosto() {
   const [postos, setPostos] = useState([]);
   const [selectedPosto, setSelectedPosto] = useState('');
   
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const fetchPostos = async () => {

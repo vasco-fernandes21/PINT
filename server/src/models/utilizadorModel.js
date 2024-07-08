@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../utils/database');
 const Posto = require('./postoModel');
+const Area = require('./areaModel');
+const Subarea = require('./subareaModel');
 
 const Utilizador = sequelize.define('Utilizador', {
   id: {
@@ -57,6 +59,29 @@ const Utilizador = sequelize.define('Utilizador', {
       key: 'id',
       defaultValue: null
     }
+  },
+  idArea: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Area',
+      key: 'id',
+      defaultValue: null
+    }
+  },
+  idSubarea: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Subarea',
+      key: 'id',
+      defaultValue: null
+    }
+  },
+  ultimoLogin: {
+    type: DataTypes.DATE,
+    allowNull: true, 
+    defaultValue: null, 
   }
 }, 
 {
@@ -65,5 +90,7 @@ const Utilizador = sequelize.define('Utilizador', {
 });
 
 Utilizador.belongsTo(Posto, {foreignKey: 'idPosto'});
+Utilizador.belongsTo(Area, {foreignKey: 'idArea'});
+Utilizador.belongsTo(Subarea, {foreignKey: 'idSubarea'});
 
 module.exports = Utilizador;

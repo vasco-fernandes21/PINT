@@ -13,6 +13,9 @@ import BotaoUpload from "../utils/botaoUpload";
 import BotaoInscricaoEvento from "../utils/BotaoInscricao";
 import EditarEvento from "./eventoEdit";
 import InscricoesGrelha from "./eventoInscricoes";
+import BotoesPartilha from "../utils/botaoPartilha";
+const apiUrl = process.env.REACT_APP_API_URL;
+const frontendUrl = process.env.REACT_APP_FRONTEND; 
 
 function EventoPage() {
     const { id } = useParams();
@@ -25,6 +28,9 @@ function EventoPage() {
     const itemsPerPage = 5;
     const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
     const [open, setOpen] = useState(false);
+
+    const url = `${frontendUrl}/eventos/${id}`;
+    const title = 'Estou interessado neste evento!';
 
     useEffect(() => {
         const fetchUtilizador = async () => {
@@ -90,7 +96,7 @@ function EventoPage() {
             const response = await api.get(`foto/eventos/${id}`);
             const fotoPaths = response.data.data.map(foto => ({
                 id: foto.id,
-                url: `${process.env.REACT_APP_API_URL}/uploads/eventos/${foto.foto}`,
+                url: `${apiUrl}/uploads/eventos/${foto.foto}`,
                 carregadaPor: foto.criador ? foto.criador.nome : 'Desconhecido',
                 validadaPor: foto.admin ? foto.admin.nome : 'Desconhecido',
             }));
@@ -104,6 +110,10 @@ function EventoPage() {
         setPage(value);
     };
 
+    const atualizarInscricoes = async () => {
+        await fetchInscricoes();
+    };
+
     if (!evento) {
         return <div>A carregar...</div>;
     }
@@ -112,7 +122,16 @@ function EventoPage() {
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
                 <Box sx={{ padding: 0, paddingTop: 0 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>{evento.titulo}</Typography>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 0 }}>
+                    <Grid item xs={12}>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginRight: 1 }}>
+                        {evento.titulo}
+                    </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={8} md={6} lg={4} xl={3}> {/* Ajuste os tamanhos conforme necessário */}
+                    <BotoesPartilha url={url} title={title} />
+                    </Grid>
+                </div>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3 }}>
                         {utilizador && (
                             <>
@@ -162,7 +181,12 @@ function EventoPage() {
                        <Grid item xs={12}>
                             <InscricoesGrelha inscricoes={inscricoes} />
                             <Grid item xs={12} sx={{ position: 'relative' }}>
-                                <BotaoInscricaoEvento sx={{ position: 'absolute', marginLeft: 0, marginTop: 2 }} idEvento={id} idUtilizador={utilizador?.id} inscricaoAberta={evento.inscricaoAberta}/>
+                            <BotaoInscricaoEvento 
+                                atualizarInscricoes={atualizarInscricoes} 
+                                idEvento={id} 
+                                idUtilizador={utilizador?.id} 
+                                inscricaoAberta={evento.inscricaoAberta}
+                            />  
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

@@ -41,13 +41,14 @@ const EditarPerfil = ({ open, onClose, utilizador, onUpdate }) => {
     try {
       const response = await api.put(`/utilizador/${utilizador.id}`, formData);
       if (response.status === 200) {
-        onUpdate(formData);
-        onClose();
+        onUpdate(formData); // Atualiza o estado do utilizador no componente Perfil
+        onClose(); // Fecha o diálogo de edição de perfil
       }
     } catch (error) {
       console.error('Erro ao atualizar utilizador:', error);
     }
   };
+  
 
   return (
     <Dialog open={open} onClose={onClose}>

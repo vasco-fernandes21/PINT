@@ -113,7 +113,7 @@ const postos = [
 
 const eventos = [
   // Saúde
-  { idArea: 1, idSubarea: 1, idCriador: 1, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', morada: 'Viseu', estado: true, foto: 'cufViseu.jpg' },
+  { idArea: 1, idSubarea: 1, idCriador: 6, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', morada: 'Viseu', estado: true, foto: 'cufViseu.jpg' },
   { idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, titulo: 'Check-up Dentário', descricao: 'Check-up Dentário na cidade de Tomar', data: '2024-07-01', hora: '11:00:00', morada: 'Tomar', estado: true },
   { idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', morada: 'Fundão', estado: true },
 
@@ -154,7 +154,7 @@ const estabelecimentos = [
   {
     idArea: 1,
     idSubarea: 1,
-    idCriador: 1,
+    idCriador: 6,
     idAdmin: 1,
     idPosto: 1,
     nome: 'CUF Viseu',
@@ -450,16 +450,11 @@ for (let eventoIndex = 1; eventoIndex <= 22; eventoIndex++) {
     Inscricoes.push({
       idUtilizador: utilizadorIndex,
       idEvento: eventoIndex,
-      estado: Math.random() < 0.5
+      estado: true,
     });
   }
 }
 
-const Notificacoes = [
-  { idUtilizador: 6, titulo: "Nova avaliação!", descricao: 'Tem uma nova avaliação no evento "Campanha de Saúde"', estado: false },
-  { idUtilizador: 6, titulo: "Nova inscrição no seu evento!", descricao: 'Tem uma nova inscrição no evento "Campanha de Saúde"', estado: true },
-  { idUtilizador: 6, titulo: "Quase a chegar!", descricao: 'Falta menos de uma semana para "Campanha de Saúde"!', estado: false },
-]
 
 const carregarTabelas = () => {
   sequelize.sync({ force: true })
@@ -495,9 +490,6 @@ const carregarTabelas = () => {
     })
     .then(() => {
       return Inscricao.bulkCreate(Inscricoes);
-    })
-    .then(() => {
-      return Notificacao.bulkCreate(Notificacoes);
     })
     .catch((error) => {
       console.error('Erro ao carregar tabelas:', error);
