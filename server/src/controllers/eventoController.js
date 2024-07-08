@@ -52,22 +52,12 @@ exports.listarEventos = async (req, res) => {
 };
 
 exports.eventosMobile = async (req, res) => {
-    const id = req.user?.id; 
-    if (!id) {
-        return res.status(401).json({ message: 'Não autenticado' });
-    }
     const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idEvento = req.body.idEvento || req.params.idEvento || req.query.idEvento;
     const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
-    let whereClause = {
-        [Op.or]: [
-            { estado: true },
-            { estado: false, idCriador: id }
-        ]
-    };
-
+    let whereClause = { estado: true };
     if (areaId) {
         whereClause.idArea = areaId;
     }
@@ -105,6 +95,30 @@ exports.eventosMobile = async (req, res) => {
     }
 }
 
+exports.eventosCriador = async (req, res) => {
+    const idCriador = req.user.id;
+    try {
+        const data = await Evento.findAll({
+            where: { idCriador: idCriador },
+            include: [
+                { model: Area, as: 'area', attributes: ['nome'] },
+                { model: Subarea, as: 'subarea', attributes: ['nome'] },
+                { model: Utilizador, as: 'criador', attributes: ['nome'] },
+                { model: Utilizador, as: 'admin', attributes: ['nome'] }
+            ]
+        });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        console.error('Erro ao listar eventos:', err.message);
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+};
 
 
 exports.getEvento = async (req, res) => {
