@@ -107,20 +107,11 @@ exports.validarEstabelecimento = async (req, res) => {
 }
 
 exports.estabelecimentosMobile = async (req, res) => {
-    const id = req.user.id;
     const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
-    console.log(id);
-
-    let whereClause = {
-        [Op.or]: [
-            { estado: true },
-            { estado: false, idCriador: id }
-        ]
-    };
-
+    let whereClause = { estado: true };
     if (areaId) {
         whereClause.idArea = areaId;
     }
@@ -130,7 +121,6 @@ exports.estabelecimentosMobile = async (req, res) => {
     if (idPosto) {
         whereClause.idPosto = idPosto;
     }
-
     try {
         const data = await Estabelecimento.findAll({
             where: whereClause,
