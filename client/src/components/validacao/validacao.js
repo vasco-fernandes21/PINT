@@ -23,14 +23,14 @@ const Validacao = () => {
       case 'avaliacaoEstabelecimento':
         return <ValidacaoAvaliacaoEstabelecimento />;
       default:
-        return <Typography variant="h6">Selecione uma opção para validação</Typography>;
+        return <Typography variant="h6">Selecione uma opção para moderação</Typography>;
     }
   };
 
   return (
     <div style={{ width: '80%', margin: '0 auto' }}>
       <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#1D324F', marginBottom: 4, fontWeight: 'bold' }}>
-        Validação
+        Moderação
       </Typography>
       <FormControl fullWidth margin="dense">
         <InputLabel>Selecione a validação</InputLabel>

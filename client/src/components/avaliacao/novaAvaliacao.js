@@ -44,7 +44,7 @@ function NovaAvaliacao({ tipo, id, idUtilizador, handleUpdateAvaliacoes }) {
         });
 
         if (resposta.data.success) {
-          handleUpdateAvaliacoes(); // Chama a função para atualizar as avaliações no componente pai
+          handleUpdateAvaliacoes(); 
           setRating(0);
           setComentario('');
 

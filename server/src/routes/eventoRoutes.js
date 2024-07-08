@@ -9,7 +9,7 @@ router.get('/', auth, eventoController.listarEventos);
 router.get('/validar', auth, eventoController.EventosPorValidar);
 router.put('/validar/:id', auth, eventoController.validarEvento);
 router.post('/mobile', auth, uploadEventos.single('foto'), eventoController.CriarEventoMobile);
-router.get('/mobile', eventoController.eventosMobile);
+router.get('/mobile', auth, eventoController.eventosMobile);
 router.post('/', auth, uploadEventos.single('foto'), eventoController.CriarEvento);
 router.delete('/:id', eventoController.apagarEvento);
 router.get('/:id', eventoController.getEvento);

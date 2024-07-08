@@ -203,7 +203,7 @@ const Perfil = () => {
           <Grid item xs={12} sm={6} sx={{ textAlign: 'left' }}>
             {/* Conteúdo para o lado esquerdo, se necessário */}
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ textAlign: 'right' }}>
+          <Grid item xs={2} sm={6} sx={{ textAlign: 'right' }}>
             <Button variant="contained" sx={{ backgroundColor: '#1D324F' }} onClick={handleDialogOpen}>
               Editar Perfil
             </Button>

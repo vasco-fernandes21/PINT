@@ -4,6 +4,7 @@ const Evento = require('../models/eventoModel');
 const Estabelecimento = require('../models/estabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const Voto = require('../models/VotoModel');
+const Notificacao = require('../models/notificacaoModel');
 const Sequelize = require('sequelize');
 
 exports.listarAvaliacoesEstabelecimento = async (req, res) => {
@@ -79,17 +80,34 @@ exports.CriarAvaliacaoEstabelecimento = async (req, res) => {
             });
         }
 
+        const estabelecimento = await Estabelecimento.findByPk(idEstabelecimento);
+        if (!estabelecimento) {
+            return res.status(404).json({
+                success: false,
+                error: 'Estabelecimento não encontrado.',
+            });
+        }
+
+        const notificacao = await Notificacao.create({
+            idUtilizador: estabelecimento.idCriador, 
+            titulo: 'Nova Avaliação',
+            descricao: `Tem uma nova avaliação no seu estabelecimento: ${estabelecimento.nome}`,
+            estado: false,
+            data: new Date()
+        });
+
         const avaliacao = await AvaliacaoEstabelecimento.create({
             idUtilizador,
             idEstabelecimento,
             classificacao,
             comentario,
-            estado: false
+            estado: true,
         });
 
         res.json({
             success: true,
             data: avaliacao,
+            notificacao: notificacao
         });
     } catch (err) {
         res.status(500).json({
@@ -263,17 +281,34 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             });
         }
 
+        const evento = await Evento.findByPk(idEvento);
+        if (!evento) {
+            return res.status(404).json({
+                success: false,
+                error: 'Evento não encontrado.',
+            });
+        }
+
+        const notificacao = await Notificacao.create({
+            idUtilizador: evento.idCriador,
+            titulo: 'Nova Avaliação',
+            descricao: `Tem uma nova avaliação no seu evento: ${evento.titulo}`,
+            estado: false,
+            data: new Date()
+        });
+
         const avaliacao = await AvaliacaoEvento.create({
             idUtilizador,
             idEvento,
             classificacao,
             comentario,
-            estado: false,
+            estado: true,
         });
 
         res.json({
             success: true,
             data: avaliacao,
+            notificacao: notificacao
         });
     } catch (err) {
         res.status(500).json({
@@ -550,9 +585,8 @@ exports.downvote = async (req, res) => {
 exports.responderAvaliacaoEvento = async(req, res) => {
     try {
         const { idAvaliacao } = req.params;
-        const { comentario, classificacao} = req.body;
+        const { comentario, classificacao } = req.body;
         const idUtilizador = req.user.id;
-        
 
         const avaliacao = await AvaliacaoEvento.findByPk(idAvaliacao);
         if (!avaliacao) {
@@ -562,6 +596,11 @@ exports.responderAvaliacaoEvento = async(req, res) => {
         const user = await Utilizador.findByPk(idUtilizador);
         if (!user) {
             return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });
+        }
+        
+        const evento = await Evento.findByPk(avaliacao.idEvento);
+        if (!evento) {
+            return res.status(404).json({ success: false, message: 'Evento não encontrado.' });
         }
 
         const resposta = await AvaliacaoEvento.create({
@@ -573,12 +612,24 @@ exports.responderAvaliacaoEvento = async(req, res) => {
             estado: true,
         });
 
+        if (avaliacao) {
+            const evento = await Evento.findByPk(avaliacao.idEvento);
+
+            await Notificacao.create({
+            idUtilizador: avaliacao.idUtilizador, 
+            titulo: 'Nova resposta à sua avaliação',
+            descricao: `Tem uma nova resposta à sua avaliação em ${evento?.titulo}!`,
+            estado: false, 
+            data: new Date(),
+            });
+        }
+
         res.json({ success: true, data: resposta });
     } catch (error) {
         console.error('Erro ao responder ao comentário:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-} 
+}
 
 exports.getFilhosEvento = async(req, res) => {
     try {
@@ -607,7 +658,7 @@ exports.getFilhosEvento = async(req, res) => {
 exports.responderAvaliacaoEstabelecimento = async(req, res) => {
     try {
         const { idAvaliacao } = req.params;
-        const { comentario, classificacao} = req.body;
+        const { comentario, classificacao } = req.body;
         const idUtilizador = req.user.id;
 
         const avaliacao = await AvaliacaoEstabelecimento.findByPk(idAvaliacao);
@@ -620,6 +671,11 @@ exports.responderAvaliacaoEstabelecimento = async(req, res) => {
             return res.status(404).json({ success: false, message: 'Utilizador não encontrado.' });
         }
 
+        const estabelecimento = await Estabelecimento.findByPk(avaliacao.idEstabelecimento);
+        if (!estabelecimento) {
+            return res.status(404).json({ success: false, message: 'Estabelecimento não encontrado.' });
+        }
+
         const resposta = await AvaliacaoEstabelecimento.create({
             idUtilizador,
             idEstabelecimento: avaliacao.idEstabelecimento,
@@ -629,12 +685,20 @@ exports.responderAvaliacaoEstabelecimento = async(req, res) => {
             estado: true,
         });
 
+        await Notificacao.create({
+            idUtilizador: avaliacao.idUtilizador, 
+            titulo: 'Nova resposta à sua avaliação',
+            descricao: `Tem uma nova resposta à sua avaliação em ${estabelecimento.nome}!`, 
+            estado: false, 
+            data: new Date(),
+        });
+
         res.json({ success: true, data: resposta });
     } catch (error) {
         console.error('Erro ao responder ao comentário:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-} 
+}
 
 exports.getFilhosEstabelecimento = async(req, res) => {
     try {

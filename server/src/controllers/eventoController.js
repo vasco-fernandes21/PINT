@@ -7,6 +7,7 @@ const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
 const Notificacao = require('../models/notificacaoModel');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
+const { Op } = require('sequelize');
 
 exports.listarEventos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -51,12 +52,22 @@ exports.listarEventos = async (req, res) => {
 };
 
 exports.eventosMobile = async (req, res) => {
+    const id = req.user?.id; 
+    if (!id) {
+        return res.status(401).json({ message: 'Não autenticado' });
+    }
     const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idEvento = req.body.idEvento || req.params.idEvento || req.query.idEvento;
     const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
-    let whereClause = { estado: true };
+    let whereClause = {
+        [Op.or]: [
+            { estado: true },
+            { estado: false, idCriador: id }
+        ]
+    };
+
     if (areaId) {
         whereClause.idArea = areaId;
     }
@@ -163,7 +174,6 @@ exports.CriarEvento = async (req, res) => {
             idPosto
         });
 
-        // Notificação para o criador do evento
         const notificacaoCriador = await Notificacao.create({
             idUtilizador: idCriador,
             titulo: 'Evento Enviado para Validação',
@@ -172,36 +182,11 @@ exports.CriarEvento = async (req, res) => {
             data: new Date()
         });
 
-        // Aqui encontra os utilizadores com as preferências do evento
-        const whereClause = {
-            idArea
-        };
-        
-        if (idSubarea) {
-            whereClause.idSubarea = idSubarea;
-        }
-        
-        const utilizadores = await Utilizador.findAll({
-            where: whereClause
-        });
-
-        // Criar e enviar notificações para cada utilizador encontrado
-        const notificacoes = await Promise.all(utilizadores.map(utilizador => {
-            return Notificacao.create({
-                idUtilizador: utilizador.id,
-                titulo: 'Novo Evento Criado',
-                descricao: `Um novo evento, ${titulo}, foi criado na sua área de interesse!`,
-                estado: false, 
-                data: new Date()
-            });
-        }));
-
         res.status(200).json({
             success: true,
-            message: 'Evento criado com sucesso, notificação enviada ao criador e notificações enviadas aos utilizadores!',
+            message: 'Evento criado com sucesso, notificação enviada ao criador!',
             data: newEvento,
             notificacaoCriador: notificacaoCriador,
-            notificacoes: notificacoes 
         });
     } catch (error) {
         console.log('Error: ', error);
@@ -516,7 +501,7 @@ exports.validarEvento = async (req, res) => {
         evento.idAdmin = idAdmin;
         await evento.save();
 
-        const notificacao = await Notificacao.create({
+        const notificacaoCriador = await Notificacao.create({
             idUtilizador: evento.idCriador,
             titulo: 'Evento validado',
             descricao: `O seu evento ${evento.titulo} foi validado com sucesso!`,
@@ -524,10 +509,32 @@ exports.validarEvento = async (req, res) => {
             data: new Date(),
         });
 
+        const utilizadores = await Utilizador.findAll({
+            where: {
+                idArea: evento.idArea,
+                idSubarea: evento.idSubarea ? { [Op.or]: [evento.idSubarea, null] } : null
+            }
+        });
+        
+        console.log('Utilizadores:', utilizadores);
+
+        const notificacoesUtilizadores = await Promise.all(utilizadores.map(utilizador => {
+            return Notificacao.create({
+                idUtilizador: utilizador.id,
+                titulo: 'Evento Validado',
+                descricao: `Um evento de seu interesse, ${evento.titulo}, foi criado!`,
+                estado: false, 
+                data: new Date()
+            });
+        }));
+
+
         res.json({
             success: true,
             data: evento,
-            notificacao: notificacao,
+            message: 'Evento validado com sucesso!',
+            notificacaoCriador: notificacaoCriador,
+            notificacoesUtilizadores: notificacoesUtilizadores
         });
     } catch (err) {
         res.status(500).json({
@@ -573,11 +580,10 @@ exports.getInscricaoEvento = async (req, res) => {
 }
 
 exports.inscreverEvento = async (req, res) => {
-    const { id } = req.params; // ID do evento
-    const idUtilizador = req.user.id; // ID do utilizador a partir do token de autenticação
+    const { id } = req.params;
+    const idUtilizador = req.user.id; 
 
     try {
-        // Verifica se o utilizador já está inscrito no evento
         const inscricaoExistente = await Inscricao.findOne({
             where: {
                 idEvento: id,
@@ -594,18 +600,25 @@ exports.inscreverEvento = async (req, res) => {
             });
         }
 
-        // Cria uma nova inscrição
         await Inscricao.create({
             idEvento: id,
             idUtilizador: idUtilizador,
             estado: true
         });
 
-        // Adiciona lógica para notificações aqui, se necessário
+        const evento = await Evento.findOne({ where: { id: id } });
 
+        const notificacao = await Notificacao.create({
+            idUtilizador: evento.idCriador,
+            titulo: 'Nova Inscrição',
+            descricao: `Tem uma nova inscrição no evento ${evento.titulo}!`,
+            estado: false,
+            data: new Date()
+        });
         res.status(200).json({
             success: true,
-            message: 'Inscrição realizada com sucesso!'
+            message: 'Inscrição realizada com sucesso!',
+            notificacao: notificacao
         });
     } catch (error) {
         console.error('Erro ao inscrever:', error);

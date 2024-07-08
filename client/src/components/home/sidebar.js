@@ -92,7 +92,7 @@ const Sidebar = () => {
               <ContadorNotificacoes className='icone' /> Notificações
             </NavLink>
             <NavLink className={location.pathname === "/validacao" ? "menu-item text-white d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
-              <FaCheck className='icone' /> Validações
+              <FaCheck className='icone' /> Moderação
             </NavLink>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>

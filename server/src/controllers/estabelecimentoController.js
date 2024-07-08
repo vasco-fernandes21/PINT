@@ -6,6 +6,7 @@ const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const Notificacao = require('../models/notificacaoModel');
+const { Op } = require('sequelize');
 
 exports.listarEstabelecimentos = async (req, res) => {
     const { areaId, subareaId } = req.query;
@@ -47,12 +48,79 @@ exports.listarEstabelecimentos = async (req, res) => {
     }
 }
 
+exports.validarEstabelecimento = async (req, res) => {
+    const { id } = req.params;
+    const idAdmin = req.user.id;
+
+    try {
+        const estabelecimento = await Estabelecimento.findOne({ where: { id: id } });
+        if (!estabelecimento) {
+            return res.status(404).json({
+                success: false,
+                error: 'Estabelecimento não encontrado.',
+            });
+        }
+
+        estabelecimento.estado = true;
+        estabelecimento.idAdmin = idAdmin;
+        await estabelecimento.save();
+
+        const notificacaoCriador = await Notificacao.create({
+            idUtilizador: estabelecimento.idCriador,
+            titulo: 'Estabelecimento validado',
+            descricao: `O seu estabelecimento ${estabelecimento.nome} foi validado com sucesso!`,
+            estado: false, 
+            data: new Date(),
+        });
+
+        // Supondo que estabelecimentos também têm idArea e idSubarea
+        const utilizadores = await Utilizador.findAll({
+            where: {
+                idArea: estabelecimento.idArea,
+                idSubarea: estabelecimento.idSubarea ? { [Op.or]: [estabelecimento.idSubarea, null] } : null
+            }
+        });
+
+        const notificacoesUtilizadores = await Promise.all(utilizadores.map(utilizador => {
+            return Notificacao.create({
+                idUtilizador: utilizador.id,
+                titulo: 'Estabelecimento Validado',
+                descricao: `Um estabelecimento de seu interesse, ${estabelecimento.nome}, foi validado!`,
+                estado: false, 
+                data: new Date()
+            });
+        }));
+
+        res.json({
+            success: true,
+            data: estabelecimento,
+            message: 'Estabelecimento validado com sucesso!',
+            notificacaoCriador: notificacaoCriador,
+            notificacoesUtilizadores: notificacoesUtilizadores
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
 exports.estabelecimentosMobile = async (req, res) => {
+    const id = req.user.id;
     const areaId = req.body.areaId || req.params.areaId || req.query.areaId;
     const subareaId = req.body.subareaId || req.params.subareaId || req.query.subareaId;
     const idPosto = req.body.idPosto || req.params.idPosto || req.query.idPosto;
 
-    let whereClause = { estado: true };
+    console.log(id);
+
+    let whereClause = {
+        [Op.or]: [
+            { estado: true },
+            { estado: false, idCriador: id }
+        ]
+    };
+
     if (areaId) {
         whereClause.idArea = areaId;
     }
@@ -62,6 +130,7 @@ exports.estabelecimentosMobile = async (req, res) => {
     if (idPosto) {
         whereClause.idPosto = idPosto;
     }
+
     try {
         const data = await Estabelecimento.findAll({
             where: whereClause,
@@ -435,18 +504,37 @@ exports.validarEstabelecimento = async (req, res) => {
         estabelecimento.idAdmin = idAdmin;
         await estabelecimento.save();
 
-        const notificacao = await Notificacao.create({
+        const notificacaoCriador = await Notificacao.create({
             idUtilizador: estabelecimento.idCriador,
-            titulo: 'Estabelecimento validado',
+            titulo: 'Estabelecimento Validado',
             descricao: `O seu estabelecimento ${estabelecimento.nome} foi validado com sucesso!`,
             estado: false, 
             data: new Date(),
         });
 
+        const utilizadores = await Utilizador.findAll({
+            where: {
+                idArea: estabelecimento.idArea,
+                idSubarea: estabelecimento.idSubarea ? { [Op.or]: [estabelecimento.idSubarea, null] } : null
+            }
+        });
+
+        const notificacoesUtilizadores = await Promise.all(utilizadores.map(utilizador => {
+            return Notificacao.create({
+                idUtilizador: utilizador.id,
+                titulo: 'Estabelecimento Validado',
+                descricao: `Um estabelecimento de seu interesse, ${estabelecimento.nome}, foi criado!`,
+                estado: false, 
+                data: new Date()
+            });
+        }));
+
         res.json({
             success: true,
             data: estabelecimento,
-            notificacao: notificacao,
+            message: 'Estabelecimento validado com sucesso!',
+            notificacaoCriador: notificacaoCriador,
+            notificacoesUtilizadores: notificacoesUtilizadores
         });
     } catch (err) {
         res.status(500).json({

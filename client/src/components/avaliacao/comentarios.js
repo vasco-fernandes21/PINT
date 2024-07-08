@@ -19,7 +19,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
   const [newReply, setNewReply] = useState('');
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
   const [currentParentId, setCurrentParentId] = useState(null);
-  const [rating, setRating] = useState(1); // Definir o valor inicial como 1
+  const [rating, setRating] = useState(1); 
   const open = Boolean(anchorEl);
 
   useEffect(() => {
