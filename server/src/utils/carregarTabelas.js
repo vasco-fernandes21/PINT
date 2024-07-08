@@ -113,8 +113,8 @@ const postos = [
 
 const eventos = [
   // Saúde
-  { idArea: 1, idSubarea: 1, idCriador: 6, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-03-01', hora: '10:00:00', morada: 'Viseu', estado: true, foto: 'cufViseu.jpg' },
-  { idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, titulo: 'Check-up Dentário', descricao: 'Check-up Dentário na cidade de Tomar', data: '2024-07-01', hora: '11:00:00', morada: 'Tomar', estado: true },
+  { idArea: 1, idSubarea: 1, idCriador: 6, idAdmin: 1, idPosto: 1, titulo: 'Campanha de Saúde', descricao: 'Campanha de Saúde na cidade de Viseu', data: '2024-08-01', hora: '10:00:00', morada: 'Viseu', estado: true, foto: 'cufViseu.jpg' },
+  { idArea: 1, idSubarea: 2, idCriador: 2, idAdmin: 2, idPosto: 2, titulo: 'Check-up Dentário', descricao: 'Check-up Dentário na cidade de Tomar', data: '2024-08-01', hora: '11:00:00', morada: 'Tomar', estado: true },
   { idArea: 1, idSubarea: 1, idCriador: 3, idAdmin: 3, idPosto: 3, titulo: 'Feira de Saúde', descricao: 'Feira de Saúde na cidade de Fundão', data: '2024-05-01', hora: '12:00:00', morada: 'Fundão', estado: true },
 
   // Desporto
@@ -144,7 +144,7 @@ const eventos = [
   // Lazer
   { idArea: 7, idSubarea: 13, idCriador: 4, idAdmin: 5, idPosto: 4, titulo: 'Festival de Cinema', descricao: 'Festival de Cinema na cidade de Portalegre', data: '2024-03-01', hora: '10:00:00', morada: 'Portalegre', estado: true },
   { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 1, idPosto: 5, titulo: 'Passeio no Parque', descricao: 'Passeio no Parque na cidade de Vila Real', data: '2024-07-01', hora: '11:00:00', morada: 'Vila Real', estado: true },
-  { idArea: 7, idSubarea: 13, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Noite de Cinema ao Ar Livre', descricao: 'Noite de Cinema ao Ar Livre na cidade de Viseu', data: '2024-05-01', hora: '12:00:00', morada: 'Viseu', estado: true, foto: 'cinemaPg.jpg' },
+  { idArea: 7, idSubarea: 13, idCriador: 1, idAdmin: 2, idPosto: 1, titulo: 'Noite de Cinema ao Ar Livre', descricao: 'Noite de Cinema ao Ar Livre na cidade de Viseu', data: '2024-08-01', hora: '12:00:00', morada: 'Viseu', estado: true, foto: 'cinemaPg.jpg' },
   { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 6, idPosto: 1, titulo: 'Verão no Parque', descricao: 'Em contagem decrescente para o verão na Cidade-Jardim, está tudo a postos para mais uma edição de sucesso da iniciativa municipal “Verão no Parque”, que regressa ao Parque Aquilino Ribeiro entre os dias 29 de maio e 28 de julho.', data: '2024-06-25', hora: '12:00:00', morada: 'Parque Aquilino Ribeiro, Viseu', estado: true, foto: 'viseuverao.jpg' },
   { idArea: 7, idSubarea: 14, idCriador: 5, idAdmin: 6, idPosto: 1, titulo: 'Feira de São Mateus', descricao: 'A Feira de São Mateus é a mais antiga feira popular de Portugal, e uma das mais antigas do mundo. Realiza-se anualmente em Viseu, Portugal, desde 1394.', data: '2024-08-08', hora: '12:00:00', morada: 'Pavilhão Multiusos de Viseu, Viseu', estado: true, foto: 'feirasaomateus.jpg' },
 ];
