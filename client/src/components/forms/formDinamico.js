@@ -24,7 +24,7 @@ import { Edit } from '@mui/icons-material';
 import api from '../api/api';
 import EditarForm from './formEditar';
 
-const FormDinamico = ({ formulario, onSubmit }) => {
+const FormDinamico = ({ formulario, onSubmit, onAlteracao}) => {
     const [formData, setFormData] = useState({});
     const [loading, setLoading] = useState(true);
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -49,6 +49,7 @@ const FormDinamico = ({ formulario, onSubmit }) => {
 
     const handleChange = (id, value) => {
         setFormData({ ...formData, [id]: value });
+        onAlteracao();
     };
 
     const handleSubmit = async (e, formularioId) => {
@@ -65,6 +66,7 @@ const FormDinamico = ({ formulario, onSubmit }) => {
     const handleCloseEditDialog = () => {
         setOpenEditDialog(false);
         setSelectedFormIndex(null);
+        onAlteracao();
     };
 
     const handleOpenRespostasDialog = async (formularioId) => {
@@ -184,6 +186,7 @@ const FormDinamico = ({ formulario, onSubmit }) => {
                     open={openEditDialog}
                     handleClose={handleCloseEditDialog}
                     formulario={editData}
+                    onAlteracao={onAlteracao}
                 />
             )}
 

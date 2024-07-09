@@ -13,9 +13,10 @@ import {
   IconButton,
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
+import Swal from 'sweetalert2'; // Importa SweetAlert2
 import api from '../api/api';
 
-const EditarForm = ({ open, handleClose, formulario }) => {
+const EditarForm = ({ open, handleClose, formulario, onAlteracao}) => {
   const [editData, setEditData] = useState(formulario);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ const EditarForm = ({ open, handleClose, formulario }) => {
       if (response.status === 200) {
         console.log('Formulário editado com sucesso!');
         handleClose();
+        onAlteracao();
       } else {
         console.error('Erro ao editar formulário:', response.statusText);
       }
@@ -37,17 +39,42 @@ const EditarForm = ({ open, handleClose, formulario }) => {
   };
 
   const handleDeleteForm = async () => {
-    try {
-      const response = await api.delete(`/formulario/${formulario.id}`);
-      if (response.status === 204) {
-        console.log('Formulário excluído com sucesso!');
-        handleClose();
-      } else {
-        console.error('Erro ao excluir formulário:', response.statusText);
+    handleClose();
+    const result = await Swal.fire({
+      title: 'Pretende apagar o formulário?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#1d324f', // Cor para o botão de confirmação (Sim)
+      cancelButtonColor: '#6c757d', // Cor para o botão de cancelamento (Não)
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await api.delete(`/formulario/${formulario.id}`);
+        if (response.status === 204) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Formulário apagado com sucesso!',
+            confirmButtonColor: '#1d324f', 
+          });
+          handleClose();
+        } else {
+          console.error('Erro ao excluir formulário:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao excluir formulário:', error.message);
       }
-    } catch (error) {
-      console.error('Erro ao excluir formulário:', error.message);
+    } else {
+      // Se o usuário cancelar a exclusão
+      Swal.fire({
+        icon: 'info',
+        title: 'Operação cancelada',
+        confirmButtonColor: '#1d324f', 
+      });
     }
+    onAlteracao(); // Chama onAlteracao independentemente do resultado
   };
 
   const addField = () => {

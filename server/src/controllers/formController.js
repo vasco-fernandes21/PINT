@@ -64,7 +64,7 @@ exports.criarFormulario = async (req, res) => {
     }
   }
 
-exports.apagarFormulario = async (req, res) => {
+  exports.apagarFormulario = async (req, res) => {
     try {
       const { id } = req.params;
   
@@ -74,11 +74,18 @@ exports.apagarFormulario = async (req, res) => {
         return res.status(404).json({ error: 'Formulário não encontrado' });
       }
   
+      // Encontrar e apagar todas as respostas associadas ao formulário
+      const respostas = await Resposta.findAll({ where: { idFormulario: id } });
+      for (const resposta of respostas) {
+        await resposta.destroy();
+      }
+  
+      // Após apagar as respostas, apagar o próprio formulário
       await formulario.destroy();
   
-      res.json({ message: 'Formulário apagado com sucesso' });
+      res.json({ message: 'Formulário e suas respostas apagados com sucesso' });
     } catch (error) {
-      console.error('Erro ao apagar formulário:', error);
+      console.error('Erro ao apagar formulário e suas respostas:', error);
       res.status(500).json({ error: 'Erro interno do servidor' });
     }
   }

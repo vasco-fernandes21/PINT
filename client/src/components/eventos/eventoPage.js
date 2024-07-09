@@ -36,10 +36,10 @@ function EventoPage() {
     const itemsPerPage = 5;
     const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
     const [openFormCriar, setOpenFormCriar] = useState(false);
-    const [openFormDinamico, setOpenFormDinamico] = useState(false); 
+    const [openFormDinamico, setOpenFormDinamico] = useState(false);
     const [formulario, setFormulario] = useState({});
     const [campos, setCampos] = useState([]);
-    const [open, setOpen] = useState(false); 
+    const [open, setOpen] = useState(false);
     const [formularioAtualizado, setFormularioAtualizado] = useState(false);
 
     const url = `${frontendUrl}/eventos/${id}`;
@@ -101,19 +101,22 @@ function EventoPage() {
 
     const handleFormCriarClose = () => {
         setOpenFormCriar(false);
+        fetchFormulario();
     };
+
 
     const handleFormSave = (campos) => {
         setCampos(campos);
         setOpenFormDinamico(true);
+        fetchFormulario();
     };
 
     const handleFormDinamicoSubmit = async (data) => {
         try {
-            const response = await api.post(`/formulario/${id}`, data);
+            const response = await api.post('/formulario/responder/$={formulario.id}', data);
             if (response.status === 201) {
                 console.log('Formulário enviado com sucesso!');
-                setFormularioAtualizado(true); 
+                setFormularioAtualizado(true);
             } else {
                 console.error('Erro ao enviar formulário:', response.statusText);
             }
@@ -121,18 +124,18 @@ function EventoPage() {
             console.error('Erro ao enviar formulário:', error.message);
         }
     };
-    
-    
+
+
     useEffect(() => {
         const fetchFormCampos = async () => {
             try {
                 const response = await api.get(`/formulario/${id}`);
                 if (response.status === 200) {
                     const formularioData = response.data.formulario;
-                    setFormulario(formularioData); 
-    
+                    setFormulario(formularioData);
+
                     const camposData = formularioData.campos;
-                    setCampos(camposData); 
+                    setCampos(camposData);
                 } else {
                     console.error('Erro ao buscar campos do formulário:', response.statusText);
                 }
@@ -140,9 +143,9 @@ function EventoPage() {
                 console.error('Erro ao buscar campos do formulário:', error.message);
             }
         };
-    
+
         fetchFormCampos();
-    }, [id]); 
+    }, [id]);
 
     const updateFotos = async () => {
         try {
@@ -191,19 +194,19 @@ function EventoPage() {
 
     useEffect(() => {
         if (formularioAtualizado) {
-            fetchFormulario(); 
+            fetchFormulario();
         }
     }, [fetchFormulario, formularioAtualizado]);
-    
+
 
     useEffect(() => {
         fetchFormulario();
     }, [fetchFormulario]);
-    
+
     useEffect(() => {
         fetchFormulario();
     }, [id]);
-    
+
 
     if (!evento) {
         return <div>A carregar...</div>;
@@ -231,7 +234,7 @@ function EventoPage() {
                                     Editar evento
                                 </Button>
                                 <EditarEvento open={open} handleClose={handleClose} />
-                                <Button variant="contained" color="primary" onClick={handleFormCriarOpen}>
+                                <Button variant="contained" color="primary" onClick={handleFormCriarOpen} onCriarSucess={fetchFormulario}>
                                     Criar Formulário
                                 </Button>
                                 <FormCriar open={openFormCriar} handleClose={handleFormCriarClose} handleSave={handleFormSave} idEvento={id} />
@@ -276,16 +279,16 @@ function EventoPage() {
                         <Grid item xs={12}>
                             <InscricoesGrelha inscricoes={inscricoes} />
                             <Grid item xs={12} sx={{ position: 'relative' }}>
-                                <BotaoInscricaoEvento 
-                                    atualizarInscricoes={atualizarInscricoes} 
-                                    idEvento={id} 
-                                    idUtilizador={utilizador?.id} 
+                                <BotaoInscricaoEvento
+                                    atualizarInscricoes={atualizarInscricoes}
+                                    idEvento={id}
+                                    idUtilizador={utilizador?.id}
                                     inscricaoAberta={evento.inscricaoAberta}
-                                />  
+                                />
                             </Grid>
                             {formulario && formulario?.length > 0 && (
                                 <Grid item xs={12} sx={{ mt: 2 }}>
-                                    <FormDinamico idEvento={id} formulario={formulario} onSubmit={handleFormDinamicoSubmit} />
+                                    <FormDinamico idEvento={id} formulario={formulario} onSubmit={handleFormDinamicoSubmit} onAlteracao={fetchFormulario} />
                                 </Grid>
                             )}
 
