@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import api from '../api/api';
 
-const FormCriar = ({ open, handleClose, handleSave, idEvento, onCriarSucess}) => {
+const FormCriar = ({ open, handleClose, handleSave, idEvento}) => {
   const [campos, setCampos] = useState([]);
   const [campoAtual, setCampoAtual] = useState({ type: 'texto', label: '', options: '', title: '', helperText: '' });
   const [titulo, setTitulo] = useState('');
@@ -25,10 +25,11 @@ const FormCriar = ({ open, handleClose, handleSave, idEvento, onCriarSucess}) =>
       alert('Por favor, preencha o título e o texto auxiliar antes de adicionar campos opcionais.');
       return;
     }
-
+  
     setCampos([...campos, { ...campoAtual, id: Date.now() }]);
-    setCampoAtual({ type: 'texto', label: '', options: '', title: '', helperText: '' });
+    setCampoAtual({ type: 'texto', label: '', options: '', title: '', helperText: '' }); 
   };
+  
 
   const saveForm = async () => {
     try {
@@ -47,9 +48,8 @@ const FormCriar = ({ open, handleClose, handleSave, idEvento, onCriarSucess}) =>
   
       if (response.status === 201) {
         setCampos([]);
-        handleClose(); // Fechar o diálogo após salvar com sucesso
+        handleClose();
         handleSave(response.data);
-        onCriarSucess(); // Chamar a função onCriarSucess após o sucesso
       }
     } catch (error) {
       console.error('Erro ao salvar o formulário:', error.message);

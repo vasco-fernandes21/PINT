@@ -74,13 +74,11 @@ exports.criarFormulario = async (req, res) => {
         return res.status(404).json({ error: 'Formulário não encontrado' });
       }
   
-      // Encontrar e apagar todas as respostas associadas ao formulário
       const respostas = await Resposta.findAll({ where: { idFormulario: id } });
       for (const resposta of respostas) {
         await resposta.destroy();
       }
   
-      // Após apagar as respostas, apagar o próprio formulário
       await formulario.destroy();
   
       res.json({ message: 'Formulário e suas respostas apagados com sucesso' });

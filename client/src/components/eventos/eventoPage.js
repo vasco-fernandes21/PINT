@@ -111,21 +111,6 @@ function EventoPage() {
         fetchFormulario();
     };
 
-    const handleFormDinamicoSubmit = async (data) => {
-        try {
-            const response = await api.post('/formulario/responder/$={formulario.id}', data);
-            if (response.status === 201) {
-                console.log('Formulário enviado com sucesso!');
-                setFormularioAtualizado(true);
-            } else {
-                console.error('Erro ao enviar formulário:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Erro ao enviar formulário:', error.message);
-        }
-    };
-
-
     useEffect(() => {
         const fetchFormCampos = async () => {
             try {
@@ -234,7 +219,7 @@ function EventoPage() {
                                     Editar evento
                                 </Button>
                                 <EditarEvento open={open} handleClose={handleClose} />
-                                <Button variant="contained" color="primary" onClick={handleFormCriarOpen} onCriarSucess={fetchFormulario}>
+                                <Button variant="outlined" color="primary" onClick={handleFormCriarOpen}>
                                     Criar Formulário
                                 </Button>
                                 <FormCriar open={openFormCriar} handleClose={handleFormCriarClose} handleSave={handleFormSave} idEvento={id} />
@@ -288,7 +273,7 @@ function EventoPage() {
                             </Grid>
                             {formulario && formulario?.length > 0 && (
                                 <Grid item xs={12} sx={{ mt: 2 }}>
-                                    <FormDinamico idEvento={id} formulario={formulario} onSubmit={handleFormDinamicoSubmit} onAlteracao={fetchFormulario} />
+                                    <FormDinamico idEvento={id} formulario={formulario} onAlteracao={fetchFormulario} />
                                 </Grid>
                             )}
 
