@@ -4,6 +4,7 @@ import { FaCalendarAlt, FaHome, FaBars, FaUser, FaCheck} from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsBuildings } from "react-icons/bs";
 import { MdEvent } from "react-icons/md";
+import { IoIosAddCircle } from "react-icons/io";
 import { Drawer, IconButton, AppBar, Toolbar } from '@mui/material';
 import api from '../api/api';
 import logo from '../../assets/softinsabranco.svg';
@@ -93,6 +94,9 @@ const Sidebar = () => {
             </NavLink>
             <NavLink className={location.pathname === "/validacao" ? "menu-item text-white d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
               <FaCheck className='icone' /> Moderação
+            </NavLink>
+            <NavLink className={location.pathname === "/criar" ? "menu-item text-white d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/criar" onClick={handleDrawerClose}>
+              <IoIosAddCircle className='icone' /> Nova Entidade
             </NavLink>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>

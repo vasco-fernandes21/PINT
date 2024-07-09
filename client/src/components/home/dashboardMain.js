@@ -62,16 +62,12 @@ useEffect(() => {
         )}
 
       <Box sx={{ flexGrow: 1 }}>
-        {selectedTab === 0 && (
           <Grid container spacing={2} sx={{ height: '110%' }}>
             <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Validacoes sx={{ flexGrow: 1 }} />
             </Grid>
             <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Comentadas sx={{ flexGrow: 1 }} />
-            </Grid>
-            <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Vista sx={{ flexGrow: 1 }} />
             </Grid>
             <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Grafico sx={{ flexGrow: 1 }} />
@@ -80,15 +76,6 @@ useEffect(() => {
               <Topicos sx={{ flexGrow: 1 }} />
             </Grid>
           </Grid>
-        )}
-
-        {selectedTab === 1 && (
-          <Box>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Detalhes:
-            </Typography>
-          </Box>
-        )}
       </Box>
     </Box>
   );

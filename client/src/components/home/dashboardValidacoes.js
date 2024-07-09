@@ -1,15 +1,39 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, Typography } from "@mui/material";
-import { styled } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/api';
+import EventIcon from '@mui/icons-material/Event';
+import StoreIcon from '@mui/icons-material/Store';
+
+const BoxContainer = styled(Card)({
+  height: '100%', // Garantindo a mesma altura do Vista
+  display: 'flex',
+  alignItems: 'center',
+  padding: '20px',
+  margin: '10px 0',
+  backgroundColor: '#fff', // Cor de fundo consistente
+  borderRadius: 10,
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  cursor: 'pointer',
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'scale(1.05)',
+    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)',
+  },
+});
+
+// Estilo para o ícone
+const Icon = styled('div')({
+  fontSize: 50,
+  color: '#1D324F',
+  marginRight: 16,
+});
 
 const DashboardValidacoes = () => {
   const navigate = useNavigate();
   const [numEventosParaValidar, setNumEventosParaValidar] = useState(0);
   const [numEstabelecimentosParaValidar, setNumEstabelecimentosParaValidar] = useState(0);
-  const [numAvaliacoesEventosParaValidar, setNumAvaliacoesEventosParaValidar] = useState(0);
-  const [numAvaliacoesEstabelecimentosParaValidar, setNumAvaliacoesEstabelecimentosParaValidar] = useState(0);
 
   useEffect(() => {
     const fetchEventosParaValidar = async () => {
@@ -34,57 +58,47 @@ const DashboardValidacoes = () => {
       }
     };
 
-    const fetchAvaliacoesEventosParaValidar = async () => {
-      try {
-        const response = await api.get('/avaliacao/validar/eventos');
-        if (response.data.success && Array.isArray(response.data.data)) {
-          setNumAvaliacoesEventosParaValidar(response.data.data.length);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar avaliações de eventos para validar:', error);
-      }
-    };
-
-    const fetchAvaliacoesEstabelecimentosParaValidar = async () => {
-      try {
-        const response = await api.get('/avaliacao/validar/estabelecimentos');
-        if (response.data.success && Array.isArray(response.data.data)) {
-          setNumAvaliacoesEstabelecimentosParaValidar(response.data.data.length);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar avaliações de estabelecimentos para validar:', error);
-      }
-    };
-
     fetchEventosParaValidar();
     fetchEstabelecimentosParaValidar();
-    fetchAvaliacoesEventosParaValidar();
-    fetchAvaliacoesEstabelecimentosParaValidar();
   }, []);
 
-  const handleOpen = () => {
-    navigate("/validacao");
+  const handleNavigation = (type) => {
+    if (type === 'eventos') {
+      navigate('/validacao');
+    } else if (type === 'estabelecimentos') {
+      navigate('/validacao');
+    }
   };
 
-  const StyledCard = styled(Card)({
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    borderRadius: 10,
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  });
-
   return (
-    <StyledCard onClick={handleOpen}>
-      <CardContent>
-        <Typography variant="h6">Validações</Typography>
-        <Typography variant="body2">Eventos para validar: {numEventosParaValidar}</Typography>
-        <Typography variant="body2">Estabelecimentos para validar: {numEstabelecimentosParaValidar}</Typography>
-        <Typography variant="body2">Avaliações de eventos para validar: {numAvaliacoesEventosParaValidar}</Typography>
-        <Typography variant="body2">Avaliações de estabelecimentos para validar: {numAvaliacoesEstabelecimentosParaValidar}</Typography>
-      </CardContent>
-    </StyledCard>
+    <Grid container spacing={2} sx={{ height: '100%' }}>
+      <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+        <BoxContainer onClick={() => handleNavigation('estabelecimentos')}>
+          <Icon><StoreIcon /></Icon>
+          <div>
+            <Typography variant="subtitle2">
+              Estabelecimentos para validar
+            </Typography>
+            <Typography variant="h5" sx={{ color: '#1D324F', fontWeight: 'bold' }}>
+              {numEstabelecimentosParaValidar}
+            </Typography>
+          </div>
+        </BoxContainer>
+      </Grid>
+      <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+        <BoxContainer onClick={() => handleNavigation('eventos')}>
+          <Icon><EventIcon /></Icon>
+          <div>
+            <Typography variant="subtitle2">
+              Eventos para validar
+            </Typography>
+            <Typography variant="h5" sx={{ color: '#1D324F', fontWeight: 'bold' }}>
+              {numEventosParaValidar}
+            </Typography>
+          </div>
+        </BoxContainer>
+      </Grid>
+    </Grid>
   );
 };
 

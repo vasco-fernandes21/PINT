@@ -8,7 +8,7 @@ const Area = sequelize.define('Area', {
     primaryKey: true
   },
   nome: DataTypes.STRING,
-  iconeId: DataTypes.INTEGER,
+  icone: DataTypes.STRING,
 }, 
   
   

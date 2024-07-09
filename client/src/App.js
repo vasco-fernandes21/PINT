@@ -22,6 +22,7 @@ import EventoPage from './components/eventos/eventoPage';
 import Notificacoes from './components/notificacao/notificacaoPage';
 import Dashboard from './components/home/dashboardMain';
 import Validacao from './components/validacao/validacao';
+import CriarEntidade from './components/PostoAreaSubarea/criarEntidade';
 
 const Autenticado = () => (
   <>
@@ -79,6 +80,7 @@ function App() {
           <Route path="calendario" element={<Calendario />} />
           <Route path="notificacoes" element={<Notificacoes />} />
           <Route path="validacao" element={<Validacao />} />
+          <Route path="criar" element={<CriarEntidade />} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAutenticado ? "/" : "/login"} replace />} />
