@@ -80,7 +80,7 @@ function App() {
           <Route path="calendario" element={<Calendario />} />
           <Route path="notificacoes" element={<Notificacoes />} />
           <Route path="validacao" element={<Validacao />} />
-          <Route path="criarEntidade" element={<CriarEntidade />} />
+          <Route path="criar" element={<CriarEntidade />} />
          </Route>
         
         <Route path="*" element={<Navigate to={isAutenticado ? "/" : "/login"} replace />} />
