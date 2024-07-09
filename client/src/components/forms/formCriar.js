@@ -21,12 +21,24 @@ const FormCriar = ({ open, handleClose, handleSave, idEvento }) => {
   const [textoAuxiliar, setTextoAuxiliar] = useState('');
 
   const addField = () => {
+    // Verifica se já existem campos de título e descrição preenchidos
+    if (!titulo || !textoAuxiliar) {
+      alert('Por favor, preencha o título e o texto auxiliar antes de adicionar campos opcionais.');
+      return;
+    }
+
     setCampos([...campos, { ...campoAtual, id: Date.now() }]);
     setCampoAtual({ type: 'texto', label: '', options: '', title: '', helperText: '' });
   };
 
   const saveForm = async () => {
     try {
+      // Verifica novamente se título e texto auxiliar estão preenchidos
+      if (!titulo || !textoAuxiliar) {
+        alert('Por favor, preencha o título e o texto auxiliar.');
+        return;
+      }
+
       const formData = {
         campos,
         titulo,
@@ -49,6 +61,20 @@ const FormCriar = ({ open, handleClose, handleSave, idEvento }) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Criar Formulário</DialogTitle>
       <DialogContent>
+        <TextField
+          margin="normal"
+          label="Título"
+          fullWidth
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+        />
+        <TextField
+          margin="normal"
+          label="Texto Auxiliar"
+          fullWidth
+          value={textoAuxiliar}
+          onChange={(e) => setTextoAuxiliar(e.target.value)}
+        />
         <FormControl fullWidth margin="normal">
           <InputLabel>Tipo de Campo</InputLabel>
           <Select
@@ -77,20 +103,6 @@ const FormCriar = ({ open, handleClose, handleSave, idEvento }) => {
             onChange={(e) => setCampoAtual({ ...campoAtual, options: e.target.value })}
           />
         )}
-        <TextField
-          margin="normal"
-          label="Título"
-          fullWidth
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
-        />
-        <TextField
-          margin="normal"
-          label="Texto Auxiliar"
-          fullWidth
-          value={textoAuxiliar}
-          onChange={(e) => setTextoAuxiliar(e.target.value)}
-        />
         <Button variant="contained" onClick={addField}>Adicionar Campo</Button>
         <div>
           {campos.map((field) => (

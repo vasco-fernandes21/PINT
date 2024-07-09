@@ -109,7 +109,7 @@ function EventoPage() {
 
     const handleFormDinamicoSubmit = async (data) => {
         try {
-            const response = await api.post(`/formulario/${evento?.id}`, data);
+            const response = await api.post(`/formulario/${id}`, data);
             if (response.status === 201) {
                 console.log('Formulário enviado com sucesso!');
                 setOpenFormDinamico(false);
@@ -124,16 +124,13 @@ function EventoPage() {
     useEffect(() => {
         const fetchFormCampos = async () => {
             try {
-                const response = await api.get(`/formulario/${evento?.id}`);
+                const response = await api.get(`/formulario/${id}`);
                 if (response.status === 200) {
                     const formularioData = response.data.formulario;
                     setFormulario(formularioData); 
     
                     const camposData = formularioData.campos;
                     setCampos(camposData); 
-
-                    console.log('Campos do formulário:', camposData);
-                    console.log('Formulário:', formularioData);
                 } else {
                     console.error('Erro ao buscar campos do formulário:', response.statusText);
                 }
@@ -143,7 +140,7 @@ function EventoPage() {
         };
     
         fetchFormCampos();
-    }, [evento?.id]); 
+    }, [id]); 
 
     const updateFotos = async () => {
         try {
@@ -180,8 +177,6 @@ function EventoPage() {
         return <div>A carregar...</div>;
     }
 
-    console.log(campos);
-
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
@@ -207,7 +202,7 @@ function EventoPage() {
                                 <Button variant="contained" color="primary" onClick={handleFormCriarOpen}>
                                     Criar Formulário
                                 </Button>
-                                <FormCriar open={openFormCriar} handleClose={handleFormCriarClose} handleSave={handleFormSave} idEvento={evento?.id} />
+                                <FormCriar open={openFormCriar} handleClose={handleFormCriarClose} handleSave={handleFormSave} idEvento={id} />
                             </>
                         )}
                     </Box>
@@ -256,9 +251,9 @@ function EventoPage() {
                                     inscricaoAberta={evento.inscricaoAberta}
                                 />  
                             </Grid>
-                            {campos && (
+                            {formulario && (
                                 <Grid item xs={12}>
-                                    <FormDinamico idEvento={evento?.id} campos={campos} onSubmit={handleFormDinamicoSubmit} />
+                                    <FormDinamico idEvento={id} formulario={formulario} onSubmit={handleFormDinamicoSubmit} />
                                 </Grid>
                             )}
                         </Grid>
