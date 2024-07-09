@@ -1,21 +1,29 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { Grid, CardContent, Typography, Box, Divider, Button } from "@mui/material";
-import api from "../api/api";
-import Mapa from "../utils/mapa";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import AvaliacoesDetalhadas from "../avaliacao/avaliacoes";
-import FotoSlider from "../utils/fotoSlider";
-import Comentarios from "../avaliacao/comentarios";
-import NovaAvaliacao from "../avaliacao/novaAvaliacao";
-import BotaoUpload from "../utils/botaoUpload";
-import BotaoInscricaoEvento from "../utils/BotaoInscricao";
-import EditarEvento from "./eventoEdit";
-import InscricoesGrelha from "./eventoInscricoes";
-import BotoesPartilha from "../utils/botaoPartilha";
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+    Grid,
+    CardContent,
+    Typography,
+    Box,
+    Divider,
+    Button,
+} from '@mui/material';
+import { useParams } from 'react-router-dom';
+import api from '../api/api';
+import Mapa from '../utils/mapa';
+import AvaliacoesDetalhadas from '../avaliacao/avaliacoes';
+import FotoSlider from '../utils/fotoSlider';
+import Comentarios from '../avaliacao/comentarios';
+import NovaAvaliacao from '../avaliacao/novaAvaliacao';
+import BotaoUpload from '../utils/botaoUpload';
+import BotaoInscricaoEvento from '../utils/BotaoInscricao';
+import EditarEvento from './eventoEdit';
+import InscricoesGrelha from './eventoInscricoes';
+import BotoesPartilha from '../utils/botaoPartilha';
+import FormCriar from '../forms/formCriar';
+import FormDinamico from '../forms/formDinamico';
+
 const apiUrl = process.env.REACT_APP_API_URL;
-const frontendUrl = process.env.REACT_APP_FRONTEND; 
+const frontendUrl = process.env.REACT_APP_FRONTEND;
 
 function EventoPage() {
     const { id } = useParams();
@@ -27,7 +35,12 @@ function EventoPage() {
     const [page, setPage] = useState(1);
     const itemsPerPage = 5;
     const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
+    const [openFormCriar, setOpenFormCriar] = useState(false);
+    const [openFormDinamico, setOpenFormDinamico] = useState(false);
+    const [formulario, setFormulario] = useState({});
+    const [campos, setCampos] = useState([]);
     const [open, setOpen] = useState(false);
+    const [formularioAtualizado, setFormularioAtualizado] = useState(false);
 
     const url = `${frontendUrl}/eventos/${id}`;
     const title = 'Estou interessado neste evento!';
@@ -60,7 +73,6 @@ function EventoPage() {
         try {
             const response = await api.get(`/avaliacao/eventos/${id}`);
             setAvaliacoes(response.data.data);
-            console.log(response.data.data);
         } catch (error) {
             console.error('Error fetching Avaliações:', error.response || error.message);
         }
@@ -83,18 +95,62 @@ function EventoPage() {
         fetchInscricoes();
     }, [fetchInscricoes]);
 
-    const handleOpen = () => {
-        setOpen(true);
+    const handleFormCriarOpen = () => {
+        setOpenFormCriar(true);
     };
 
-    const handleClose = () => {
-        setOpen(false);
+    const handleFormCriarClose = () => {
+        setOpenFormCriar(false);
+        fetchFormulario();
     };
+
+
+    const handleFormSave = (campos) => {
+        setCampos(campos);
+        setOpenFormDinamico(true);
+        fetchFormulario();
+    };
+
+    const handleFormDinamicoSubmit = async (data) => {
+        try {
+            const response = await api.post('/formulario/responder/$={formulario.id}', data);
+            if (response.status === 201) {
+                console.log('Formulário enviado com sucesso!');
+                setFormularioAtualizado(true);
+            } else {
+                console.error('Erro ao enviar formulário:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao enviar formulário:', error.message);
+        }
+    };
+
+
+    useEffect(() => {
+        const fetchFormCampos = async () => {
+            try {
+                const response = await api.get(`/formulario/${id}`);
+                if (response.status === 200) {
+                    const formularioData = response.data.formulario;
+                    setFormulario(formularioData);
+
+                    const camposData = formularioData.campos;
+                    setCampos(camposData);
+                } else {
+                    console.error('Erro ao buscar campos do formulário:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar campos do formulário:', error.message);
+            }
+        };
+
+        fetchFormCampos();
+    }, [id]);
 
     const updateFotos = async () => {
         try {
             const response = await api.get(`foto/eventos/${id}`);
-            const fotoPaths = response.data.data.map(foto => ({
+            const fotoPaths = response.data.data.map((foto) => ({
                 id: foto.id,
                 url: `${apiUrl}/uploads/eventos/${foto.foto}`,
                 carregadaPor: foto.criador ? foto.criador.nome : 'Desconhecido',
@@ -110,9 +166,47 @@ function EventoPage() {
         setPage(value);
     };
 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     const atualizarInscricoes = async () => {
         await fetchInscricoes();
     };
+
+    const fetchFormulario = useCallback(async () => {
+        try {
+            const response = await api.get(`/formulario/${id}`);
+            if (response.status === 200) {
+                setFormulario(response.data.formulario);
+                setFormularioAtualizado(false); // Resetar o estado de atualização
+            } else {
+                console.error('Erro ao buscar dados do formulário:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados do formulário:', error.message);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (formularioAtualizado) {
+            fetchFormulario();
+        }
+    }, [fetchFormulario, formularioAtualizado]);
+
+
+    useEffect(() => {
+        fetchFormulario();
+    }, [fetchFormulario]);
+
+    useEffect(() => {
+        fetchFormulario();
+    }, [id]);
+
 
     if (!evento) {
         return <div>A carregar...</div>;
@@ -122,15 +216,15 @@ function EventoPage() {
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
                 <Box sx={{ padding: 0, paddingTop: 0 }}>
-                <Grid container alignItems="center" spacing={2}>
-                    <Grid item>
-                        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>
-                        {evento.titulo}
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <BotoesPartilha url={url} title={title} />
-                    </Grid>
+                    <Grid container alignItems="center" spacing={2}>
+                        <Grid item>
+                            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>
+                                {evento.titulo}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <BotoesPartilha url={url} title={title} />
+                        </Grid>
                     </Grid>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3 }}>
                         {utilizador && (
@@ -140,6 +234,10 @@ function EventoPage() {
                                     Editar evento
                                 </Button>
                                 <EditarEvento open={open} handleClose={handleClose} />
+                                <Button variant="contained" color="primary" onClick={handleFormCriarOpen} onCriarSucess={fetchFormulario}>
+                                    Criar Formulário
+                                </Button>
+                                <FormCriar open={openFormCriar} handleClose={handleFormCriarClose} handleSave={handleFormSave} idEvento={id} />
                             </>
                         )}
                     </Box>
@@ -178,16 +276,22 @@ function EventoPage() {
                                 />
                             )}
                         </Grid>
-                       <Grid item xs={12}>
+                        <Grid item xs={12}>
                             <InscricoesGrelha inscricoes={inscricoes} />
                             <Grid item xs={12} sx={{ position: 'relative' }}>
-                            <BotaoInscricaoEvento 
-                                atualizarInscricoes={atualizarInscricoes} 
-                                idEvento={id} 
-                                idUtilizador={utilizador?.id} 
-                                inscricaoAberta={evento.inscricaoAberta}
-                            />  
+                                <BotaoInscricaoEvento
+                                    atualizarInscricoes={atualizarInscricoes}
+                                    idEvento={id}
+                                    idUtilizador={utilizador?.id}
+                                    inscricaoAberta={evento.inscricaoAberta}
+                                />
                             </Grid>
+                            {formulario && formulario?.length > 0 && (
+                                <Grid item xs={12} sx={{ mt: 2 }}>
+                                    <FormDinamico idEvento={id} formulario={formulario} onSubmit={handleFormDinamicoSubmit} onAlteracao={fetchFormulario} />
+                                </Grid>
+                            )}
+
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Box sx={{ bgcolor: 'rgba(0, 0, 0, 0.03)', borderRadius: 2, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

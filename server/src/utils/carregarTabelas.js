@@ -10,6 +10,7 @@ const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
 const Notificacao = require('../models/notificacaoModel');
+const Formulario = require('../models/formModel');
 const { sequelize } = require('./database');
 
 const utilizadores = [

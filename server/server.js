@@ -37,6 +37,7 @@ const utilizadorRoutes = require('./src/routes/utilizadorRoutes');
 const notificacaoRoutes = require('./src/routes/notificacaoRoutes');
 const fotoRoutes = require('./src/routes/fotoRoutes');
 const estatisticaRoutes = require('./src/routes/estatisticaRoutes');
+const formRoutes = require('./src/routes/formRoutes');
 
 // Rotas da API
 app.use('/', authRoutes);
@@ -50,6 +51,7 @@ app.use('/utilizador', utilizadorRoutes);
 app.use('/foto', fotoRoutes);
 app.use('/notificacao', notificacaoRoutes);
 app.use('/estatistica', estatisticaRoutes);
+app.use('/formulario', formRoutes);
 
 
 
