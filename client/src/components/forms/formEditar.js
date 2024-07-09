@@ -13,14 +13,20 @@ import {
   IconButton,
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
-import Swal from 'sweetalert2'; // Importa SweetAlert2
+import Swal from 'sweetalert2';
 import api from '../api/api';
 
-const EditarForm = ({ open, handleClose, formulario, onAlteracao}) => {
-  const [editData, setEditData] = useState(formulario);
+const EditarForm = ({ open, handleClose, formulario, onAlteracao }) => {
+  const [editData, setEditData] = useState({
+    ...formulario,
+    estado: formulario.estado ? true : false, // Inicializa com booleano conforme formulário atual
+  });
 
   useEffect(() => {
-    setEditData(formulario);
+    setEditData({
+      ...formulario,
+      estado: formulario.estado ? true : false, // Atualiza editData quando o formulário muda
+    });
   }, [formulario]);
 
   const handleEditForm = async () => {
@@ -44,8 +50,8 @@ const EditarForm = ({ open, handleClose, formulario, onAlteracao}) => {
       title: 'Pretende apagar o formulário?',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#1d324f', // Cor para o botão de confirmação (Sim)
-      cancelButtonColor: '#6c757d', // Cor para o botão de cancelamento (Não)
+      confirmButtonColor: '#1d324f',
+      cancelButtonColor: '#6c757d',
       confirmButtonText: 'Sim',
       cancelButtonText: 'Não',
     });
@@ -57,7 +63,7 @@ const EditarForm = ({ open, handleClose, formulario, onAlteracao}) => {
           Swal.fire({
             icon: 'success',
             title: 'Formulário apagado com sucesso!',
-            confirmButtonColor: '#1d324f', 
+            confirmButtonColor: '#1d324f',
           });
           handleClose();
         } else {
@@ -67,14 +73,13 @@ const EditarForm = ({ open, handleClose, formulario, onAlteracao}) => {
         console.error('Erro ao excluir formulário:', error.message);
       }
     } else {
-      // Se o usuário cancelar a exclusão
       Swal.fire({
         icon: 'info',
         title: 'Operação cancelada',
-        confirmButtonColor: '#1d324f', 
+        confirmButtonColor: '#1d324f',
       });
     }
-    onAlteracao(); // Chama onAlteracao independentemente do resultado
+    onAlteracao();
   };
 
   const addField = () => {
@@ -96,6 +101,11 @@ const EditarForm = ({ open, handleClose, formulario, onAlteracao}) => {
     setEditData({ ...editData, campos: newCampos });
   };
 
+  const handleChangeEstado = (e) => {
+    const estadoValue = e.target.value === 'ativo' ? true : false; // Converte 'ativo' para true e 'inativo' para false
+    setEditData({ ...editData, estado: estadoValue });
+  };
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>Editar Formulário</DialogTitle>
@@ -114,6 +124,16 @@ const EditarForm = ({ open, handleClose, formulario, onAlteracao}) => {
           value={editData.textoAuxiliar}
           onChange={(e) => setEditData({ ...editData, textoAuxiliar: e.target.value })}
         />
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Estado do Formulário</InputLabel>
+          <Select
+            value={editData.estado ? 'ativo' : 'inativo'}
+            onChange={handleChangeEstado}
+          >
+            <MenuItem value="ativo">Ativo</MenuItem>
+            <MenuItem value="inativo">Inativo</MenuItem>
+          </Select>
+        </FormControl>
         {editData.campos && Array.isArray(editData.campos) ? editData.campos.map((field, index) => (
           <div key={field.id} style={{ display: 'flex', flexDirection: 'column', marginBottom: '1em' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>

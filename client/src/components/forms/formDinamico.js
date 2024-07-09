@@ -24,7 +24,7 @@ import { Edit } from '@mui/icons-material';
 import api from '../api/api';
 import EditarForm from './formEditar';
 
-const FormDinamico = ({ formulario, onSubmit, onAlteracao}) => {
+const FormDinamico = ({ formulario, onAlteracao }) => {
     const [formData, setFormData] = useState({});
     const [loading, setLoading] = useState(true);
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -48,13 +48,20 @@ const FormDinamico = ({ formulario, onSubmit, onAlteracao}) => {
     }, [formulario]);
 
     const handleChange = (id, value) => {
-        setFormData({ ...formData, [id]: value });
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            respostas: {
+                ...prevFormData.respostas,
+                [id]: value
+            }
+        }));
         onAlteracao();
     };
+    
 
-    const handleSubmit = async (e, formularioId) => {
+    const handleSubmit = (e, idFormulario) => {
         e.preventDefault();
-        await onSubmit(formularioId, formData);
+        handleEnviarRespostas(idFormulario);
     };
 
     const handleOpenEditDialog = (index) => {
@@ -69,9 +76,9 @@ const FormDinamico = ({ formulario, onSubmit, onAlteracao}) => {
         onAlteracao();
     };
 
-    const handleOpenRespostasDialog = async (formularioId) => {
+    const handleOpenRespostasDialog = async (idFormulario) => {
         try {
-            const response = await api.get(`/formulario/respostas/${formularioId}`);
+            const response = await api.get(`/formulario/respostas/${idFormulario}`);
             if (response.status === 200) {
                 setRespostas(response.data.respostas);
                 setOpenRespostasDialog(true);
@@ -93,6 +100,23 @@ const FormDinamico = ({ formulario, onSubmit, onAlteracao}) => {
             return value ? 'Sim' : 'Não';
         }
         return value;
+    };
+
+    const handleEnviarRespostas = async (idFormulario) => {
+        try {
+            const response = await api.post(`/formulario/responder/${idFormulario}`, formData);
+            if (response.status === 201) {
+                console.log('Respostas enviadas com sucesso!');
+                handleCloseEditDialog(); // Fecha o diálogo de edição se estiver aberto
+                // Exibir feedback ao usuário se necessário
+            } else {
+                console.error('Erro ao enviar respostas:', response.statusText);
+                // Exibir mensagem de erro ao usuário se necessário
+            }
+        } catch (error) {
+            console.error('Erro ao enviar respostas:', error.message);
+            // Exibir mensagem de erro ao usuário se necessário
+        }
     };
 
     return (
