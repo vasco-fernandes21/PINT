@@ -204,10 +204,10 @@ const Perfil = () => {
             {/* Conteúdo para o lado esquerdo, se necessário */}
           </Grid>
           <Grid item xs={2} sm={6} sx={{ textAlign: 'right' }}>
-            <Button variant="contained" sx={{ backgroundColor: '#1D324F' }} onClick={handleDialogOpen}>
+            {utilizador && <BotaoUpload tipo="utilizador" id={utilizador.id} idUtilizador={utilizador.id} updateFotos={updateFotoPerfil} />}
+            <Button variant="contained" color="secondary" onClick={handleDialogOpen}>
               Editar Perfil
             </Button>
-            {utilizador && <BotaoUpload tipo="utilizador" id={utilizador.id} idUtilizador={utilizador.id} updateFotos={updateFotoPerfil} />}
           </Grid>
           <Grid item xs={12} sx={{ textAlign: 'center', marginTop: -8 }}>
             <AvatarImagem 

@@ -122,16 +122,16 @@ function EventoPage() {
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item xs={12} sm={10} md={11} lg={10} xl={10}>
                 <Box sx={{ padding: 0, paddingTop: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 0 }}>
-                    <Grid item xs={12}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginRight: 1 }}>
+                <Grid container alignItems="center" spacing={2}>
+                    <Grid item>
+                        <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: 0 }}>
                         {evento.titulo}
-                    </Typography>
+                        </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={6} lg={4} xl={3}> {/* Ajuste os tamanhos conforme necessário */}
-                    <BotoesPartilha url={url} title={title} />
+                    <Grid item>
+                        <BotoesPartilha url={url} title={title} />
                     </Grid>
-                </div>
+                    </Grid>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', flexWrap: 'wrap', marginTop: -6, marginBottom: 3 }}>
                         {utilizador && (
                             <>
