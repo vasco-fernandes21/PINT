@@ -82,7 +82,6 @@ const Grafico = () => {
   return (
     <StyledCard>
       <CardContent>
-        <Typography variant="h6">Eventos por Mês</Typography>
         <div id="chart_div" style={{ width: '100%', height: '400px' }}></div>
       </CardContent>
     </StyledCard>
