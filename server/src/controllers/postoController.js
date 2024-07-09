@@ -41,3 +41,13 @@ exports.get = async (req, res) => {
     }
 };
 
+exports.criarPosto = async (req, res) => {
+    try {
+      const { nome } = req.body;
+      const novoPosto = await Posto.create({ nome });
+      res.status(201).json(novoPosto);
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao criar Posto.' });
+    }
+  };
+
