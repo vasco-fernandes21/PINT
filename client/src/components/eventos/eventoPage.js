@@ -251,8 +251,8 @@ function EventoPage() {
                                     inscricaoAberta={evento.inscricaoAberta}
                                 />  
                             </Grid>
-                            {formulario && (
-                                <Grid item xs={12}>
+                            {formulario?.length > 0 && (
+                                <Grid item xs={12} sx={{mt: 2}}>
                                     <FormDinamico idEvento={id} formulario={formulario} onSubmit={handleFormDinamicoSubmit} />
                                 </Grid>
                             )}

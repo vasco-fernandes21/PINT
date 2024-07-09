@@ -9,28 +9,39 @@ import {
     FormControl,
     InputLabel,
     Typography,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions
 } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 import api from '../api/api';
+import EditarForm from './formEditar';
 
 const FormDinamico = ({ idEvento, formulario }) => {
     const [formData, setFormData] = useState({});
     const [loading, setLoading] = useState(true);
-
-    console.log(formulario);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [editData, setEditData] = useState({ campos: [], titulo: '', textoAuxiliar: '' });
+    const [selectedFormIndex, setSelectedFormIndex] = useState(null);
 
     useEffect(() => {
         setLoading(false);
     }, [formulario]);
 
+    console.log('Formulários:', formulario);
+
     const handleChange = (id, value) => {
         setFormData({ ...formData, [id]: value });
     };
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (formularioId, respostas) => {
         try {
-            const response = await api.post(`/formulario/${idEvento}`, data);
-            if (response.status === 201) {
+            const response = await api.post(`/formulario/responder/${formularioId}`, { respostas });
+            if (response.status === 200) {
                 console.log('Formulário enviado com sucesso!');
+                setFormData({});
             } else {
                 console.error('Erro ao enviar formulário:', response.statusText);
             }
@@ -39,80 +50,105 @@ const FormDinamico = ({ idEvento, formulario }) => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e, formularioId) => {
         e.preventDefault();
-        onSubmit(formData);
+        await onSubmit(formularioId, formData);
+    };
+
+    const handleOpenEditDialog = (index) => {
+        setEditData(formulario[index]);
+        setSelectedFormIndex(index);
+        setOpenEditDialog(true);
+    };
+
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {!loading && formulario.map((form) => (
-                <div key={form.id}>
-                    <Typography variant="h4" style={{ fontWeight: '700' }}>{form.titulo}</Typography>
-                    <Typography variant="body1">{form.textoAuxiliar}</Typography>
-                    {form.campos && form.campos.length > 0 ? (
-                        form.campos.map((field) => (
-                            <div key={field.id}>
-                                {field.type === 'texto' && (
-                                    <TextField
-                                        label={field.label}
-                                        fullWidth
-                                        margin="normal"
-                                        helperText={field.helperText}
-                                        onChange={(e) => handleChange(field.id, e.target.value)}
-                                        disabled={!form.estado} // Desabilita se form.estado for false
-                                    />
-                                )}
-                                {field.type === 'numero' && (
-                                    <TextField
-                                        label={field.label}
-                                        type="number"
-                                        fullWidth
-                                        margin="normal"
-                                        helperText={field.helperText}
-                                        onChange={(e) => handleChange(field.id, e.target.value)}
-                                        disabled={!form.estado} // Desabilita se form.estado for false
-                                    />
-                                )}
-                                {field.type === 'checkbox' && (
-                                    <FormControlLabel
-                                        control={<Checkbox onChange={(e) => handleChange(field.id, e.target.checked)} />}
-                                        label={field.label}
-                                        disabled={!form.estado} // Desabilita se form.estado for false
-                                    />
-                                )}
-                                {field.type === 'select' && (
-                                    <FormControl fullWidth margin="normal">
-                                        <InputLabel>{field.label}</InputLabel>
-                                        <Select
+        <form>
+            {!loading && formulario && formulario.length > 0 ? (
+                formulario.map((form, index) => (
+                    <div key={form.id}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            <Typography variant="h4" style={{ fontWeight: '700', flexGrow: 1 }}>{form.titulo}</Typography>
+                            <IconButton onClick={() => handleOpenEditDialog(index)} color="primary" aria-label="Editar formulário">
+                                <Edit />
+                            </IconButton>
+                        </div>
+                        <Typography variant="body1">{form.textoAuxiliar}</Typography>
+                        {form.campos && form.campos.length > 0 ? (
+                            form.campos.map((field) => (
+                                <div key={field.id}>
+                                    {field.type === 'texto' && (
+                                        <TextField
+                                            label={field.label}
+                                            fullWidth
+                                            margin="normal"
+                                            helperText={field.helperText}
                                             onChange={(e) => handleChange(field.id, e.target.value)}
-                                            disabled={!form.estado} // Desabilita se form.estado for false
-                                        >
-                                            {field.options.split(',').map((option, index) => (
-                                                <MenuItem key={index} value={option}>
-                                                    {option}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                )}
-                            </div>
-                        ))
-                    ) : (
-                        <Typography variant="body1">Nenhum campo encontrado.</Typography>
-                    )}
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{ ml: 0, minWidth: '10%' }}
-                        disabled={!form.estado} // Desabilita se form.estado for false
-                    >
-                        {form.estado ? 'Enviar' : 'O formulário já não se encontra disponível no momento'}
-                    </Button>
-                </div>
-            ))}
-            {loading && (
+                                            disabled={!form.estado}
+                                        />
+                                    )}
+                                    {field.type === 'numero' && (
+                                        <TextField
+                                            label={field.label}
+                                            type="number"
+                                            fullWidth
+                                            margin="normal"
+                                            helperText={field.helperText}
+                                            onChange={(e) => handleChange(field.id, e.target.value)}
+                                            disabled={!form.estado}
+                                        />
+                                    )}
+                                    {field.type === 'checkbox' && (
+                                        <FormControlLabel
+                                            control={<Checkbox onChange={(e) => handleChange(field.id, e.target.checked)} />}
+                                            label={field.label}
+                                            disabled={!form.estado}
+                                        />
+                                    )}
+                                    {field.type === 'select' && (
+                                        <FormControl fullWidth margin="normal">
+                                            <InputLabel>{field.label}</InputLabel>
+                                            <Select
+                                                onChange={(e) => handleChange(field.id, e.target.value)}
+                                                disabled={!form.estado}
+                                            >
+                                                {field.options.split(',').map((option, index) => (
+                                                    <MenuItem key={index} value={option}>
+                                                        {option}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    )}
+                                </div>
+                            ))
+                        ) : (
+                            <Typography variant="body1">Nenhum campo encontrado.</Typography>
+                        )}
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{ ml: 0, minWidth: '10%' }}
+                            disabled={!form.estado}
+                            onClick={(e) => handleSubmit(e, form.id)}
+                        >
+                            {form.estado ? 'Enviar' : 'O formulário já não se encontra disponível no momento'}
+                        </Button>
+                    </div>
+                ))
+            ) : (
                 <Typography variant="body1">Carregando campos do formulário...</Typography>
+            )}
+
+            {selectedFormIndex !== null && (
+                <EditarForm
+                    open={openEditDialog}
+                    handleClose={handleCloseEditDialog}
+                    formulario={editData}
+                />
             )}
         </form>
     );

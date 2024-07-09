@@ -80,3 +80,26 @@ exports.apagarFormulario = async (req, res) => {
       res.status(500).json({ error: 'Erro interno do servidor' });
     }
   }
+
+  exports.responderFormulario = async (req, res) => {
+    const { id } = req.params;
+    const { respostas } = req.body;
+
+    try {
+        const formulario = await Formulario.findOne({
+            where: { id: id},
+        });
+
+        if (!formulario) {
+            return res.status(404).json({ error: 'Formulário não encontrado' });
+        }
+
+        await formulario.update({ respostas });
+
+        return res.status(200).json({ message: 'Respostas armazenadas com sucesso' });
+    } catch (error) {
+        console.error('Erro ao armazenar respostas:', error.message);
+        return res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  }
+
