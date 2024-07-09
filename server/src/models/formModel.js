@@ -4,12 +4,12 @@ const Evento = require('./eventoModel');
 
 const Formulario = sequelize.define('Formulario', {
     id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
     },
     campos: {
-        type: DataTypes.JSONB, // Mantido para definir a estrutura inicial dos campos do formulário
+        type: DataTypes.JSONB, 
         allowNull: false,
     },
     titulo: {
@@ -31,10 +31,6 @@ const Formulario = sequelize.define('Formulario', {
             model: Evento,
             key: 'id',
         },
-    },
-    respostas: {
-        type: DataTypes.JSONB, 
-        allowNull: true, 
     },
 }, {
     tableName: 'Formulario',

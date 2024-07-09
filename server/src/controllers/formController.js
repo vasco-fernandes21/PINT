@@ -1,5 +1,7 @@
 const { Op } = require('sequelize');
 const Formulario = require('../models/formModel');
+const Resposta = require('../models/respostaModel');
+const Utilizador = require('../models/utilizadorModel');
 
 exports.criarFormulario = async (req, res) => {
     try {
@@ -81,25 +83,58 @@ exports.apagarFormulario = async (req, res) => {
     }
   }
 
+
   exports.responderFormulario = async (req, res) => {
+      const { id } = req.params;
+      const { respostas } = req.body;
+      const idUtilizador = req.user.id; 
+  
+      try {
+          const formulario = await Formulario.findOne({
+              where: { id: id },
+          });
+  
+          if (!formulario) {
+              return res.status(404).json({ error: 'Formulário não encontrado' });
+          }
+  
+          await Resposta.create({
+              idFormulario: id,
+              respostas: respostas,
+              idUtilizador: idUtilizador,
+              data: new Date(), 
+          });
+  
+          return res.status(201).json({ message: 'Respostas armazenadas com sucesso' });
+      } catch (error) {
+          console.error('Erro ao armazenar respostas:', error.message);
+          return res.status(500).json({ error: 'Erro interno do servidor' });
+      }
+  };
+
+  exports.getRespostasFormulario = async (req, res) => {
     const { id } = req.params;
-    const { respostas } = req.body;
-
+  
     try {
-        const formulario = await Formulario.findOne({
-            where: { id: id},
-        });
-
-        if (!formulario) {
-            return res.status(404).json({ error: 'Formulário não encontrado' });
+      const respostas = await Resposta.findAll({
+        where: {
+          idFormulario: id,
+        },
+        include: [{
+          model: Utilizador, 
+          attributes: ['nome'], 
+        },
+        {
+          model: Formulario,
+          attributes: ['titulo'],
         }
-
-        await formulario.update({ respostas });
-
-        return res.status(200).json({ message: 'Respostas armazenadas com sucesso' });
+      ],
+      });
+  
+      res.json({ respostas });
     } catch (error) {
-        console.error('Erro ao armazenar respostas:', error.message);
-        return res.status(500).json({ error: 'Erro interno do servidor' });
+      console.error('Erro ao buscar respostas:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
     }
   }
-
+  

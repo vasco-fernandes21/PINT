@@ -36,10 +36,11 @@ function EventoPage() {
     const itemsPerPage = 5;
     const noOfPages = Math.ceil(avaliacoes.length / itemsPerPage);
     const [openFormCriar, setOpenFormCriar] = useState(false);
-    const [openFormDinamico, setOpenFormDinamico] = useState(false); // Estado para controlar a exibição de FormDinamico
+    const [openFormDinamico, setOpenFormDinamico] = useState(false); 
     const [formulario, setFormulario] = useState({});
     const [campos, setCampos] = useState([]);
-    const [open, setOpen] = useState(false); // Estado para controlar a exibição de EditarEvento dialog
+    const [open, setOpen] = useState(false); 
+    const [formularioAtualizado, setFormularioAtualizado] = useState(false);
 
     const url = `${frontendUrl}/eventos/${id}`;
     const title = 'Estou interessado neste evento!';
@@ -112,7 +113,7 @@ function EventoPage() {
             const response = await api.post(`/formulario/${id}`, data);
             if (response.status === 201) {
                 console.log('Formulário enviado com sucesso!');
-                setOpenFormDinamico(false);
+                setFormularioAtualizado(true); 
             } else {
                 console.error('Erro ao enviar formulário:', response.statusText);
             }
@@ -120,7 +121,8 @@ function EventoPage() {
             console.error('Erro ao enviar formulário:', error.message);
         }
     };
-
+    
+    
     useEffect(() => {
         const fetchFormCampos = async () => {
             try {
@@ -172,6 +174,36 @@ function EventoPage() {
     const atualizarInscricoes = async () => {
         await fetchInscricoes();
     };
+
+    const fetchFormulario = useCallback(async () => {
+        try {
+            const response = await api.get(`/formulario/${id}`);
+            if (response.status === 200) {
+                setFormulario(response.data.formulario);
+                setFormularioAtualizado(false); // Resetar o estado de atualização
+            } else {
+                console.error('Erro ao buscar dados do formulário:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados do formulário:', error.message);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (formularioAtualizado) {
+            fetchFormulario(); 
+        }
+    }, [fetchFormulario, formularioAtualizado]);
+    
+
+    useEffect(() => {
+        fetchFormulario();
+    }, [fetchFormulario]);
+    
+    useEffect(() => {
+        fetchFormulario();
+    }, [id]);
+    
 
     if (!evento) {
         return <div>A carregar...</div>;
@@ -251,11 +283,12 @@ function EventoPage() {
                                     inscricaoAberta={evento.inscricaoAberta}
                                 />  
                             </Grid>
-                            {formulario?.length > 0 && (
-                                <Grid item xs={12} sx={{mt: 2}}>
+                            {formulario && formulario?.length > 0 && (
+                                <Grid item xs={12} sx={{ mt: 2 }}>
                                     <FormDinamico idEvento={id} formulario={formulario} onSubmit={handleFormDinamicoSubmit} />
                                 </Grid>
                             )}
+
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Box sx={{ bgcolor: 'rgba(0, 0, 0, 0.03)', borderRadius: 2, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

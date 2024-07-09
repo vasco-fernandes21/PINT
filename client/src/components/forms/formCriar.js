@@ -21,7 +21,6 @@ const FormCriar = ({ open, handleClose, handleSave, idEvento }) => {
   const [textoAuxiliar, setTextoAuxiliar] = useState('');
 
   const addField = () => {
-    // Verifica se já existem campos de título e descrição preenchidos
     if (!titulo || !textoAuxiliar) {
       alert('Por favor, preencha o título e o texto auxiliar antes de adicionar campos opcionais.');
       return;

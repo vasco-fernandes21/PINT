@@ -13,41 +13,42 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions
+    DialogActions,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import api from '../api/api';
 import EditarForm from './formEditar';
 
-const FormDinamico = ({ idEvento, formulario }) => {
+const FormDinamico = ({ formulario, onSubmit }) => {
     const [formData, setFormData] = useState({});
     const [loading, setLoading] = useState(true);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [editData, setEditData] = useState({ campos: [], titulo: '', textoAuxiliar: '' });
     const [selectedFormIndex, setSelectedFormIndex] = useState(null);
+    const [openRespostasDialog, setOpenRespostasDialog] = useState(false);
+    const [respostas, setRespostas] = useState([]);
+    const [fieldLabelMap, setFieldLabelMap] = useState({});
 
     useEffect(() => {
+        if (formulario && formulario.length > 0) {
+            const fieldMap = {};
+            formulario.forEach(form => {
+                form.campos.forEach(field => {
+                    fieldMap[field.id] = field.label;
+                });
+            });
+            setFieldLabelMap(fieldMap);
+        }
         setLoading(false);
     }, [formulario]);
 
-    console.log('Formulários:', formulario);
-
     const handleChange = (id, value) => {
         setFormData({ ...formData, [id]: value });
-    };
-
-    const onSubmit = async (formularioId, respostas) => {
-        try {
-            const response = await api.post(`/formulario/responder/${formularioId}`, { respostas });
-            if (response.status === 200) {
-                console.log('Formulário enviado com sucesso!');
-                setFormData({});
-            } else {
-                console.error('Erro ao enviar formulário:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Erro ao enviar formulário:', error.message);
-        }
     };
 
     const handleSubmit = async (e, formularioId) => {
@@ -63,6 +64,33 @@ const FormDinamico = ({ idEvento, formulario }) => {
 
     const handleCloseEditDialog = () => {
         setOpenEditDialog(false);
+        setSelectedFormIndex(null);
+    };
+
+    const handleOpenRespostasDialog = async (formularioId) => {
+        try {
+            const response = await api.get(`/formulario/respostas/${formularioId}`);
+            if (response.status === 200) {
+                setRespostas(response.data.respostas);
+                setOpenRespostasDialog(true);
+            } else {
+                console.error('Erro ao buscar respostas:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar respostas:', error.message);
+        }
+    };
+
+    const handleCloseRespostasDialog = () => {
+        setOpenRespostasDialog(false);
+        setRespostas([]);
+    };
+
+    const formatValue = (value) => {
+        if (typeof value === 'boolean') {
+            return value ? 'Sim' : 'Não';
+        }
+        return value;
     };
 
     return (
@@ -137,6 +165,14 @@ const FormDinamico = ({ idEvento, formulario }) => {
                         >
                             {form.estado ? 'Enviar' : 'O formulário já não se encontra disponível no momento'}
                         </Button>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            sx={{ ml: 2, minWidth: '10%' }}
+                            onClick={() => handleOpenRespostasDialog(form.id)}
+                        >
+                            Ver Respostas
+                        </Button>
                     </div>
                 ))
             ) : (
@@ -150,6 +186,45 @@ const FormDinamico = ({ idEvento, formulario }) => {
                     formulario={editData}
                 />
             )}
+
+            <Dialog open={openRespostasDialog} onClose={handleCloseRespostasDialog} fullWidth maxWidth="md">
+                <DialogTitle>Respostas do Formulário</DialogTitle>
+                <DialogContent>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>ID</TableCell>
+                                <TableCell>Formulário</TableCell>
+                                <TableCell>Respostas</TableCell>
+                                <TableCell>Utilizador</TableCell>
+                                <TableCell>Data</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {respostas.map((resposta) => (
+                                <TableRow key={resposta.id}>
+                                    <TableCell>{resposta.id}</TableCell>
+                                    <TableCell>{resposta?.Formulario?.titulo}</TableCell>
+                                    <TableCell>
+                                        {Object.entries(resposta.respostas).map(([fieldId, value]) => (
+                                            <div key={fieldId}>
+                                                <strong>{fieldLabelMap[fieldId]}:</strong> {formatValue(value)}
+                                            </div>
+                                        ))}
+                                    </TableCell>
+                                    <TableCell>{resposta?.Utilizador?.nome}</TableCell>
+                                    <TableCell>{new Date(resposta.data).toLocaleString()}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseRespostasDialog} color="primary">
+                        Fechar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </form>
     );
 };
