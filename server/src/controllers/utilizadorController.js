@@ -242,11 +242,17 @@ exports.listarInscricoes = async (req, res) => {
   try {
     const inscricoes = await Inscricao.findAll({
       where: { idUtilizador: id, estado: true },
-     
       include: [
         { model: Utilizador, as: 'utilizador', attributes: ['nome'] },
-        { model: Evento, as: 'evento', attributes: ['titulo', 'data'] }
-    ]
+        { 
+          model: Evento, 
+          as: 'evento', 
+          attributes: ['titulo', 'data'],
+          include: [
+            { model: Posto, as: 'posto', attributes: ['nome'] } 
+          ]
+        },
+      ]
     });
 
     const contador = inscricoes.length;

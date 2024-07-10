@@ -565,12 +565,18 @@ exports.getInscricaoEvento = async (req, res) => {
             where: {
                 idEvento: id,
                 estado: true,
-
             },
             include: [
                 { model: Utilizador, as: 'utilizador', attributes: ['nome'] },
                 { model: Utilizador, as: 'admin', attributes: ['nome'] },
-                { model: Evento, as: 'evento', attributes: ['titulo', 'data'] }
+                { 
+                  model: Evento, 
+                  as: 'evento', 
+                  attributes: ['titulo', 'data'],
+                  include: [
+                    { model: Posto, as: 'posto', attributes: ['nome'] } // Inclui o modelo Posto aqui
+                  ]
+                }
             ]
         });
 
@@ -592,7 +598,7 @@ exports.getInscricaoEvento = async (req, res) => {
             error: 'Erro: ' + err.message,
         });
     }
-}
+};
 
 exports.inscreverEvento = async (req, res) => {
     const { id } = req.params;
