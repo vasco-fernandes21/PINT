@@ -45,6 +45,8 @@ function EventoPage() {
     const url = `${frontendUrl}/eventos/${id}`;
     const title = 'Estou interessado neste evento!';
 
+    console.log('url de partilha:', url);   
+
     useEffect(() => {
         const fetchUtilizador = async () => {
             try {

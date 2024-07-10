@@ -21,7 +21,6 @@ const BotoesPartilha = ({ url, title }) => {
     setAnchorEl(null);
   };
 
-
   return (
     <div>
       <IconButton aria-controls="share-menu" aria-haspopup="true" onClick={handleClick}>

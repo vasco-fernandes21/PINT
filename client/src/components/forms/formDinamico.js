@@ -21,6 +21,8 @@ import {
     TableRow
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import api from '../api/api';
 import EditarForm from './formEditar';
 
@@ -55,9 +57,7 @@ const FormDinamico = ({ formulario, onAlteracao }) => {
                 [id]: value
             }
         }));
-        onAlteracao();
     };
-    
 
     const handleSubmit = (e, idFormulario) => {
         e.preventDefault();
@@ -107,20 +107,26 @@ const FormDinamico = ({ formulario, onAlteracao }) => {
             const response = await api.post(`/formulario/responder/${idFormulario}`, formData);
             if (response.status === 201) {
                 console.log('Respostas enviadas com sucesso!');
-                handleCloseEditDialog(); // Fecha o diálogo de edição se estiver aberto
-                // Exibir feedback ao usuário se necessário
+                resetForm();
+                toast.success('Respostas enviadas com sucesso!');
             } else {
                 console.error('Erro ao enviar respostas:', response.statusText);
-                // Exibir mensagem de erro ao usuário se necessário
+                toast.error('Erro ao enviar respostas!');
             }
         } catch (error) {
             console.error('Erro ao enviar respostas:', error.message);
-            // Exibir mensagem de erro ao usuário se necessário
+            toast.error('Erro ao enviar respostas!');
         }
+    };
+
+    const resetForm = () => {
+        setFormData({});
+        onAlteracao();
     };
 
     return (
         <form>
+            <ToastContainer />
             {!loading && formulario && formulario.length > 0 ? (
                 formulario.map((form, index) => (
                     <div key={form.id}>
@@ -142,6 +148,7 @@ const FormDinamico = ({ formulario, onAlteracao }) => {
                                             helperText={field.helperText}
                                             onChange={(e) => handleChange(field.id, e.target.value)}
                                             disabled={!form.estado}
+                                            value={formData.respostas?.[field.id] || ''}
                                         />
                                     )}
                                     {field.type === 'numero' && (
@@ -153,11 +160,12 @@ const FormDinamico = ({ formulario, onAlteracao }) => {
                                             helperText={field.helperText}
                                             onChange={(e) => handleChange(field.id, e.target.value)}
                                             disabled={!form.estado}
+                                            value={formData.respostas?.[field.id] || ''}
                                         />
                                     )}
                                     {field.type === 'checkbox' && (
                                         <FormControlLabel
-                                            control={<Checkbox onChange={(e) => handleChange(field.id, e.target.checked)} />}
+                                            control={<Checkbox checked={!!formData.respostas?.[field.id]} onChange={(e) => handleChange(field.id, e.target.checked)} />}
                                             label={field.label}
                                             disabled={!form.estado}
                                         />
@@ -168,6 +176,7 @@ const FormDinamico = ({ formulario, onAlteracao }) => {
                                             <Select
                                                 onChange={(e) => handleChange(field.id, e.target.value)}
                                                 disabled={!form.estado}
+                                                value={formData.respostas?.[field.id] || ''}
                                             >
                                                 {field.options.split(',').map((option, index) => (
                                                     <MenuItem key={index} value={option}>
