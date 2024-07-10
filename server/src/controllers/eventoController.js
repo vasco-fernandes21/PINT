@@ -570,6 +570,7 @@ exports.getInscricaoEvento = async (req, res) => {
             include: [
                 { model: Utilizador, as: 'utilizador', attributes: ['nome'] },
                 { model: Utilizador, as: 'admin', attributes: ['nome'] },
+                { model: Evento, as: 'evento', attributes: ['titulo', 'data'] }
             ]
         });
 
