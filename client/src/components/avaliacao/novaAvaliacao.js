@@ -13,7 +13,7 @@ function NovaAvaliacao({ tipo, id, idUtilizador, handleUpdateAvaliacoes }) {
       showDenyButton: true,
       confirmButtonText: 'Sim',
       denyButtonText: 'Não',
-      confirmButtonColor: '#1d234f',
+      confirmButtonColor: '#1D324F',
       denyButtonColor: '#6c757d',
     });
 
@@ -52,14 +52,14 @@ function NovaAvaliacao({ tipo, id, idUtilizador, handleUpdateAvaliacoes }) {
             icon: 'success',
             title: 'Operação concluída',
             text: 'O comentário foi enviado com sucesso.',
-            confirmButtonColor: '#1d234f',
+            confirmButtonColor: '#1D324F',
           });
         } else {
           Swal.fire({
             icon: 'error',
             title: 'Erro ao enviar avaliação',
             text: 'Ocorreu um erro ao enviar a avaliação.',
-            confirmButtonColor: '#1d234f',
+            confirmButtonColor: '#1D324F',
           });
         }
       } catch (error) {
@@ -69,11 +69,15 @@ function NovaAvaliacao({ tipo, id, idUtilizador, handleUpdateAvaliacoes }) {
           icon: 'error',
           title: 'Erro ao enviar avaliação',
           text: 'Ocorreu um erro ao enviar a avaliação.',
-          confirmButtonColor: '#1d234f',
+          confirmButtonColor: '#1D324F',
         });
       }
     } else if (result.isDenied) {
-      Swal.fire('Operação Cancelada', '', 'info');
+      Swal.fire({
+        title: 'Operação Cancelada',
+        icon: 'info',
+        confirmButtonColor: '#6c757d',
+      });
     }
   };
 

@@ -92,8 +92,13 @@ const ValidacaoEventos = () => {
           const id = eventoSelecionado.id; // Supondo que o eventoSelecionado tenha um ID
           await api.delete(`/eventos/${id}`);
           handleClose();
-          fetchEventos(); // Atualiza a lista de eventos após a alteração
-          Swal.fire('Recusado!', 'O evento foi recusado com sucesso.', 'success');
+          fetchEventos();
+          Swal.fire({
+            title: 'Recusado!',
+            text: 'O evento foi recusado com sucesso.',
+            icon: 'success',
+            confirmButtonColor: '#1d324f'
+          });
         } catch (error) {
           console.error('Erro ao recusar o evento:', error);
           Swal.fire('Erro', 'Erro ao recusar o evento. Por favor, tente novamente.', 'error');

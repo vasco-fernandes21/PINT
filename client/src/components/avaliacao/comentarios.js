@@ -122,7 +122,11 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
         });
       }
     } else if (result.isDenied) {
-      Swal.fire('Operação Cancelada', '', 'info');
+      Swal.fire({
+        title: 'Operação Cancelada',
+        icon: 'info',
+        confirmButtonColor: '#6c757d',
+      });
     }
   };
 

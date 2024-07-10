@@ -52,9 +52,13 @@ const Sidebar = () => {
         sessionStorage.removeItem('token');
         localStorage.removeItem('recoveryToken');
         sessionStorage.removeItem('recoveryToken');
-        window.location.href = '/login';
       } else if (result.isDenied) {
-        Swal.fire('Sessão não terminada', '', 'info');
+        Swal.fire({
+          title: 'Sessão não terminada',
+          icon: 'info',
+          confirmButtonColor: '#1d324f',
+          confirmButtonText: 'OK'
+        });
       }
     });
   };

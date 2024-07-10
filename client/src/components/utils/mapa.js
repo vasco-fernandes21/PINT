@@ -15,7 +15,7 @@ const options = {
 
 const Mapa = ({ morada }) => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBkvnVEmV_pwnsc52AqcPmx5giZmVu7LpU',
+    googleMapsApiKey: 'AIzaSyA69sIkASD2CYFNbzNV_7XOCR-3L1Fcqps',
   });
 
   const [location, setLocation] = useState(null);
@@ -31,7 +31,7 @@ const Mapa = ({ morada }) => {
       const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
         params: {
           address: address,
-          key: 'AIzaSyBkvnVEmV_pwnsc52AqcPmx5giZmVu7LpU'
+          key: 'AIzaSyA69sIkASD2CYFNbzNV_7XOCR-3L1Fcqps'
         }
       });
 

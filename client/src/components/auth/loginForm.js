@@ -32,7 +32,7 @@ function Login({ setIsAutenticado: setAuth }) {
     try {
       const response = await api.post('/login', { email, password });
       const { token, recoveryToken } = response.data;
-
+  
       if (rememberUser) {
         localStorage.setItem('token', token);
         if (recoveryToken) {
@@ -44,26 +44,17 @@ function Login({ setIsAutenticado: setAuth }) {
           sessionStorage.setItem('recoveryToken', recoveryToken);
         }
       }
-
-      setToken(token);
-      Swal.fire({
-        title: 'Sucesso!',
-        text: 'Login realizado com sucesso',
-        icon: 'success',
-        confirmButtonColor: '#1D324F',
-        timer: 2000,
-      });
-
-      setAuth(true);
-
+  
       if (recoveryToken) {
         navigate(`/reset-passe?token=${recoveryToken}`);
       } else {
-        const userResponse = await api.get('/utilizador');
-        const { idPosto } = userResponse.data;
+        const response = await api.get('/utilizador/completo');
+        const { idPosto } = response.data;
         if (idPosto === null || idPosto === undefined) {
           navigate('/posto');
         } else {
+          setToken(token);
+          setAuth(true);
           navigate('/');
         }
       }
@@ -125,6 +116,7 @@ function Login({ setIsAutenticado: setAuth }) {
       }
     }
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
