@@ -18,7 +18,6 @@ const CreateAreaForm = () => {
     try {
       const response = await api.post('/areas', { nome, icone });
       console.log('Nova área criada:', response.data.data);
-      // Lógica adicional após a criação da área, se necessário
     } catch (error) {
       console.error('Erro ao criar área:', error.response.data.error);
     }

@@ -46,7 +46,7 @@ const Mapa = ({ morada }) => {
           setLocation(null);
         }
       } else {
-        console.error("Geocode error status:", status); // Log error status
+        console.error("Geocode error status:", status); 
         setLocation(null);
       }
     } catch (error) {

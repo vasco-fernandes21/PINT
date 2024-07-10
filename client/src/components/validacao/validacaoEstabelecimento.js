@@ -38,8 +38,7 @@ const ValidacaoEstabelecimentos = () => {
   };
 
   const handleValidar = () => {
-    handleClose(); // fecha o diálogo para vermos o alerta
-    // Exibe um diálogo de confirmação
+    handleClose(); 
     Swal.fire({
       title: 'Tem certeza?',
       text: 'Deseja realmente validar este estabelecimento?',

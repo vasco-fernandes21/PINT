@@ -19,13 +19,13 @@ import api from '../api/api';
 const EditarForm = ({ open, handleClose, formulario, onAlteracao }) => {
   const [editData, setEditData] = useState({
     ...formulario,
-    estado: formulario.estado ? true : false, // Inicializa com booleano conforme formulário atual
+    estado: formulario.estado ? true : false, 
   });
 
   useEffect(() => {
     setEditData({
       ...formulario,
-      estado: formulario.estado ? true : false, // Atualiza editData quando o formulário muda
+      estado: formulario.estado ? true : false, 
     });
   }, [formulario]);
 
@@ -102,7 +102,7 @@ const EditarForm = ({ open, handleClose, formulario, onAlteracao }) => {
   };
 
   const handleChangeEstado = (e) => {
-    const estadoValue = e.target.value === 'ativo' ? true : false; // Converte 'ativo' para true e 'inativo' para false
+    const estadoValue = e.target.value === 'ativo' ? true : false; 
     setEditData({ ...editData, estado: estadoValue });
   };
 

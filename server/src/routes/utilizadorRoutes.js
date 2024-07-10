@@ -13,6 +13,6 @@ router.put('/:id/preferencias', utilizadorController.associarPreferencias);
 router.delete('/:id', utilizadorController.apagarUtilizador);
 router.post('/associar-posto', auth, utilizadorController.associarPosto);
 
-router.get('/inscricao/:id', auth, utilizadorController.listarInscricoes);
+router.get('/inscricao/:id', utilizadorController.listarInscricoes);
 
 module.exports = router;
