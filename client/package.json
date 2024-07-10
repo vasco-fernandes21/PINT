@@ -28,7 +28,6 @@
     "react-big-calendar": "^1.13.0",
     "react-date-range": "^2.0.1",
     "react-dom": "^18.2.0",
-    "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.2.2",
     "react-google-maps": "^9.4.5",
     "react-hook-form": "^7.51.5",
@@ -51,7 +50,7 @@
     "start:local": "cross-env REACT_APP_API_URL=http://localhost:3001 REACT_APP_FRONTEND=http://localhost:3000 react-scripts start",
     "start:host": "cross-env REACT_APP_API_URL=https://pint-f1tf.onrender.com REACT_APP_FRONTEND=https://pint-softinsa.vercel.app react-scripts start",
     "start": "react-scripts start",
-    "build": "cross-env REACT_APP_API_URL=http://localhost:3001 REACT_APP_FRONTEND=http://localhost:3000 react-scripts build",
+    "build": "cross-env REACT_APP_API_URL=https://pint-f1tf.onrender.com REACT_APP_FRONTEND=https://pint-softinsa.vercel.app react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
