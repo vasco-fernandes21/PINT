@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/api';
 import EventIcon from '@mui/icons-material/Event';
 import StoreIcon from '@mui/icons-material/Store';
+import ImageIcon from '@mui/icons-material/Image'; // Ícone para validação de imagens
 
 const BoxContainer = styled(Card)({
   height: '100%', // Garantindo a mesma altura do Vista
   display: 'flex',
   alignItems: 'center',
   padding: '20px',
-  margin: '10px 0',
   backgroundColor: '#fff', // Cor de fundo consistente
   borderRadius: 10,
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -23,7 +23,6 @@ const BoxContainer = styled(Card)({
   },
 });
 
-// Estilo para o ícone
 const Icon = styled('div')({
   fontSize: 50,
   color: '#1D324F',
@@ -34,6 +33,7 @@ const DashboardValidacoes = () => {
   const navigate = useNavigate();
   const [numEventosParaValidar, setNumEventosParaValidar] = useState(0);
   const [numEstabelecimentosParaValidar, setNumEstabelecimentosParaValidar] = useState(0);
+  const [numImagensParaValidar, setNumImagensParaValidar] = useState(0);
 
   useEffect(() => {
     const fetchEventosParaValidar = async () => {
@@ -58,8 +58,20 @@ const DashboardValidacoes = () => {
       }
     };
 
+    const fetchImagensParaValidar = async () => {
+      try {
+        const response = await api.get('/por-validar');
+        if (response.data.success) {
+          setNumImagensParaValidar(response.data.contador);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar imagens para validar:', error);
+      }
+    };
+
     fetchEventosParaValidar();
     fetchEstabelecimentosParaValidar();
+    fetchImagensParaValidar();
   }, []);
 
   const handleNavigation = (type) => {
@@ -67,12 +79,14 @@ const DashboardValidacoes = () => {
       navigate('/validacao');
     } else if (type === 'estabelecimentos') {
       navigate('/validacao');
+    } else if (type === 'imagens') {
+      navigate('/validacao');
     }
   };
 
   return (
     <Grid container spacing={2} sx={{ height: '100%' }}>
-      <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+      <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         <BoxContainer onClick={() => handleNavigation('estabelecimentos')}>
           <Icon><StoreIcon /></Icon>
           <div>
@@ -85,7 +99,7 @@ const DashboardValidacoes = () => {
           </div>
         </BoxContainer>
       </Grid>
-      <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+      <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         <BoxContainer onClick={() => handleNavigation('eventos')}>
           <Icon><EventIcon /></Icon>
           <div>
@@ -94,6 +108,19 @@ const DashboardValidacoes = () => {
             </Typography>
             <Typography variant="h5" sx={{ color: '#1D324F', fontWeight: 'bold' }}>
               {numEventosParaValidar}
+            </Typography>
+          </div>
+        </BoxContainer>
+      </Grid>
+      <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+        <BoxContainer onClick={() => handleNavigation('imagens')}>
+          <Icon><ImageIcon /></Icon>
+          <div>
+            <Typography variant="subtitle2">
+              Imagens para validar
+            </Typography>
+            <Typography variant="h5" sx={{ color: '#1D324F', fontWeight: 'bold' }}>
+              {numImagensParaValidar}
             </Typography>
           </div>
         </BoxContainer>

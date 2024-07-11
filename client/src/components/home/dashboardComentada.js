@@ -11,7 +11,6 @@ const BoxContainer = styled(Card)({
   display: 'flex',
   alignItems: 'center',
   padding: '20px',
-  margin: '10px 0',
   backgroundColor: '#fff', // Cor de fundo consistente
   borderRadius: 10,
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',

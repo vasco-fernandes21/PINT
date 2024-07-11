@@ -64,14 +64,11 @@ useEffect(() => {
 
       <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2} sx={{ height: '110%' }}>
-            <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Validacoes sx={{ flexGrow: 1 }} />
             </Grid>
             <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Comentadas sx={{ flexGrow: 1 }} />
-            </Grid>
-            <Grid item xs={12} md={2} sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Denuncia sx={{ flexGrow: 1 }} />
             </Grid>
             <Grid item xs={12} md={2} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Denuncia sx={{ flexGrow: 1 }} />

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { styled } from '@mui/system';
-import ReportIcon from '@mui/icons-material/Report'; // Importando um ícone de exemplo do MUI
+import ReportIcon from '@mui/icons-material/Report';
+import api from '../api/api';
 
 const BoxContainer = styled(Card)({
-  height: '100%', // Garantindo que o componente ocupe toda a altura disponível
+  height: '100%',
   display: 'flex',
   alignItems: 'center',
   padding: '20px',
-  margin: '10px 0',
+  margin: '15px 0',
   backgroundColor: '#fff',
   borderRadius: 10,
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -27,21 +28,17 @@ const Icon = styled('div')({
 });
 
 const DashboardDenuncias = () => {
-  const [numDenuncias, setNumDenuncias] = useState(0);
-
-  useEffect(() => {
-    setNumDenuncias(8);
-  }, []);
+  
 
   return (
     <BoxContainer>
-      <Icon>
-        <ReportIcon />
-      </Icon>
+      <Icon><ReportIcon /></Icon>
       <div>
-        <Typography variant="subtitle2">Denúncias</Typography>
+        <Typography variant="subtitle2">
+          Denúncias
+        </Typography>
         <Typography variant="h5" sx={{ color: '#1D324F', fontWeight: 'bold' }}>
-          {numDenuncias}
+          mete ai o numero de denuncias
         </Typography>
       </div>
     </BoxContainer>
