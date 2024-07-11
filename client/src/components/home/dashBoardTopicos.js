@@ -22,13 +22,13 @@ const columns = [
   { field: 'estabelecimentos', headerName: 'Estabelecimentos', type: 'number', width: 150 },
 ];
 
-
 const Topicos = () => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const areasResponse = await api.get('/areas');
         const eventosResponse = await api.get('/estatistica/eventos');
         const estabelecimentosResponse = await api.get('/estatistica/estabelecimentos');
 
@@ -42,19 +42,11 @@ const Topicos = () => {
           return acc;
         }, {});
 
-        const areas = [
-          { id: 1, name: 'Saúde' },
-          { id: 2, name: 'Desporto' },
-          { id: 3, name: 'Formação' },
-          { id: 4, name: 'Gastronomia' },
-          { id: 5, name: 'Alojamento' },
-          { id: 6, name: 'Transportes' },
-          { id: 7, name: 'Lazer' },
-        ];
+        const areasData = areasResponse.data.data;
 
-        const mergedData = areas.map((area) => ({
+        const mergedData = areasData.map((area) => ({
           id: area.id,
-          name: area.name,
+          name: area.nome,
           eventos: eventosData[area.id] || 0,
           estabelecimentos: estabelecimentosData[area.id] || 0,
         }));
@@ -71,13 +63,12 @@ const Topicos = () => {
   return (
     <StyledCard>
       <CardContent>
-        <div style={{ height: 'auto', width: '100%', overflow: 'hidden' }}>
+        <div style={{ height: 400, width: '100%' }}>
           <DataGrid
             rows={rows}
             columns={columns}
-            autoHeight
-            hideFooter
-            checkboxSelection={false}
+            disableColumnMenu
+            disableSelectionOnClick
           />
         </div>
       </CardContent>

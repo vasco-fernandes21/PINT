@@ -36,6 +36,7 @@
     "react-big-calendar": "^1.13.0",
     "react-date-range": "^2.0.1",
     "react-facebook-login": "^4.1.1",
+    "react-toastify": "^10.0.5",
     "sequelize": "^6.37.3"
   },
   "devDependencies": {

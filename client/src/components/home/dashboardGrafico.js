@@ -17,6 +17,7 @@ const StyledCard = styled(Card)({
 
 const Grafico = () => {
   const [eventos, setEventos] = useState([]);
+  const [chartsLoaded, setChartsLoaded] = useState(false);
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -36,34 +37,46 @@ const Grafico = () => {
     script.async = true;
     script.onload = () => {
       window.google.charts.load('current', { packages: ['corechart'] });
-      window.google.charts.setOnLoadCallback(drawVisualization);
+      window.google.charts.setOnLoadCallback(() => {
+        setChartsLoaded(true);
+      });
     };
     document.body.appendChild(script);
+  }, []);
 
-    const drawVisualization = () => {
-      const eventosPorMes = calcularEventosPorMes(eventos);
+  useEffect(() => {
+    if (chartsLoaded && eventos.length > 0) {
+      drawVisualization();
+    }
+  }, [chartsLoaded, eventos]);
 
-      const data = new window.google.visualization.DataTable();
-      data.addColumn('string', 'Mês');
-      data.addColumn('number', 'Eventos');
+  const drawVisualization = () => {
+    if (!window.google || !window.google.visualization) {
+      return;
+    }
 
-      eventosPorMes.forEach(item => {
-        data.addRow([item.mes, item.total]);
-      });
+    const eventosPorMes = calcularEventosPorMes(eventos);
 
-      const options = {
-        title: 'Quantidade de Eventos por Mês',
-        vAxis: { title: 'Eventos' },
-        hAxis: { title: 'Mês' },
-        legend: 'none',
-        bar: { groupWidth: '90%' },
-        colors: ['#1d324f'], 
-      };
+    const data = new window.google.visualization.DataTable();
+    data.addColumn('string', 'Mês');
+    data.addColumn('number', 'Eventos');
 
-      const chart = new window.google.visualization.ColumnChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
+    eventosPorMes.forEach(item => {
+      data.addRow([item.mes, item.total]);
+    });
+
+    const options = {
+      title: 'Quantidade de Eventos por Mês',
+      vAxis: { title: 'Eventos' },
+      hAxis: { title: 'Mês' },
+      legend: 'none',
+      bar: { groupWidth: '90%' },
+      colors: ['#1d324f'],
     };
-  }, [eventos]); 
+
+    const chart = new window.google.visualization.ColumnChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  };
 
   const calcularEventosPorMes = (eventos) => {
     const eventosPorMes = {};
