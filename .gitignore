@@ -18,3 +18,5 @@ pids
 .DS_Store
 
 build/
+
+.idea/
