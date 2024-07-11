@@ -230,7 +230,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
             <>
               {avaliacao.utilizador.foto ? (
                 <Avatar 
-                  src={`${process.env.REACT_APP_API_URL}/uploads/utilizador/${avaliacao.utilizador.foto}`} 
+                src={avaliacao.utilizador.id_google != null ? avaliacao.utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${avaliacao.utilizador.foto}`}
                   alt={avaliacao.utilizador.nome} 
                   sx={{ marginRight: 2 }}
                 />

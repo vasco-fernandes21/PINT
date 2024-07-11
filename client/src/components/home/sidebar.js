@@ -19,6 +19,7 @@ const Sidebar = () => {
   const [utilizador, setUtilizador] = useState(null);
 
   const handleDrawerOpen = () => {
+    fetchUtilizador();
     setOpen(true);
   };
 
@@ -26,15 +27,16 @@ const Sidebar = () => {
     setOpen(false);
   };
 
+  const fetchUtilizador = async () => {
+    try {
+      const response = await api.get('/utilizador/completo');
+      setUtilizador(response.data); 
+    } catch (error) {
+      console.error('Erro ao encontrar utilizador:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUtilizador = async () => {
-      try {
-        const response = await api.get('/utilizador/completo');
-        setUtilizador(response.data); 
-      } catch (error) {
-        console.error('Erro ao encontrar utilizador:', error);
-      }
-    };
     fetchUtilizador();
   }, []);
 
@@ -52,6 +54,7 @@ const Sidebar = () => {
         sessionStorage.removeItem('token');
         localStorage.removeItem('recoveryToken');
         sessionStorage.removeItem('recoveryToken');
+        window.location.href = '/login';
       } else if (result.isDenied) {
         Swal.fire({
           title: 'Sessão não terminada',

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, Paper, Pagination, MenuItem, styled, Select, useTheme } from '@mui/material';
+import React, { useState, useEffect, useRef } from "react";
+import { Box, Typography, Button, Grid, Paper, Pagination, MenuItem, styled, Select } from '@mui/material';
 import api from '../api/api';
 import AvatarImagem from "../utils/avatarImagem";
-import BotaoUpload from "../utils/botaoUpload";
 import ComentariosPerfil from "./comentariosPerfil";
 import EditarPerfil from './utilizadorEditar'; 
 import InscricoesUtilizador from "./utilizadorInscricoes";
@@ -24,13 +23,14 @@ const Perfil = () => {
   const [subareas, setSubareas] = useState([]);
   const [mostrarAvaliacoes, setMostrarAvaliacoes] = useState(true); 
 
+  const fileInputRef = useRef(null);
+
   const fetchUtilizador = async () => {
     try {
       const response = await api.get('/utilizador/completo');
       const dadosUtilizador = response.data;
       setUtilizador(dadosUtilizador);
 
-      // Inicializa as preferências do utilizador
       setidArea(dadosUtilizador.idArea || "");
       setidSubarea(dadosUtilizador.idSubarea || "");
 
@@ -113,8 +113,27 @@ const Perfil = () => {
     setPage(value);
   };
 
-  const updateFotoPerfil = (novaFoto) => {
-    setUtilizador({ ...utilizador, foto: novaFoto });
+  const updateFotoPerfil = async (event) => {
+    const foto = event.target.files[0];
+    if (foto && utilizador) {
+      const formData = new FormData();
+      formData.append('foto', foto); 
+
+      try {
+        const response = await api.put(`/utilizador/${utilizador.id}`, formData, { // Atualizado para corresponder ao endpoint correto
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        if (response.status === 200) {
+          setUtilizador({ ...utilizador, foto: response.data.foto });
+          fetchUtilizador();
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar foto do perfil:', error);
+      }
+    }
   };
 
   const handleDialogOpen = () => {
@@ -205,8 +224,7 @@ const Perfil = () => {
             {/* Conteúdo para o lado esquerdo, se necessário */}
           </Grid>
           <Grid item xs={2} sm={6} sx={{ textAlign: 'right' }}>
-            {utilizador && <BotaoUpload tipo="utilizador" id={utilizador.id} idUtilizador={utilizador.id} updateFotos={updateFotoPerfil} />}
-            <Button variant="contained" color="secondary" onClick={handleDialogOpen}>
+            <Button variant="contained" color="primary" onClick={handleDialogOpen}>
               Editar Perfil
             </Button>
           </Grid>
@@ -215,6 +233,13 @@ const Perfil = () => {
               src={utilizador && utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador ? utilizador.foto : ''}`}
               alt={utilizador?.nome} 
               sx={{ width: 150, height: 150, margin: '0 auto', mb: 2 }} 
+              onClick={() => fileInputRef.current.click()} 
+            />
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={updateFotoPerfil}
             />
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
               {utilizador?.nome}

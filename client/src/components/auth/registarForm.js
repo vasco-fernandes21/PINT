@@ -85,7 +85,7 @@ function RegistarForm() {
   };
 
   return (
-    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '63.5vh' }}>
+    <div className="login-container d-flex flex-column align-items-center justify-content-center" style={{ height: '62.5vh' }}>
       <header className="header mb-1">
         <img src={logo} alt="Logo" className="logo" />
       </header>
