@@ -21,7 +21,7 @@ exports.listarAvaliacoesEstabelecimento = async (req, res) => {
                 { 
                     model: Utilizador, 
                     as: 'utilizador', 
-                    attributes: ['nome', 'foto'] 
+                    attributes: ['nome', 'foto', 'id_google'] 
                 },
                 { 
                     model: Utilizador, 
@@ -235,7 +235,7 @@ exports.listarAvaliacoesEvento = async (req, res) => {
                 { 
                     model: Utilizador, 
                     as: 'utilizador', 
-                    attributes: ['nome', 'foto'] 
+                    attributes: ['nome', 'foto', 'id_google'] 
                 },
                 { 
                     model: Utilizador, 
