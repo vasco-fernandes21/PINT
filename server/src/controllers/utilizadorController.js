@@ -99,7 +99,9 @@ exports.apagarUtilizador = async (req, res) => {
 exports.atualizarUtilizador = async (req, res) => {
   const { id } = req.params;
   const { nome, email, estado, isAdmin, idPosto, telemovel, nif, cargo, descricao, localidade } = req.body;
-  const foto = req.file ? req.file.filename : null;
+  if (req.file) {
+    foto = req.file.filename;
+  }
 
   try {
     const utilizador = await Utilizador.findByPk(id);

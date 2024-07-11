@@ -142,10 +142,12 @@ const Perfil = () => {
   };
 
   const handleDialogClose = () => {
+    fetchUtilizador();
     setIsDialogOpen(false);
   };
 
   const handleUpdate = (updatedUtilizador) => {
+    fetchUtilizador();
     setUtilizador(updatedUtilizador); 
   };
 
