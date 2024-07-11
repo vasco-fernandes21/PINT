@@ -18,4 +18,6 @@ router.delete('/utilizador/:id', utilizadorController.deleteFotoUtilizador);
 
 
 
+
+
 module.exports = router;

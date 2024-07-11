@@ -8,6 +8,13 @@ router.get('/estabelecimentos/:areaId', auth, estatisticaController.estabelecime
 router.get('/eventos', auth, estatisticaController.contadorEventosPorArea);
 router.get('/estabelecimentos', auth, estatisticaController.contadorEstabelecimentosPorArea);
 router.get('/mais-avaliados', estatisticaController.maisAvaliados);
+router.get('/por-validar', estatisticaController.fotosPorValidar);
+router.get('/foto-evento', estatisticaController.fotoEventosPorValidar);
+router.get('/foto-estabelecimento', estatisticaController.fotoEstabelecimentosPorValidar);
+router.delete('/foto-evento/:id', estatisticaController.apagarFotoEvento);
+router.delete('/foto-estabelecimento/:id', estatisticaController.apagarFotoEstabelecimento);
+router.put('/foto-evento/:id', auth, estatisticaController.validarFotoEvento);
+router.put('/foto-estabelecimento/:id', auth, estatisticaController.validarFotoEstabelecimento);
 
 
 module.exports = router;

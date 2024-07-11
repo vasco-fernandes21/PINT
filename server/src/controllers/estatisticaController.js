@@ -5,6 +5,10 @@ const Area = require ('../models/areaModel');
 const Sequelize = require('sequelize');
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const AvaliacaoEvento = require('../models/avaliacaoEventoModel');
+const FotoEvento = require('../models/fotoEventoModel');
+const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
+const Notificacao = require('../models/notificacaoModel');
+const Utilizador = require('../models/utilizadorModel');
 
 exports.contadorEventosPorArea = async (req, res) => {
     try {
@@ -181,3 +185,215 @@ exports.maisAvaliados = async (req, res) => {
         });
     }
 };
+
+exports.fotosPorValidar = async (req, res) => {
+    try {
+        const fotosEvento = await FotoEvento.findAll({
+            where: { estado: false }
+        });
+        const fotosEstabelecimento = await FotoEstabelecimento.findAll({
+            where: { estado: false }
+        });
+        const contador = fotosEvento.length + fotosEstabelecimento.length;
+        res.json({
+            success: true,
+            data: {
+                fotosEvento: fotosEvento,
+                fotosEstabelecimento: fotosEstabelecimento
+            },
+            contador: contador
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.fotoEventosPorValidar = async (req, res) => {
+    try {
+        const fotosEvento = await FotoEvento.findAll({
+            where: { estado: false },
+            include: [
+            {
+                model: Utilizador,
+                as: 'criador',
+                attributes: ['nome']
+            },
+            {
+                model: Evento,
+                as: 'evento',
+                attributes: ['titulo']
+            }
+            ]
+        });
+        const contador = fotosEvento.length;
+        res.json({
+            success: true,
+            data: fotosEvento.map(foto => ({
+                ...foto.toJSON(),
+                criador: foto.criador ? foto.criador.nome : null // Ajuste conforme a estrutura do seu modelo
+            })),
+            contador: contador
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.apagarFotoEvento = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const foto = await FotoEvento.findByPk(id);
+        if (!foto) {
+            return res.status(404).json({
+                success: false,
+                error: 'Foto não encontrada',
+            });
+        }
+        await foto.destroy();
+        res.json({
+            success: true,
+            message: 'Foto apagada com sucesso',
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+exports.validarFotoEvento = async (req, res) => {
+    const { id } = req.params;
+    const idAdmin = req.user.id;
+    try {
+        const foto = await FotoEvento.findByPk(id);
+        if (!foto) {
+            return res.status(404).json({
+                success: false,
+                error: 'Foto não encontrada',
+            });
+        }
+        foto.estado = true;
+        foto.idAdmin = idAdmin;
+        await foto.save();
+
+        const notificacao = await Notificacao.create({
+            idUtilizador: foto.idCriador,
+            titulo: 'Foto validada',
+            descricao: 'A sua foto foi validada com sucesso',
+            estado: false,
+            data: new Date()
+        });
+        
+        res.json({
+            success: true,
+            message: 'Foto validada com sucesso',
+            notificacao: notificacao
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+
+
+exports.apagarFotoEstabelecimento = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const foto = await FotoEstabelecimento.findByPk(id);
+        if (!foto) {
+            return res.status(404).json({
+                success: false,
+                error: 'Foto não encontrada',
+            });
+        }
+        await foto.destroy();
+        res.json({
+            success: true,
+            message: 'Foto apagada com sucesso',
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+
+
+exports.validarFotoEstabelecimento = async (req, res) => {
+    const { id } = req.params;
+    const idAdmin = req.user.id;
+    try {
+        const foto = await FotoEstabelecimento.findByPk(id);
+        if (!foto) {
+            return res.status(404).json({
+                success: false,
+                error: 'Foto não encontrada',
+            });
+        }
+        foto.estado = true;
+        foto.idAdmin = idAdmin;
+        await foto.save();
+
+        const notificacao = await Notificacao.create({
+            idUtilizador: foto.idCriador,
+            titulo: 'Foto validada',
+            descricao: 'A sua foto foi validada com sucesso',
+            estado: false,
+            data: new Date()
+        });
+        
+        res.json({
+            success: true,
+            message: 'Foto validada com sucesso',
+            notificacao: notificacao
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.fotoEstabelecimentosPorValidar = async (req, res) => {
+    try {
+        const fotosEstabelecimento = await FotoEstabelecimento.findAll({
+            where: { estado: false },
+            include: [
+            {
+                model: Utilizador,
+                as: 'criador',
+                attributes: ['nome']
+            },
+            {
+                model: Estabelecimento,
+                as: 'estabelecimento',
+                attributes: ['nome']
+            }
+            ]
+        });
+        const contador = fotosEstabelecimento.length;
+        res.json({
+            success: true,
+            data: fotosEstabelecimento,
+            contador: contador
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+

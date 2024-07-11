@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../utils/database');
 const Utilizador = require('./utilizadorModel');
 const AvaliacaoEvento = require('./avaliacaoEventoModel');
+const AvaliacaoEstabelecimento = require('./avaliacaoEstabelecimentoModel');
 
 const Denuncia = sequelize.define('Denuncia', {
     id: {
@@ -19,9 +20,17 @@ const Denuncia = sequelize.define('Denuncia', {
     },
     idAvaliacaoEvento: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
             model: 'AvaliacaoEvento',
+            key: 'id'
+        }
+    },
+    idAvaliacaoEstabelecimento: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'AvaliacaoEstabelecimento',
             key: 'id'
         }
     },
@@ -33,10 +42,6 @@ const Denuncia = sequelize.define('Denuncia', {
             key: 'id'
         }
     },
-    estado: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-    },
 }, {
     freezeTableName: true,
     timestamps: false
@@ -44,6 +49,7 @@ const Denuncia = sequelize.define('Denuncia', {
 
 Denuncia.belongsTo(Utilizador, { foreignKey: 'idCriador', as: 'criador' });
 Denuncia.belongsTo(AvaliacaoEvento, { foreignKey: 'idAvaliacaoEvento', as: 'avaliacaoEvento' });
+Denuncia.belongsTo(AvaliacaoEstabelecimento, { foreignKey: 'idAvaliacaoEstabelecimento', as: 'avaliacaoEstabelecimento' });
 Denuncia.belongsTo(Utilizador, { foreignKey: 'idAdmin', as: 'admin' });
 
 module.exports = Denuncia;

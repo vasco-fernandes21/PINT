@@ -70,7 +70,10 @@ useEffect(() => {
             <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Comentadas sx={{ flexGrow: 1 }} />
             </Grid>
-            <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Grid item xs={12} md={2} sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Denuncia sx={{ flexGrow: 1 }} />
+            </Grid>
+            <Grid item xs={12} md={2} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Denuncia sx={{ flexGrow: 1 }} />
             </Grid>
             <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>

@@ -20,7 +20,6 @@ const BotaoUpload = ({ tipo, id, idUtilizador, updateFotos }) => {
                 if (response.status === 200) {
                     console.log('Foto enviada com sucesso:', response.data);
                     updateFotos();
-                    window.location.reload();
                 } else {
                     throw new Error('Falha ao enviar foto');
                 }
