@@ -24,26 +24,26 @@ const Perfil = () => {
   const [subareas, setSubareas] = useState([]);
   const [mostrarAvaliacoes, setMostrarAvaliacoes] = useState(true); 
 
-  useEffect(() => {
-    const fetchUtilizador = async () => {
-      try {
-        const response = await api.get('/utilizador/completo');
-        const dadosUtilizador = response.data;
-        setUtilizador(dadosUtilizador);
+  const fetchUtilizador = async () => {
+    try {
+      const response = await api.get('/utilizador/completo');
+      const dadosUtilizador = response.data;
+      setUtilizador(dadosUtilizador);
 
-        // Inicializa as preferências do utilizador
-        setidArea(dadosUtilizador.idArea || "");
-        setidSubarea(dadosUtilizador.idSubarea || "");
+      // Inicializa as preferências do utilizador
+      setidArea(dadosUtilizador.idArea || "");
+      setidSubarea(dadosUtilizador.idSubarea || "");
 
-        // Carrega as subáreas se uma área estiver selecionada
-        if (dadosUtilizador.idArea) {
-          fetchSubareas(dadosUtilizador.idArea);
-        }
-      } catch (error) {
-        console.error('Erro ao encontrar utilizador:', error);
+      // Carrega as subáreas se uma área estiver selecionada
+      if (dadosUtilizador.idArea) {
+        fetchSubareas(dadosUtilizador.idArea);
       }
-    };
+    } catch (error) {
+      console.error('Erro ao encontrar utilizador:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchUtilizador();
   }, []);
 
@@ -118,6 +118,7 @@ const Perfil = () => {
   };
 
   const handleDialogOpen = () => {
+    fetchUtilizador();
     setIsDialogOpen(true);
   };
 
@@ -258,6 +259,9 @@ const Perfil = () => {
             </Typography>
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
               <strong>NIF:</strong> {utilizador?.nif || '-'}
+            </Typography>
+            <Typography variant="body1" sx={{ marginBottom: 1 }}>
+              <strong>Localidade:</strong> {utilizador?.localidade || '-'}
             </Typography>
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
               <strong>Telemóvel:</strong> {utilizador?.telemovel || '-'}

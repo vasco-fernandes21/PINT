@@ -41,8 +41,8 @@ const EditarPerfil = ({ open, onClose, utilizador, onUpdate }) => {
     try {
       const response = await api.put(`/utilizador/${utilizador.id}`, formData);
       if (response.status === 200) {
-        onUpdate(formData); // Atualiza o estado do utilizador no componente Perfil
-        onClose(); // Fecha o diálogo de edição de perfil
+        onUpdate(formData); 
+        onClose(); 
       }
     } catch (error) {
       console.error('Erro ao atualizar utilizador:', error);
@@ -73,6 +73,7 @@ const EditarPerfil = ({ open, onClose, utilizador, onUpdate }) => {
           variant="standard"
           value={formData.email}
           onChange={handleChange}
+          inputProps={{ readOnly: true }}
         />
         <TextField
           margin="dense"
