@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Box, Menu, MenuItem, IconButton, Grid, Typography, InputAdornment } from '@mui/material';
+import { TextField, Button, Box, Menu, IconButton, Grid, Typography, InputAdornment } from '@mui/material';
 import Swal from 'sweetalert2';
 import api from '../api/api';
 import * as Icons from '@mui/icons-material';
@@ -10,25 +10,22 @@ const FormArea = () => {
   const [icons, setIcons] = useState([]);
   const [selectedIcon, setSelectedIcon] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const iconList = [
-      'AddOutlined',
-      'DeleteOutlined',
-      'EditOutlined',
-      'SearchOutlined',
-      'ArrowForwardOutlined',
-      'HomeOutlined',
-      'InfoOutlined',
-      'SettingsOutlined',
-      'HelpOutlineOutlined',
-      'AccountCircleOutlined'
-    ].map(iconName => ({
-      id: iconName,
-      name: iconName,
-      component: Icons[iconName],
-    }));
+      { id: 'LocalHospitalOutlined', name: 'Saúde', component: Icons.LocalHospitalOutlined },
+      { id: 'SportsSoccerOutlined', name: 'Desporto', component: Icons.SportsSoccerOutlined },
+      { id: 'SchoolOutlined', name: 'Formação', component: Icons.SchoolOutlined },
+      { id: 'RestaurantOutlined', name: 'Gastronomia', component: Icons.RestaurantOutlined },
+      { id: 'BedOutlined', name: 'Alojamento', component: Icons.BedOutlined },
+      { id: 'DirectionsCarOutlined', name: 'Transportes', component: Icons.DirectionsCarOutlined },
+      { id: 'DeckOutlined', name: 'Lazer', component: Icons.DeckOutlined },
+      { id: 'AccountBalanceOutlined', name: 'Financeiro', component: Icons.AccountBalanceOutlined },
+      { id: 'PublicOutlined', name: 'Ambiente', component: Icons.PublicOutlined },
+      { id: 'BuildOutlined', name: 'Engenharia', component: Icons.BuildOutlined },
+      { id: 'ScienceOutlined', name: 'Ciência', component: Icons.ScienceOutlined },
+      { id: 'PaletteOutlined', name: 'Arte', component: Icons.PaletteOutlined },
+    ];
     setIcons(iconList);
   }, []);
 
@@ -44,10 +41,6 @@ const FormArea = () => {
     setSelectedIcon(icon.id);
     handleMenuClose();
   };
-
-  const filteredIcons = icons.filter(icon => 
-    icon.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const onSubmit = async (data) => {
     try {
@@ -106,13 +99,13 @@ const FormArea = () => {
       <TextField
         label="Escolher Ícone"
         fullWidth
-        value={selectedIcon ? Icons[selectedIcon] ? selectedIcon.replace('Outlined', '') : 'Ícone inválido' : 'Nenhum ícone selecionado'}
+        value={selectedIcon ? icons.find(icon => icon.id === selectedIcon).name : 'Nenhum ícone selecionado'}
         onClick={handleMenuOpen}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               {selectedIcon ? (
-                React.createElement(Icons[selectedIcon], { sx: { fontSize: 24 } })
+                React.createElement(icons.find(icon => icon.id === selectedIcon).component, { sx: { fontSize: 24 } })
               ) : (
                 <Icons.AddCircleOutlineOutlined sx={{ fontSize: 24 }} />
               )}
@@ -127,43 +120,37 @@ const FormArea = () => {
         PaperProps={{
           style: {
             maxHeight: 400,
-            width: '250px',
+            width: '300px',
           },
         }}
       >
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Pesquisar Ícones"
-          fullWidth
-          variant="outlined"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Icons.SearchOutlined />
-              </InputAdornment>
-            ),
-          }}
-        />
         <Grid container spacing={1} sx={{ p: 1 }}>
-          {filteredIcons.map(icon => (
+          {icons.map(icon => (
             <Grid item xs={4} key={icon.id}>
               <IconButton
                 color={selectedIcon === icon.id ? 'primary' : 'default'}
                 onClick={() => handleIconSelect(icon)}
-                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  border: selectedIcon === icon.id ? '2px solid #1D324F' : '2px solid transparent',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    borderColor: '#1D324F',
+                    backgroundColor: 'rgba(29, 50, 79, 0.1)',
+                  },
+                  width: '56px',
+                  height: '56px',
+                }}
               >
-                {React.createElement(icon.component, { sx: { fontSize: 24 } })}
-                <Typography variant="caption">{icon.name.replace('Outlined', '')}</Typography>
+                {React.createElement(icon.component, { sx: { fontSize: 30 } })}
               </IconButton>
             </Grid>
           ))}
         </Grid>
       </Menu>
       <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-        {selectedIcon ? `Ícone selecionado: ${Icons[selectedIcon] ? selectedIcon.replace('Outlined', '') : 'Ícone inválido'}` : 'Nenhum ícone selecionado'}
       </Typography>
       <Button
         type="submit"
