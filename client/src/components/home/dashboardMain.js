@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import Validacoes from './dashboardValidacoes';
 import Comentadas from './dashboardComentada';
-import Vista from './dashboardVista';
+import Vista from './dashboardDenuncias';
 import Grafico from './dashboardGrafico';
 import Topicos from './dashBoardTopicos';
 import api from '../api/api'; 
+import Denuncia from './dashboardDenuncias';
 
 const DashboardMain = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -68,6 +69,9 @@ useEffect(() => {
             </Grid>
             <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Comentadas sx={{ flexGrow: 1 }} />
+            </Grid>
+            <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Denuncia sx={{ flexGrow: 1 }} />
             </Grid>
             <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Grafico sx={{ flexGrow: 1 }} />

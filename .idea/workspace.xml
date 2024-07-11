@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="25481f14-a491-465a-8e6e-4077627ffefb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/home/dashBoardTopicos.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/home/dashBoardTopicos.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/home/dashboardGrafico.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/home/dashboardGrafico.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/package.json" afterDir="false" />
-    </list>
+    <list default="true" id="25481f14-a491-465a-8e6e-4077627ffefb" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
