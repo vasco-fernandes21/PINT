@@ -34,14 +34,6 @@ const Denuncia = sequelize.define('Denuncia', {
             key: 'id'
         }
     },
-    idAdmin: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'Utilizador',
-            key: 'id'
-        }
-    },
 }, {
     freezeTableName: true,
     timestamps: false
