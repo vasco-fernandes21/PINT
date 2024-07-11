@@ -15,7 +15,6 @@ import EstabelecimentoPage from './components/estabelecimento/estabelecimentoPag
 import ListaUtilizadores from './components/utilizador/utilizadorList';
 import SelecionarPosto from './components/posto/SelecionarPostoForm';
 import EditarEstabelecimento from './components/estabelecimento/estabelecimentoEdit';
-import CreateAreaForm from './components/area/areaCriar';
 import UtilizadorPerfil from './components/utilizador/utilizadorPerfil';
 import Calendario from './components/calendario/calendario';
 import EventoPage from './components/eventos/eventoPage';
@@ -23,6 +22,7 @@ import Notificacoes from './components/notificacao/notificacaoPage';
 import Dashboard from './components/home/dashboardMain';
 import Validacao from './components/validacao/validacao';
 import CriarEntidade from './components/PostoAreaSubarea/criarEntidade';
+
 
 const Autenticado = () => (
   <>

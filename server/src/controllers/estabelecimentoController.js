@@ -383,7 +383,7 @@ exports.uploadFotoEstabelecimento = async (req, res) => {
             foto,
             idEstabelecimento: id,
             idCriador: idUtilizador,
-            estado: true,
+            estado: false,
         });
 
         res.status(200).json({

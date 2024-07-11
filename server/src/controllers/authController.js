@@ -104,6 +104,7 @@ exports.loginMobile = async (req, res) => {
 exports.criarConta = async (req, res) => {
   try {
     const { nome, email } = req.body;
+    console.log(req.body);
 
     if (!nome || !email) {
       return res.status(400).send({ error: 'Preencha todos os campos' });

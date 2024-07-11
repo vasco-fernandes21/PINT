@@ -188,10 +188,16 @@ function Login({ setIsAutenticado: setAuth }) {
             <GoogleAuth />
             <Link
               to="/recuperar-passe"
-              className="btn btn-link text-muted mb-2 text-center"
+              className="btn btn-link text-muted mt-2 text-center"
               style={{ display: 'block', textAlign: 'center', fontSize: '13px' }}>
               Esqueceu a palavra-passe?
             </Link>
+            <a
+              href="/informacoes.html"
+              className="btn btn-link text-muted text-center"
+              style={{ display: 'block', textAlign: 'center', fontSize: '13px' }}>
+              Novo por aqui? Saiba mais
+            </a>
           </div>
         </div>
       </form>

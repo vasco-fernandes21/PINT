@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
 import ValidacaoEventos from './validacaoEvento';
 import ValidacaoEstabelecimentos from './validacaoEstabelecimento';
-import ValidacaoAvaliacaoEvento from './validacaoAvaliacaoEvento';
-import ValidacaoAvaliacaoEstabelecimento from './validacaoAvaliacaoEstabelecimento';
 
 const Validacao = () => {
   const [opcaoSelecionada, setOpcaoSelecionada] = useState('');
@@ -18,10 +16,6 @@ const Validacao = () => {
         return <ValidacaoEventos />;
       case 'estabelecimentos':
         return <ValidacaoEstabelecimentos />;
-      case 'avaliacaoEvento':
-        return <ValidacaoAvaliacaoEvento />;
-      case 'avaliacaoEstabelecimento':
-        return <ValidacaoAvaliacaoEstabelecimento />;
       default:
         return <Typography variant="h6">Selecione uma opção para moderação</Typography>;
     }
@@ -37,8 +31,6 @@ const Validacao = () => {
         <Select value={opcaoSelecionada} onChange={handleChange}>
           <MenuItem value="eventos">Eventos</MenuItem>
           <MenuItem value="estabelecimentos">Estabelecimentos</MenuItem>
-          <MenuItem value="avaliacaoEvento">Avaliação de Eventos</MenuItem>
-          <MenuItem value="avaliacaoEstabelecimento">Avaliação de Estabelecimentos</MenuItem>
         </Select>
       </FormControl>
       {renderGrelha()}

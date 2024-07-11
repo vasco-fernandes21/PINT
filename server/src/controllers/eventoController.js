@@ -450,7 +450,7 @@ exports.uploadFotoEvento = async (req, res) => {
             foto,
             idEvento: id,
             idCriador: idUtilizador,
-            estado: true,
+            estado: false,
         });
 
         res.status(200).json({
