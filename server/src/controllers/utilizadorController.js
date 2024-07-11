@@ -98,7 +98,7 @@ exports.apagarUtilizador = async (req, res) => {
 
 exports.atualizarUtilizador = async (req, res) => {
   const { id } = req.params;
-  const { nome, email, estado, isAdmin, idPosto } = req.body;
+  const { nome, email, estado, isAdmin, idPosto, telemovel, nif, cargo, descricao } = req.body;
 
   try {
     const utilizador = await Utilizador.findByPk(id);
@@ -112,6 +112,10 @@ exports.atualizarUtilizador = async (req, res) => {
     if (estado !== undefined) utilizador.estado = estado;
     if (isAdmin !== undefined) utilizador.isAdmin = isAdmin;
     if (idPosto !== undefined) utilizador.idPosto = idPosto;
+    if (telemovel !== undefined) utilizador.telemovel = telemovel;
+    if (nif !== undefined) utilizador.nif = nif;
+    if (cargo !== undefined) utilizador.cargo = cargo;
+    if (descricao !== undefined) utilizador.descricao = descricao;
 
     await utilizador.save();
 
