@@ -78,13 +78,13 @@ const utilizadores = [
 ];
 
 const areas = [
-  { nome: 'Saúde' },
-  { nome: 'Desporto' },
-  { nome: 'Formação' },
-  { nome: 'Gastronomia' },
-  { nome: 'Alojamento' },
-  { nome: 'Transportes' },
-  { nome: 'Lazer' }
+  { nome: 'Saúde' , icone: 'LocalHospitalOutlined'},
+  { nome: 'Desporto' , icone: 'SportsSoccerOutlined'},
+  { nome: 'Formação', icone: 'SchoolOutlined'},
+  { nome: 'Gastronomia', icone: 'RestaurantOutlined'},
+  { nome: 'Alojamento', icone: 'BedOutlined'},
+  { nome: 'Transportes', icone: 'DirectionsCarOutlined'},
+  { nome: 'Lazer', icone: 'DeckOutlined' },
 ];
 
 const subareas = [
