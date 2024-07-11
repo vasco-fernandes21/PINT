@@ -60,7 +60,7 @@ const DashboardValidacoes = () => {
 
     const fetchImagensParaValidar = async () => {
       try {
-        const response = await api.get('/por-validar');
+        const response = await api.get('/estatistica/por-validar');
         if (response.data.success) {
           setNumImagensParaValidar(response.data.contador);
         }

@@ -27,8 +27,29 @@ const Icon = styled('div')({
   marginRight: 16,
 });
 
+const fetchDenuncias = async () => {
+  try {
+    const response = await api.get('/denuncias');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar denúncias:', error);
+    return [];
+  }
+};
+
 const DashboardDenuncias = () => {
-  
+  const [contador, setContador] = useState(0);
+
+  useEffect(() => {
+    const getDenuncias = async () => {
+      const data = await fetchDenuncias();
+      if (data.success) {
+        setContador(data.contador);
+      }
+    };
+
+    getDenuncias();
+  }, []);
 
   return (
     <BoxContainer>
@@ -38,7 +59,7 @@ const DashboardDenuncias = () => {
           Denúncias
         </Typography>
         <Typography variant="h5" sx={{ color: '#1D324F', fontWeight: 'bold' }}>
-          mete ai o numero de denuncias
+          {contador}
         </Typography>
       </div>
     </BoxContainer>
