@@ -4,6 +4,7 @@ import ValidacaoEventos from './validacaoEvento';
 import ValidacaoEstabelecimentos from './validacaoEstabelecimento';
 import ValidacaoFotoEvento from './validacaoFotoEvento';
 import ValidacaoFotoEstabelecimento from './validacaoFotoEstabelecimento';
+import ValidacaoDenuncias from './validacaoDenuncia';
 
 const Validacao = () => {
   const [opcaoSelecionada, setOpcaoSelecionada] = useState('');
@@ -22,6 +23,8 @@ const Validacao = () => {
         return <ValidacaoFotoEvento />;
       case 'foto-estabelecimento':
         return <ValidacaoFotoEstabelecimento />;
+      case 'denuncias':
+        return <ValidacaoDenuncias />;
       default:
         return <Typography variant="h6">Selecione uma opção para moderação</Typography>;
     }
@@ -39,6 +42,7 @@ const Validacao = () => {
           <MenuItem value="estabelecimentos">Estabelecimentos</MenuItem>
           <MenuItem value="foto-evento">Foto dos Eventos</MenuItem>
           <MenuItem value="foto-estabelecimento">Foto dos Estabelecimentos</MenuItem>
+          <MenuItem value="denuncias">Denúncias</MenuItem>
         </Select>
       </FormControl>
       {renderGrelha()}
