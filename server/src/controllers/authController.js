@@ -257,10 +257,21 @@ exports.google = async (req, res) => {
       return res.status(400).json({ error: 'Token não fornecido' });
     }
 
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    let ticket;
+    try {
+      // Primeira tentativa com a audience padrão
+      ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+    } catch (error) {
+      console.error("Erro na verificação com GOOGLE_CLIENT_ID, tentando com GOOGLE_CLIENT_IOS", error);
+      // Segunda tentativa com uma audience alternativa
+      ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_IOS,
+      });
+    }
 
     const payload = ticket.getPayload();
     const email = payload['email'];
