@@ -28,7 +28,7 @@ exports.listarEstabelecimentos = async (req, res) => {
     }
 
     try {
-        // Encontrar todos os estabelecimentos
+        // Encontrar todos os estabelecimentos com suas associações
         const estabelecimentos = await Estabelecimento.findAll({
             where: whereClause,
             include: [
@@ -36,11 +36,13 @@ exports.listarEstabelecimentos = async (req, res) => {
                 { model: Subarea, attributes: ['nome'] },
                 { model: Posto, attributes: ['nome'] },
             ],
+            raw: true, // Para obter todos os campos como objetos puros
+            nest: true // Para garantir que os dados aninhados sejam corretamente formatados
         });
 
         // Mapear para obter os IDs dos estabelecimentos e buscar médias de preço e avaliação
         const estabelecimentosIds = estabelecimentos.map(est => est.id);
-        
+
         const [precos, avaliacaoEstabelecimentos] = await Promise.all([
             Preco.findAll({
                 where: {
@@ -81,11 +83,7 @@ exports.listarEstabelecimentos = async (req, res) => {
 
         // Formatar os resultados para incluir médias de preços e avaliações
         const formattedData = estabelecimentos.map(est => ({
-            id: est.id,
-            nome: est.nome,
-            area: est.Area ? est.Area.nome : null,
-            subarea: est.Subarea ? est.Subarea.nome : null,
-            posto: est.Posto ? est.Posto.nome : null,
+            ...est, // Inclui todos os campos do estabelecimento
             preco: precoMap[est.id] ? parseFloat(precoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
             classificacao: classificacaoMap[est.id] ? parseFloat(classificacaoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
         }));
@@ -177,18 +175,71 @@ exports.estabelecimentosMobile = async (req, res) => {
     if (idPosto) {
         whereClause.idPosto = idPosto;
     }
+    
     try {
-        const data = await Estabelecimento.findAll({
+        // Encontrar todos os estabelecimentos com suas associações
+        const estabelecimentos = await Estabelecimento.findAll({
             where: whereClause,
             include: [
                 { model: Area, attributes: ['nome'] },
                 { model: Subarea, attributes: ['nome'] },
                 { model: Posto, attributes: ['nome'] },
             ],
+            raw: true, // Para obter todos os campos como objetos puros
+            nest: true // Para garantir que os dados aninhados sejam corretamente formatados
         });
+
+        // Mapear para obter os IDs dos estabelecimentos e buscar médias de preço e avaliação
+        const estabelecimentosIds = estabelecimentos.map(est => est.id);
+
+        const [precos, avaliacaoEstabelecimentos] = await Promise.all([
+            Preco.findAll({
+                where: {
+                    idEstabelecimento: { [Sequelize.Op.in]: estabelecimentosIds },
+                    estado: true
+                },
+                attributes: [
+                    'idEstabelecimento',
+                    [Sequelize.fn('AVG', Sequelize.col('preco')), 'preco']
+                ],
+                group: ['idEstabelecimento'],
+                raw: true
+            }),
+            AvaliacaoEstabelecimento.findAll({
+                where: {
+                    idEstabelecimento: { [Sequelize.Op.in]: estabelecimentosIds },
+                    estado: true
+                },
+                attributes: [
+                    'idEstabelecimento',
+                    [Sequelize.fn('AVG', Sequelize.col('classificacao')), 'classificacao']
+                ],
+                group: ['idEstabelecimento'],
+                raw: true
+            })
+        ]);
+
+        // Criar um mapa de médias para preços e avaliações
+        const precoMap = precos.reduce((acc, item) => {
+            acc[item.idEstabelecimento] = parseFloat(item.preco); // Converta para número
+            return acc;
+        }, {});
+
+        const classificacaoMap = avaliacaoEstabelecimentos.reduce((acc, item) => {
+            acc[item.idEstabelecimento] = parseFloat(item.classificacao); // Converta para número
+            return acc;
+        }, {});
+
+        // Formatar os resultados para incluir médias de preços e avaliações
+        const formattedData = estabelecimentos.map(est => ({
+            ...est, // Inclui todos os campos do estabelecimento
+            preco_medio: precoMap[est.id] ? parseFloat(precoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
+            classificacao_media: classificacaoMap[est.id] ? parseFloat(classificacaoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
+        }));
+
         res.json({
             success: true,
-            data: data,
+            data: formattedData,
         });
     }
     catch (err) {
@@ -198,7 +249,7 @@ exports.estabelecimentosMobile = async (req, res) => {
             error: 'Erro: ' + err.message,
         });
     }
-}
+};
 
 
 exports.criarEstabelecimento = async (req, res) => {
