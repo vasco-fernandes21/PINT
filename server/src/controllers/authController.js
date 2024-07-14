@@ -259,14 +259,12 @@ exports.google = async (req, res) => {
 
     let ticket;
     try {
-      // Primeira tentativa com a audience padrão
       ticket = await client.verifyIdToken({
         idToken: token,
         audience: process.env.GOOGLE_CLIENT_ID,
       });
     } catch (error) {
       console.error("Erro na verificação com GOOGLE_CLIENT_ID, tentando com GOOGLE_CLIENT_IOS", error);
-      // Segunda tentativa com uma audience alternativa
       ticket = await client.verifyIdToken({
         idToken: token,
         audience: process.env.GOOGLE_CLIENT_IOS,
@@ -283,11 +281,11 @@ exports.google = async (req, res) => {
 
     if (!user) {
       const respostaCriarConta = await criarContaGoogleHandler({ nome, email, foto, id_google });
-      return res.json(respostaCriarConta);
+      return res.json({ ...respostaCriarConta, user: { nome, email, foto, id_google } });
     } else {
       req.body.email = email;
       const loginResponse = await loginGoogleHandler(req);
-      return res.json(loginResponse);
+      return res.json({ ...loginResponse, user: { nome, email, foto, id_google } });
     }
   } catch (error) {
     console.error('Erro ao autenticar com Google:', error);
