@@ -99,6 +99,8 @@ exports.apagarUtilizador = async (req, res) => {
 exports.atualizarUtilizador = async (req, res) => {
   const { id } = req.params;
   const { nome, email, estado, isAdmin, idPosto, telemovel, nif, cargo, descricao, localidade } = req.body;
+  let foto;
+
   if (req.file) {
     foto = req.file.filename;
   }
@@ -110,6 +112,7 @@ exports.atualizarUtilizador = async (req, res) => {
       return res.status(404).send({ message: 'Utilizador não encontrado' });
     }
 
+    // Atualiza os campos conforme necessário
     if (nome !== undefined) utilizador.nome = nome;
     if (email !== undefined) utilizador.email = email;
     if (estado !== undefined) utilizador.estado = estado;
@@ -120,7 +123,12 @@ exports.atualizarUtilizador = async (req, res) => {
     if (cargo !== undefined) utilizador.cargo = cargo;
     if (descricao !== undefined) utilizador.descricao = descricao;
     if (localidade !== undefined) utilizador.localidade = localidade;
-    if (foto !== undefined) utilizador.foto = foto;
+    if (foto !== undefined) {
+      utilizador.foto = foto;
+      // Define `id_facebook` e `id_google` como null se uma nova foto for recebida
+      utilizador.id_facebook = null;
+      utilizador.id_google = null;
+    }
 
     await utilizador.save();
 

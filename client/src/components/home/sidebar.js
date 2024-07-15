@@ -115,7 +115,7 @@ const Sidebar = () => {
               >
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 'auto'}}>
                   <AvatarImagem
-                    src={utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador.foto}`}
+                    src={(utilizador.id_google || utilizador.id_facebook) != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador.foto}`}
                     alt={utilizador.nome} 
                     sx={{ width: 30, height: 30, marginRight: 1.4}}
                   />
