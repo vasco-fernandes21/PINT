@@ -223,85 +223,82 @@ const Perfil = () => {
       <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={6} sx={{ textAlign: 'left' }}>
-            {/* Conteúdo para o lado esquerdo, se necessário */}
-          </Grid>
-          <Grid item xs={2} sm={6} sx={{ textAlign: 'right' }}>
-            <Button variant="contained" color="primary" onClick={handleDialogOpen}>
-              Editar Perfil
-            </Button>
-          </Grid>
-          <Grid item xs={12} sx={{ textAlign: 'center', marginTop: -8 }}>
-            <AvatarImagem 
-              src={utilizador && utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador ? utilizador.foto : ''}`}
-              alt={utilizador?.nome} 
-              sx={{ width: 150, height: 150, margin: '0 auto', mb: 2 }} 
-              onClick={() => fileInputRef.current.click()} 
-            />
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-              onChange={updateFotoPerfil}
-            />
-            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-              {utilizador?.nome}
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-              {utilizador?.cargo}
-            </Typography>
-            {utilizador && (
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                Última vez online: {moment(utilizador.ultimoLogin).subtract(1, 'hours').fromNow()}
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} sx={{ textAlign: 'center', marginTop: -2}}>
-            <Typography style={{marginTop: 15}} variant="h6">Preferências</Typography>
-            <StyledSelectArea value={idArea} onChange={handleAreaChange} displayEmpty fullWidth>
-              <MenuItem value="">Todas</MenuItem>
-              {areas.map((area) => (
-                <MenuItem value={area.id} key={area.id}>{area?.nome}</MenuItem>
-              ))}
-            </StyledSelectArea>
-            <StyledSelectSubarea value={idSubarea} onChange={handleSubareaChange} displayEmpty fullWidth>
-              <MenuItem value="">Todas</MenuItem>
-              {subareas.map((subarea) => (
-                <MenuItem value={subarea.id} key={subarea.id}>{subarea?.nome}</MenuItem>
-              ))}
-            </StyledSelectSubarea>
-          </Grid>
-        </Grid>
-      </Paper>
-      <Paper elevation={3} sx={{ padding: 4, marginTop: 3, marginBottom: 3 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6} sx={{ borderRight: { xs: 'none', md: '1px solid #ddd' } }}>
-            <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: '700' }}>
-              Detalhes:
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Nome:</strong> {utilizador?.nome || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Descrição:</strong> {utilizador?.descricao || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>NIF:</strong> {utilizador?.nif || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Localidade:</strong> {utilizador?.localidade || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Telemóvel:</strong> {utilizador?.telemovel || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Email:</strong> {utilizador?.email || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Posto:</strong> {utilizador?.Posto?.nome || '-'}
-            </Typography>
-          </Grid>
-
-          {/* Metade direita */}
+                  </Grid>
+                  <Grid item xs={2} sm={6} sx={{ textAlign: 'right' }}>
+                  <Button variant="contained" color="primary" onClick={handleDialogOpen}>
+                    Editar Perfil
+                  </Button>
+                  </Grid>
+                  <Grid item xs={12} sx={{ textAlign: 'center', marginTop: -8 }}>
+                  <AvatarImagem 
+                    src={utilizador && (utilizador.id_google || utilizador.id_facebook) ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador ? utilizador.foto : ''}`}
+                    alt={utilizador?.nome} 
+                    sx={{ width: 150, height: 150, margin: '0 auto', mb: 2 }} 
+                    onClick={() => fileInputRef.current.click()} 
+                  />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={updateFotoPerfil}
+                  />
+                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                    {utilizador?.nome}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+                    {utilizador?.cargo}
+                  </Typography>
+                  {utilizador && (
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                    Última vez online: {moment(utilizador.ultimoLogin).subtract(1, 'hours').fromNow()}
+                    </Typography>
+                  )}
+                  </Grid>
+                  <Grid item xs={12} sx={{ textAlign: 'center', marginTop: -2}}>
+                  <Typography style={{marginTop: 15}} variant="h6">Preferências</Typography>
+                  <StyledSelectArea value={idArea} onChange={handleAreaChange} displayEmpty fullWidth>
+                    <MenuItem value="">Todas</MenuItem>
+                    {areas.map((area) => (
+                    <MenuItem value={area.id} key={area.id}>{area?.nome}</MenuItem>
+                    ))}
+                  </StyledSelectArea>
+                  <StyledSelectSubarea value={idSubarea} onChange={handleSubareaChange} displayEmpty fullWidth>
+                    <MenuItem value="">Todas</MenuItem>
+                    {subareas.map((subarea) => (
+                    <MenuItem value={subarea.id} key={subarea.id}>{subarea?.nome}</MenuItem>
+                    ))}
+                  </StyledSelectSubarea>
+                  </Grid>
+                </Grid>
+                </Paper>
+                <Paper elevation={3} sx={{ padding: 4, marginTop: 3, marginBottom: 3 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6} sx={{ borderRight: { xs: 'none', md: '1px solid #ddd' } }}>
+                  <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: '700' }}>
+                    Detalhes:
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                    <strong>Nome:</strong> {utilizador?.nome || '-'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                    <strong>Descrição:</strong> {utilizador?.descricao || '-'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                    <strong>NIF:</strong> {utilizador?.nif || '-'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                    <strong>Localidade:</strong> {utilizador?.localidade || '-'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                    <strong>Telemóvel:</strong> {utilizador?.telemovel || '-'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                    <strong>Email:</strong> {utilizador?.email || '-'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                    <strong>Posto:</strong> {utilizador?.Posto?.nome || '-'}
+                  </Typography>
+                  </Grid>
           <Grid item xs={12} md={6} sx={{ paddingLeft: { xs: 0, md: 2 }, paddingTop: { xs: 2, md: 0 } }}>
             <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: '700' }}>
               Informações:

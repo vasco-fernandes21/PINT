@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const axios = require('axios');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
@@ -7,6 +8,7 @@ const Utilizador = require('../models/utilizadorModel');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 require('dotenv').config();
 const gerarToken = require('../middlewares/gerarToken');
+const { access } = require('fs');
 
 exports.login = async (req, res) => {
   try {
@@ -83,6 +85,10 @@ exports.loginMobile = async (req, res) => {
       return res.status(401).send({ error: 'Palavra Passe incorreta' });
     }
 
+    const hora = new Date();
+    const horaAtual = new Date(hora.getTime() + 3600000); 
+    await user.update({ ultimoLogin: horaAtual });
+
     const token = gerarToken(user);
 
     if (user.isPrimeiroLogin) {
@@ -118,6 +124,9 @@ exports.criarConta = async (req, res) => {
     const password = crypto.randomBytes(10).toString('hex');
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const hora = new Date();
+    const horaAtual = new Date(hora.getTime() + 3600000);
+
     const verificationToken = crypto.randomBytes(32).toString('hex');
  
     const novoUser = await Utilizador.create({
@@ -125,7 +134,9 @@ exports.criarConta = async (req, res) => {
       email,
       palavra_passe: hashedPassword,
       verificationToken,
-      estado: false
+      estado: false,
+      isPrimeiroLogin: true,
+      ultimoLogin: horaAtual
     });
 
     const token = gerarToken(novoUser);
@@ -253,10 +264,19 @@ exports.google = async (req, res) => {
       return res.status(400).json({ error: 'Token não fornecido' });
     }
 
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+    } catch (error) {
+      console.error("Erro na verificação com GOOGLE_CLIENT_ID, tentando com GOOGLE_CLIENT_IOS", error);
+      ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_IOS,
+      });
+    }
 
     const payload = ticket.getPayload();
     const email = payload['email'];
@@ -268,11 +288,11 @@ exports.google = async (req, res) => {
 
     if (!user) {
       const respostaCriarConta = await criarContaGoogleHandler({ nome, email, foto, id_google });
-      return res.json(respostaCriarConta);
+      return res.json({ ...respostaCriarConta, user: { nome, email, foto, id_google } });
     } else {
       req.body.email = email;
       const loginResponse = await loginGoogleHandler(req);
-      return res.json(loginResponse);
+      return res.json({ ...loginResponse, user: { nome, email, foto, id_google } });
     }
   } catch (error) {
     console.error('Erro ao autenticar com Google:', error);
@@ -285,6 +305,9 @@ const loginGoogleHandler = async (req) => {
     const { email } = req.body;
     const user = await Utilizador.findOne({ where: { email } });
     const token = gerarToken(user);
+    const hora = new Date();
+    const horaAtual = new Date(hora.getTime() + 3600000); //fuso horário estava 1h atrás
+    await user.update({ ultimoLogin: horaAtual });
     return { token, message: 'Login realizado com sucesso' };
   } catch (error) {
     throw new Error('Erro ao fazer login com Google');
@@ -305,6 +328,9 @@ const criarContaGoogleHandler = async ({ nome, email, foto, id_google}) => {
     const password = crypto.randomBytes(10).toString('hex');
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const hora = new Date();
+    const horaAtual = new Date(hora.getTime() + 3600000);
+
     const novoUser = await Utilizador.create({
       nome,
       email,
@@ -312,7 +338,8 @@ const criarContaGoogleHandler = async ({ nome, email, foto, id_google}) => {
       foto,
       id_google,
       estado: true,
-      isPrimeiroLogin: true
+      isPrimeiroLogin: true,
+      ultimoLogin: horaAtual
     });
 
     const token = gerarToken(novoUser);
@@ -329,4 +356,95 @@ const criarContaGoogleHandler = async ({ nome, email, foto, id_google}) => {
     throw new Error('Erro ao criar conta com Google');
   }
 };
+exports.facebook = async (req, res) => {
+  try {
+    const {id, nome, email, foto} = req.body; 
+    console.log(req.body);
 
+    if (!email) {
+      return res.status(400).json({ error: 'Email não fornecido pelo Facebook' });
+    }
+
+    let user = await Utilizador.findOne({ where: { email } });
+
+    if (!user) {
+      const respostaCriarConta = await criarContaFacebookHandler({id, nome, email, foto});
+      return res.json({ ...respostaCriarConta, user: { email, nome, foto, id_facebook: id } });
+    } else {
+      req.body.email = email; // Certifique-se de que o email é atribuído corretamente
+      const loginResponse = await loginFacebookHandler(req);
+      return res.json({ ...loginResponse, user: { email, nome, foto, id_facebook: id } });
+    }
+  } catch (error) {
+    console.error('Erro ao autenticar com Facebook:', error);
+    return res.status(500).json({ error: 'Erro ao autenticar com Facebook' });
+  }
+};
+
+const loginFacebookHandler = async (req) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      throw new Error('Email não fornecido');
+    }
+
+    const user = await Utilizador.findOne({ where: { email } });
+    if (!user) {
+      throw new Error('Usuário não encontrado');
+    }
+
+    const token = gerarToken(user);
+
+    const hora = new Date();
+    const horaAtual = new Date(hora.getTime() + 3600000); //fuso horário estava 1h atrás
+    await user.update({ ultimoLogin: horaAtual });
+
+    return { token, message: 'Login realizado com sucesso' };
+  } catch (error) {
+    throw new Error('Erro ao fazer login com Facebook');
+  }
+};
+
+const criarContaFacebookHandler = async ({ id, nome, email, foto }) => {
+  try {
+    if (!nome || !email) {
+      throw new Error('Nome e email são necessários');
+    }
+
+    const existingUser = await Utilizador.findOne({ where: { email } });
+    if (existingUser) {
+      throw new Error('Email já está em uso');
+    }
+
+    const password = crypto.randomBytes(10).toString('hex');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const hora = new Date();
+    const horaAtual = new Date(hora.getTime() + 3600000);
+
+    const novoUser = await Utilizador.create({
+      nome: nome,
+      email: email,
+      palavra_passe: hashedPassword,
+      foto,
+      id_facebook: id,
+      estado: true,
+      isPrimeiroLogin: true,
+      ultimoLogin: horaAtual
+    });
+
+    const token = gerarToken(novoUser);
+
+    await enviarEmail({
+      email,
+      subject: 'Bem-vindo ao Softshares',
+      message: `A sua conta foi criada com sucesso. Aqui está a sua palavra-passe temporária: ${password}. Irá atualizá-la após o login.`
+    });
+
+    return { token, message: 'Conta criada com sucesso.' };
+  } catch (error) {
+    console.error('Erro ao criar conta com Facebook:', error);
+    throw new Error('Erro ao criar conta com Facebook');
+  }
+};
