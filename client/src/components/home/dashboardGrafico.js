@@ -11,7 +11,6 @@ const StyledCard = styled(Card)({
   borderRadius: 10,
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   marginBottom: '20px',
-  padding: '20px',
   overflow: 'hidden',
 });
 

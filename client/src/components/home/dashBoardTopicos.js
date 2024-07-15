@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, CardContent, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import api from '../api/api';
 
-const StyledCard = styled(Card)({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
+const StyledDataGrid = styled(DataGrid)({
+  height: '620px',
+  padding: '10px',
   borderRadius: 10,
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  marginBottom: '20px',
-  padding: '20px',
-  overflow: 'hidden',
+  marginBottom: '1px',
+  '& .MuiDataGrid-root': {
+    border: 'none',
+  },
+  '& .MuiDataGrid-cell': {
+    borderBottom: '1px solid rgba(224, 224, 224, 1)',
+  },
 });
 
 const columns = [
-  { field: 'name', headerName: 'Área', width: 150 },
-  { field: 'eventos', headerName: 'Eventos', type: 'number', width: 100 },
-  { field: 'estabelecimentos', headerName: 'Estabelecimentos', type: 'number', width: 150 },
+  { field: 'name', headerName: 'Área', width: 100, align: 'left' },
+  { field: 'eventos', headerName: 'Eventos', headerAlign: 'center', type: 'number', width: 200, align: 'center' },
+  { field: 'estabelecimentos', headerName: 'Estabelecimentos', headerAlign: 'center', type: 'number', width: 200, align: 'center' },
 ];
 
 const Topicos = () => {
@@ -61,18 +62,15 @@ const Topicos = () => {
   }, []);
 
   return (
-    <StyledCard>
-      <CardContent>
-        <div style={{ height: 400, width: '100%' }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            disableColumnMenu
-            disableSelectionOnClick
-          />
-        </div>
-      </CardContent>
-    </StyledCard>
+    <div style={{ height: 610, width: '100%' }}>
+      <StyledDataGrid
+        rows={rows}
+        columns={columns}
+        disableColumnMenu
+        disableSelectionOnClick
+        hideFooter={true}
+      />
+    </div>
   );
 };
 

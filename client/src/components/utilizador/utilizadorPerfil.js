@@ -251,7 +251,7 @@ const Perfil = () => {
             </Typography>
             {utilizador && (
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                Última vez online: {moment(utilizador.ultimoLogin).subtract(1, 'hours').fromNow()}
+                Último login: {moment(utilizador.ultimoLogin).subtract(1, 'hours').fromNow()}
               </Typography>
             )}
           </Grid>
