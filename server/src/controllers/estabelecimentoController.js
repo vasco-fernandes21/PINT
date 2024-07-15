@@ -6,6 +6,7 @@ const FotoEstabelecimento = require('../models/fotoEstabelecimentoModel');
 const Utilizador = require('../models/utilizadorModel');
 const AvaliacaoEstabelecimento = require('../models/avaliacaoEstabelecimentoModel');
 const Notificacao = require('../models/notificacaoModel');
+const Preco = require('../models/precoModel');
 const { Op } = require('sequelize');
 
 exports.listarEstabelecimentos = async (req, res) => {
@@ -25,28 +26,81 @@ exports.listarEstabelecimentos = async (req, res) => {
     if (idPosto) {
         whereClause.idPosto = idPosto;
     }
+
     try {
-        const data = await Estabelecimento.findAll({
+        // Encontrar todos os estabelecimentos com suas associações
+        const estabelecimentos = await Estabelecimento.findAll({
             where: whereClause,
             include: [
                 { model: Area, attributes: ['nome'] },
                 { model: Subarea, attributes: ['nome'] },
                 { model: Posto, attributes: ['nome'] },
             ],
+            raw: true, // Para obter todos os campos como objetos puros
+            nest: true // Para garantir que os dados aninhados sejam corretamente formatados
         });
+
+        // Mapear para obter os IDs dos estabelecimentos e buscar médias de preço e avaliação
+        const estabelecimentosIds = estabelecimentos.map(est => est.id);
+
+        const [precos, avaliacaoEstabelecimentos] = await Promise.all([
+            Preco.findAll({
+                where: {
+                    idEstabelecimento: { [Sequelize.Op.in]: estabelecimentosIds },
+                    estado: true
+                },
+                attributes: [
+                    'idEstabelecimento',
+                    [Sequelize.fn('AVG', Sequelize.col('preco')), 'preco']
+                ],
+                group: ['idEstabelecimento'],
+                raw: true
+            }),
+            AvaliacaoEstabelecimento.findAll({
+                where: {
+                    idEstabelecimento: { [Sequelize.Op.in]: estabelecimentosIds },
+                    estado: true
+                },
+                attributes: [
+                    'idEstabelecimento',
+                    [Sequelize.fn('AVG', Sequelize.col('classificacao')), 'classificacao']
+                ],
+                group: ['idEstabelecimento'],
+                raw: true
+            })
+        ]);
+
+        // Criar um mapa de médias para preços e avaliações
+        const precoMap = precos.reduce((acc, item) => {
+            acc[item.idEstabelecimento] = parseFloat(item.preco); // Converta para número
+            return acc;
+        }, {});
+
+        const classificacaoMap = avaliacaoEstabelecimentos.reduce((acc, item) => {
+            acc[item.idEstabelecimento] = parseFloat(item.classificacao); // Converta para número
+            return acc;
+        }, {});
+
+        // Formatar os resultados para incluir médias de preços e avaliações
+        const formattedData = estabelecimentos.map(est => ({
+            ...est, // Inclui todos os campos do estabelecimento
+            preco: precoMap[est.id] ? parseFloat(precoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
+            classificacao: classificacaoMap[est.id] ? parseFloat(classificacaoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
+        }));
+
         res.json({
             success: true,
-            data: data,
+            data: formattedData,
         });
     }
     catch (err) {
-        console.error('Erro ao listar estabelecimentos:', err.message); // Adicionado log de erro detalhado
+        console.error('Erro ao listar estabelecimentos:', err.message);
         res.status(500).json({
             success: false,
             error: 'Erro: ' + err.message,
         });
     }
-}
+};
 
 exports.validarEstabelecimento = async (req, res) => {
     const { id } = req.params;
@@ -121,18 +175,71 @@ exports.estabelecimentosMobile = async (req, res) => {
     if (idPosto) {
         whereClause.idPosto = idPosto;
     }
+    
     try {
-        const data = await Estabelecimento.findAll({
+        // Encontrar todos os estabelecimentos com suas associações
+        const estabelecimentos = await Estabelecimento.findAll({
             where: whereClause,
             include: [
                 { model: Area, attributes: ['nome'] },
                 { model: Subarea, attributes: ['nome'] },
                 { model: Posto, attributes: ['nome'] },
             ],
+            raw: true, // Para obter todos os campos como objetos puros
+            nest: true // Para garantir que os dados aninhados sejam corretamente formatados
         });
+
+        // Mapear para obter os IDs dos estabelecimentos e buscar médias de preço e avaliação
+        const estabelecimentosIds = estabelecimentos.map(est => est.id);
+
+        const [precos, avaliacaoEstabelecimentos] = await Promise.all([
+            Preco.findAll({
+                where: {
+                    idEstabelecimento: { [Sequelize.Op.in]: estabelecimentosIds },
+                    estado: true
+                },
+                attributes: [
+                    'idEstabelecimento',
+                    [Sequelize.fn('AVG', Sequelize.col('preco')), 'preco']
+                ],
+                group: ['idEstabelecimento'],
+                raw: true
+            }),
+            AvaliacaoEstabelecimento.findAll({
+                where: {
+                    idEstabelecimento: { [Sequelize.Op.in]: estabelecimentosIds },
+                    estado: true
+                },
+                attributes: [
+                    'idEstabelecimento',
+                    [Sequelize.fn('AVG', Sequelize.col('classificacao')), 'classificacao']
+                ],
+                group: ['idEstabelecimento'],
+                raw: true
+            })
+        ]);
+
+        // Criar um mapa de médias para preços e avaliações
+        const precoMap = precos.reduce((acc, item) => {
+            acc[item.idEstabelecimento] = parseFloat(item.preco); // Converta para número
+            return acc;
+        }, {});
+
+        const classificacaoMap = avaliacaoEstabelecimentos.reduce((acc, item) => {
+            acc[item.idEstabelecimento] = parseFloat(item.classificacao); // Converta para número
+            return acc;
+        }, {});
+
+        // Formatar os resultados para incluir médias de preços e avaliações
+        const formattedData = estabelecimentos.map(est => ({
+            ...est, // Inclui todos os campos do estabelecimento
+            preco_medio: precoMap[est.id] ? parseFloat(precoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
+            classificacao_media: classificacaoMap[est.id] ? parseFloat(classificacaoMap[est.id]).toFixed(2) : '0.00', // Garantir que seja formatado como decimal
+        }));
+
         res.json({
             success: true,
-            data: data,
+            data: formattedData,
         });
     }
     catch (err) {
@@ -142,7 +249,7 @@ exports.estabelecimentosMobile = async (req, res) => {
             error: 'Erro: ' + err.message,
         });
     }
-}
+};
 
 
 exports.criarEstabelecimento = async (req, res) => {
@@ -246,6 +353,8 @@ exports.criarEstabelecimentoMobile = async (req, res) => {
     }
 };
 
+const { Sequelize } = require('sequelize');
+
 exports.getEstabelecimento = async (req, res) => {
     const { id } = req.params;
     try {
@@ -258,10 +367,31 @@ exports.getEstabelecimento = async (req, res) => {
             ]
         });
 
+        const preco = await Preco.findAll({
+            where: { idEstabelecimento: id, estado: true },
+            attributes: [
+                [Sequelize.fn('AVG', Sequelize.col('preco')), 'preco']
+            ],
+            raw: true,
+        });
+
+        const classificacao = await AvaliacaoEstabelecimento.findOne({
+            where: { idEstabelecimento: id, estado: true },
+            attributes: [
+                [Sequelize.fn('AVG', Sequelize.col('classificacao')), 'classificacao']
+            ],
+            raw: true,
+        });
+
+        console.log('preco:', preco);
+        console.log('classificacao:', classificacao);
+
         if (data) {
             res.status(200).json({
                 success: true,
                 data: data,
+                preco: preco.length > 0 ? parseFloat(preco[0].preco).toFixed(2) : 0,
+                classificacao: classificacao ? parseFloat(classificacao.classificacao).toFixed(2) : 0,
             });
         } else {
             res.status(404).json({
@@ -533,3 +663,26 @@ exports.validarEstabelecimento = async (req, res) => {
         });
     }
 };
+
+exports.adicionarPreco = async (req, res) => {
+    try {
+      const { idEstabelecimento } = req.params;
+      const { preco } = req.body;
+      if (!preco || !idEstabelecimento) {
+        return res.status(400).json({
+          success: false,
+          error: 'Campos obrigatórios não preenchidos',
+        });
+      }
+      const data = await Preco.create({ idEstabelecimento, preco });
+      res.json({
+        success: true,
+        data: data,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        error: 'Erro: ' + err.message,
+      });
+    }
+  }

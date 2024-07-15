@@ -88,8 +88,8 @@ const areas = [
 ];
 
 const subareas = [
-  { idArea: 1, nome: 'Clinicas medicas e hospitais' },
-  { idArea: 1, nome: 'Clinicas dentárias' },
+  { idArea: 1, nome: 'Clínicas médicas e hospitais' },
+  { idArea: 1, nome: 'Clinicas Dentárias' },
   { idArea: 2, nome: 'Ginásios' },
   { idArea: 2, nome: 'Atividades ao Ar Livre' },
   { idArea: 3, nome: 'Centros de Formação' },
@@ -184,7 +184,7 @@ const estabelecimentos = [
     idAdmin: 3,
     idPosto: 1,
     nome: 'Hospital São Teotónio',
-    descricao: 'Hospital de Viseu, oferecendo serviços de emergência',
+    descricao: 'Hospital de Viseu, a oferecer serviços de emergência',
     morada: 'Av. Rei Dom Duarte, 3504-509 Viseu',
     estado: true,
     foto: 'saoTeotoneo.jpg',

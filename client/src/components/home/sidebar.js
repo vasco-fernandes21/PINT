@@ -99,10 +99,10 @@ const Sidebar = () => {
             <NavLink className={location.pathname === "/notificacoes" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/notificacoes" onClick={handleDrawerClose}>
               <ContadorNotificacoes className='icone' /> Notificações
             </NavLink>
-            <NavLink className={location.pathname === "/validacao" ? "menu-item text-white d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/validacao" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
               <FaCheck className='icone' /> Moderação
             </NavLink>
-            <NavLink className={location.pathname === "/criar" ? "menu-item text-white d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/criar" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/criar" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/criar" onClick={handleDrawerClose}>
               <IoIosAddCircle className='icone' /> Nova Entidade
             </NavLink>
           </div>
@@ -115,7 +115,7 @@ const Sidebar = () => {
               >
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 'auto'}}>
                   <AvatarImagem
-                    src={utilizador.id_google != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador.foto}`}
+                    src={(utilizador.id_google || utilizador.id_facebook) != null ? utilizador.foto : `${process.env.REACT_APP_API_URL}/uploads/utilizador/${utilizador.foto}`}
                     alt={utilizador.nome} 
                     sx={{ width: 30, height: 30, marginRight: 1.4}}
                   />

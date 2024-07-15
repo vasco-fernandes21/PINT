@@ -9,6 +9,7 @@ router.post('/verificar-conta', authController.verificarEmail);
 router.post('/recuperar-passe', authController.recuperarPasse);
 router.post('/reset-passe', authController.resetarPasse);
 router.post('/login/google', authController.google);
+router.post('/login/facebook', authController.facebook);
 
 module.exports = router;
 
