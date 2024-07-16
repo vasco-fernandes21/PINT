@@ -3,6 +3,7 @@ import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { styled } from '@mui/system';
 import ReportIcon from '@mui/icons-material/Report';
 import api from '../api/api';
+import { useNavigate } from 'react-router-dom';
 
 const BoxContainer = styled(Card)({
   height: '100%',
@@ -39,6 +40,7 @@ const fetchDenuncias = async () => {
 
 const DashboardDenuncias = () => {
   const [contador, setContador] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getDenuncias = async () => {
@@ -51,8 +53,14 @@ const DashboardDenuncias = () => {
     getDenuncias();
   }, []);
 
+  const handleNavigation = (type) => {
+    if (type === 'denuncias') {
+      navigate('/validacao');
+    }
+  };
+
   return (
-    <BoxContainer>
+    <BoxContainer onClick={() => handleNavigation('denuncias')}>
       <Icon><ReportIcon /></Icon>
       <div>
         <Typography variant="subtitle2">
