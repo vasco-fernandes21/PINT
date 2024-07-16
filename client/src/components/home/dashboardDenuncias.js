@@ -29,7 +29,7 @@ const Icon = styled('div')({
 
 const fetchDenuncias = async () => {
   try {
-    const response = await api.get('/denuncias');
+    const response = await api.get('/denuncia');
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar denúncias:', error);
