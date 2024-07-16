@@ -10,6 +10,7 @@ import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import api from '../api/api';
 import Swal from 'sweetalert2';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, fetchAvaliacoes, tipo }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -21,6 +22,7 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
   const [currentParentId, setCurrentParentId] = useState(null);
   const [rating, setRating] = useState(1); 
   const open = Boolean(anchorEl);
+  const [utilizador, setUtilizador] = useState(null);
 
   useEffect(() => {
     const initializeRespostas = async () => {
@@ -55,6 +57,20 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
 
     initializeRespostas();
   }, [avaliacoes, tipo]);
+
+  const fetchUtilizador = async () => {
+    try {
+      const response = await api.get('/utilizador/completo');
+      const dadosUtilizador = response.data;
+      setUtilizador(dadosUtilizador.id);
+    } catch (error) {
+      console.error('Erro ao encontrar utilizador:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUtilizador();
+  }, []);
 
   const handleClick = (event, avaliacao) => {
     setAnchorEl(event.currentTarget);
@@ -222,6 +238,8 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
     }
   };
 
+  const navigate = useNavigate();
+
   const renderComment = (avaliacao, isReply = false) => (
     <Box key={avaliacao.id} sx={{ display: 'flex', flexDirection: 'column', marginBottom: 2, marginLeft: isReply ? 4 : 0 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -235,7 +253,13 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
                   sx={{ marginRight: 2 }}
                 />
               ) : (
-                <Avatar sx={{ marginRight: 2 }}>
+                <Avatar sx={{ marginRight: 2 }} onClick={() => {
+                  if (avaliacao.idUtilizador === utilizador) {
+                    navigate('/perfil');  
+                  } else {
+                    navigate(`/perfil/${avaliacao.idUtilizador}`);
+                  }
+                }}>
                   {avaliacao.utilizador.nome[0]}
                 </Avatar>
               )}
@@ -305,7 +329,6 @@ function Comentarios({ avaliacoes, page, itemsPerPage, noOfPages, handleChange, 
       )}
     </Box>
   );
-
   return (
     <Box>
       {avaliacoes.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((avaliacao, index) => (

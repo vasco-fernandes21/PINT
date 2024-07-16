@@ -22,6 +22,7 @@ import Notificacoes from './components/notificacao/notificacaoPage';
 import Dashboard from './components/home/dashboardMain';
 import Validacao from './components/validacao/validacao';
 import CriarEntidade from './components/PostoAreaSubarea/criarEntidade';
+import PerfilOutros from './components/utilizador/perfilOutros';
 
 
 const Autenticado = () => (
@@ -77,6 +78,7 @@ function App() {
             <Route path="estabelecimentos/:id/editar" element={<EditarEstabelecimento />} />
           <Route path="utilizadores" element={<ListaUtilizadores />} />
           <Route path="perfil" element={<UtilizadorPerfil />} />
+          <Route path="perfil/:id" element={<PerfilOutros />} />
           <Route path="calendario" element={<Calendario />} />
           <Route path="notificacoes" element={<Notificacoes />} />
           <Route path="validacao" element={<Validacao />} />
