@@ -106,9 +106,6 @@ const PerfilOutros = () => {
               <strong>Descrição:</strong> {utilizador?.descricao || '-'}
             </Typography>
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>NIF:</strong> {utilizador?.nif || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
               <strong>Localidade:</strong> {utilizador?.localidade || '-'}
             </Typography>
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
@@ -116,9 +113,6 @@ const PerfilOutros = () => {
             </Typography>
             <Typography variant="body1" sx={{ marginBottom: 1 }}>
               <strong>Email:</strong> {utilizador?.email || '-'}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: 1 }}>
-              <strong>Posto:</strong> {utilizador?.Posto?.nome || '-'}
             </Typography>
           </Grid>
           <Grid item xs={12} md={6} sx={{ paddingLeft: { xs: 0, md: 2 }, paddingTop: { xs: 2, md: 0 } }}>
