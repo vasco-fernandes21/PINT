@@ -4,13 +4,12 @@ import { styled } from '@mui/system';
 import api from '../api/api';
 
 const StyledCard = styled(Card)({
-  height: '100%',
+  height: '530px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
   borderRadius: 10,
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  marginBottom: '20px',
   overflow: 'hidden',
 });
 
@@ -94,7 +93,7 @@ const Grafico = () => {
   return (
     <StyledCard>
       <CardContent>
-        <div id="chart_div" style={{ width: '100%', height: '400px' }}></div>
+        <div id="chart_div" style={{ width: '100%', height: '450px' }}></div>
       </CardContent>
     </StyledCard>
   );

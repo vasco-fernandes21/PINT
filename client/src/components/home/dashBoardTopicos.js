@@ -4,8 +4,8 @@ import { styled } from '@mui/system';
 import api from '../api/api';
 
 const StyledDataGrid = styled(DataGrid)({
-  height: '30vh',
-  padding: '10px',
+  height: '530px',
+  padding: '15px',
   borderRadius: 10,
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   marginBottom: '1px',
@@ -62,7 +62,7 @@ const Topicos = () => {
   }, []);
 
   return (
-    <div style={{ height: 610, width: '100%' }}>
+    <div >
       <StyledDataGrid
         rows={rows}
         columns={columns}
