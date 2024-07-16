@@ -128,6 +128,7 @@ const ListaUtilizadores = () => {
         disableSelectionOnClick
         sx={{
           maxHeight: '100vh',
+          minHeight: '630px',
           '.MuiTablePagination-selectRoot': {
             display: 'none',
           },
