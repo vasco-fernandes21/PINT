@@ -142,28 +142,6 @@ exports.apagarAlbum = async (req, res) => {
     }
 }
 
-exports.getFotosAlbum = async (req, res) => {
-    try {
-        const { id } = req.params;
-        console.log('id:', id); 
-
-        if (!id) {
-            throw new Error('id não fornecido');
-        }
-
-        const data = await FotoAlbum.findAll({ where: { idAlbum: id } });
-        res.json({
-            success: true,
-            data: data,
-        });
-    }
-    catch (err) {
-        res.status(500).json({
-            success: false,
-            error: 'Erro: ' + err.message,
-        });
-    }
-}
 
 exports.adicionarFotoAlbum = async (req, res) => {
     try {

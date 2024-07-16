@@ -8,7 +8,6 @@ const auth = require('../middlewares/decodeJWT');
 router.get('/', albumController.listarAlbums);
 router.get('/:id', albumController.getAlbum);
 router.post('/', auth, uploadAlbuns.single('foto'), albumController.criarAlbum);
-router.get('/:id', albumController.getAlbum);
 router.put('/:id', uploadAlbuns.single('foto'), albumController.editarAlbum);
 router.delete('/:id', albumController.apagarAlbum);
 
