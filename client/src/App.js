@@ -24,6 +24,7 @@ import Validacao from './components/validacao/validacao';
 import CriarEntidade from './components/PostoAreaSubarea/criarEntidade';
 import AlbumList from './components/album/albumList';
 import AlbumDetails from './components/album/albumDetail';
+import PerfilOutros from './components/utilizador/perfilOutros';
 
 
 const Autenticado = () => (

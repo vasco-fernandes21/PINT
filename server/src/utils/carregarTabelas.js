@@ -25,6 +25,7 @@ const utilizadores = [
     estado: false,
     isAdmin: true,
     cargo: 'Lider de Marketing',
+    ultimoLogin: '2024-07-17 00:07:50.918000 +00:00'
   },
   {
     nome: 'Vasco Fernandes',
@@ -35,6 +36,7 @@ const utilizadores = [
     estado: true,
     isAdmin: false,
     cargo: 'IT',
+    ultimoLogin: '2024-07-16 00:07:50.918000 +00:00'
   },
   {
     nome: 'Pedro Figueiredo',
@@ -45,6 +47,7 @@ const utilizadores = [
     estado: false,
     isAdmin: false,
     cargo: 'Marketing',
+    ultimoLogin: '2024-07-17 00:07:50.918000 +00:00'
   },
   {
     nome: 'Mateus Vasconcelos',
@@ -55,6 +58,7 @@ const utilizadores = [
     estado: true,
     isAdmin: false,
     cargo: 'Gestor de Dados',
+    ultimoLogin: '2024-07-17 00:07:50.918000 +00:00'
   },
   {
     nome: 'Simão Ramos',
@@ -65,6 +69,7 @@ const utilizadores = [
     estado: false,
     isAdmin: false,
     cargo: 'Gestor de Dados',
+    ultimoLogin: '2024-07-17 00:07:50.918000 +00:00'
   },
   {
     nome: 'Utilizador Teste',
@@ -458,6 +463,13 @@ for (let eventoIndex = 1; eventoIndex <= 22; eventoIndex++) {
   }
 }
 
+const Albuns = [
+  {nome:'teste', descricao:'teste', foto:'cuf.jpg' ,idAdmin: 1, idCriador: 1, estado: 1, idArea: 1, idPosto: 1, estado: true},
+]
+
+const FotosAlbum = [
+  { idAlbum: 1, foto: 'cuf.jpg', idCriador: 1, descricao: 'teste', estado: false},
+]
 
 
 const carregarTabelas = () => {
@@ -495,7 +507,12 @@ const carregarTabelas = () => {
     .then(() => {
       return Inscricao.bulkCreate(Inscricoes);
     })
-    
+    .then(() => {
+      return Album.bulkCreate(Albuns);
+    })
+    .then(() => {
+      return FotoAlbum.bulkCreate(FotosAlbum);
+    })
     .catch((error) => {
       console.error('Erro ao carregar tabelas:', error);
     });
