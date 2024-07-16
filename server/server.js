@@ -38,7 +38,8 @@ const notificacaoRoutes = require('./src/routes/notificacaoRoutes');
 const fotoRoutes = require('./src/routes/fotoRoutes');
 const estatisticaRoutes = require('./src/routes/estatisticaRoutes');
 const formRoutes = require('./src/routes/formRoutes');
-const denunciaRoutes = require('./src/routes/denunciaRoutes');
+const denunciaRoutes = require('./src/routes/denunciaRoutes'); 
+const albumRoutes = require('./src/routes/albumRoutes');
 
 // Rotas da API
 app.use('/', authRoutes);
@@ -54,6 +55,7 @@ app.use('/notificacao', notificacaoRoutes);
 app.use('/estatistica', estatisticaRoutes);
 app.use('/formulario', formRoutes);
 app.use('/denuncia', denunciaRoutes);
+app.use('/album', albumRoutes);
 
 
 

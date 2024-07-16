@@ -11,6 +11,8 @@ const FotoEvento = require('../models/fotoEventoModel');
 const Inscricao = require('../models/inscricaoModel');
 const Notificacao = require('../models/notificacaoModel');
 const Formulario = require('../models/formModel');
+const Album = require('../models/albumModel');
+const FotoAlbum = require('../models/fotoAlbumModel');
 const { sequelize } = require('./database');
 
 const utilizadores = [
@@ -457,6 +459,7 @@ for (let eventoIndex = 1; eventoIndex <= 22; eventoIndex++) {
 }
 
 
+
 const carregarTabelas = () => {
   sequelize.sync({ force: true })
     .then(() => {
@@ -492,6 +495,7 @@ const carregarTabelas = () => {
     .then(() => {
       return Inscricao.bulkCreate(Inscricoes);
     })
+    
     .catch((error) => {
       console.error('Erro ao carregar tabelas:', error);
     });

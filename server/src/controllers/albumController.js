@@ -1,0 +1,238 @@
+const { id } = require('date-fns/locale');
+const Album = require('../models/albumModel');
+const FotoAlbum = require('../models/fotoAlbumModel');
+const Notificacao = require('../models/notificacaoModel');
+const Utilizador = require('../models/utilizadorModel');
+
+exports.getAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await Album.findByPk(id);
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.criarAlbum = async (req, res) => {
+    try {
+        // Extrair dados do corpo da solicitação
+        const { nome, descricao, idArea } = req.body;
+
+        // Verificar se `req.file` está disponível
+        const foto = req.file ? req.file.filename : null;
+
+        // Verificar se `req.user` está definido e tem as propriedades esperadas
+        if (!req.user || !req.user.id || !req.user.idPosto) {
+            return res.status(400).json({
+                success: false,
+                error: 'Usuário não autenticado ou informações do usuário estão ausentes.',
+            });
+        }
+
+        const idCriador = req.user.id;
+        const idPosto = req.user.idPosto;
+
+        // Criar o álbum no banco de dados
+        const data = await Album.create({ nome, descricao, foto, idArea, idCriador, idPosto });
+
+        // Retornar resposta de sucesso
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        // Retornar resposta de erro
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}; 
+
+exports.listarAlbums = async (req, res) => {
+    try {
+        const { idPosto: queryIdPosto, areaId} = req.query;
+
+        const tokenIdPosto = req.user ? req.user.idPosto : null;
+        const bodyIdPosto = req.body ? req.body.idPosto : null;
+
+        const whereClause = {};
+        if (queryIdPosto) {
+            whereClause.idPosto = queryIdPosto;
+        } else if (bodyIdPosto) {
+            whereClause.idPosto = bodyIdPosto;
+        } else if (tokenIdPosto) {
+            whereClause.idPosto = tokenIdPosto;
+        }
+        if (areaId) {
+            whereClause.idArea = areaId;
+        }
+
+        const data = await Album.findAll({
+            where: whereClause,  
+        });
+
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.getAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await Album.findByPk(id);
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.editarAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nome, descricao, idArea, estado } = req.body;
+        const foto = req.file ? req.file.filename : null;
+        const data = await Album.update({ nome, descricao, foto, idArea, estado }, { where: { id } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.apagarAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await Album.destroy({ where: { id } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.getFotosAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('id:', id); 
+
+        if (!id) {
+            throw new Error('id não fornecido');
+        }
+
+        const data = await FotoAlbum.findAll({ where: { idAlbum: id } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.adicionarFotoAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { descricao } = req.body;
+        const foto = req.file ? req.file.filename : null;
+        const idCriador = req.user.id;
+        const data = await FotoAlbum.create({ idAlbum: id, idCriador, foto, descricao });
+        res.json({
+            success: true,
+            data: data,
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.getFotosAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await FotoAlbum.findAll({ 
+            where: { idAlbum: id }, 
+            include: [{ model: Utilizador, as: 'criador', attributes: ['nome'] }] 
+        });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.editarFotoAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { foto, descricao } = req.body;
+        const data = await FotoAlbum.update({ foto, descricao }, { where: { id } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.apagarFotoAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await FotoAlbum.destroy({ where: { id } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
