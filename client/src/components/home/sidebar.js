@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaHome, FaBars, FaUser, FaCheck} from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsBuildings } from "react-icons/bs";
@@ -17,6 +17,7 @@ const Sidebar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [utilizador, setUtilizador] = useState(null);
+  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     fetchUtilizador();
@@ -71,7 +72,7 @@ const Sidebar = () => {
       <div style={{ position: 'fixed', left: 0, top: 0, height: '100vh', width: '5px' }} onMouseEnter={handleDrawerOpen} />
       <AppBar position="static" style={{ backgroundColor: "#1D324F", boxShadow: "none", height: "64px" }}>
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-          <img src={logo} alt="Logo" style={{ width: "150px", height: "100%", objectFit: "contain" }} />
+          <img src={logo} alt="Logo" style={{ width: "150px", height: "100%", objectFit: "contain", cursor: "pointer" }} onClick={() => navigate(`/`)} />
           <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerOpen}>
             <FaBars />
           </IconButton>
