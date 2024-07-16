@@ -22,7 +22,8 @@ import Notificacoes from './components/notificacao/notificacaoPage';
 import Dashboard from './components/home/dashboardMain';
 import Validacao from './components/validacao/validacao';
 import CriarEntidade from './components/PostoAreaSubarea/criarEntidade';
-import PerfilOutros from './components/utilizador/perfilOutros';
+import AlbumList from './components/album/albumList';
+import AlbumDetails from './components/album/albumDetail';
 
 
 const Autenticado = () => (
@@ -81,6 +82,8 @@ function App() {
           <Route path="perfil/:id" element={<PerfilOutros />} />
           <Route path="calendario" element={<Calendario />} />
           <Route path="notificacoes" element={<Notificacoes />} />
+          <Route path="albuns" element={<AlbumList />} />
+          <Route path="albuns/:albumId" element={<AlbumDetails />} />
           <Route path="validacao" element={<Validacao />} />
           <Route path="criar" element={<CriarEntidade />} />
          </Route>

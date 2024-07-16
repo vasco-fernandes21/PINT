@@ -31,12 +31,23 @@ const storageUtilizadores = multer.diskStorage({
     }
 });
 
+const storageAlbuns = multer.diskStorage({
+    destination: './uploads/albuns',
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const filename = file.fieldname + '-' + Date.now() + '-' + path.basename(file.originalname, ext) + ext;
+        cb(null, filename);
+    }
+});
+
 const uploadEventos = multer({ storage: storageEventos });
 const uploadEstabelecimentos = multer({ storage: storageEstabelecimentos });
 const uploadUtilizadores = multer({ storage: storageUtilizadores });
+const uploadAlbuns = multer({ storage: storageAlbuns });
 
 module.exports = {
     uploadEventos,
     uploadEstabelecimentos,
-    uploadUtilizadores
+    uploadUtilizadores,
+    uploadAlbuns
 };
