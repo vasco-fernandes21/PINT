@@ -18,4 +18,5 @@ router.delete('/:id', estabelecimentoController.apagarEstabelecimento);
 //precos 
 router.put('/:idEstabelecimento/precos', estabelecimentoController.adicionarPreco);
 
+
 module.exports = router;

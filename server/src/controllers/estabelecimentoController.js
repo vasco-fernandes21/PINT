@@ -390,8 +390,8 @@ exports.getEstabelecimento = async (req, res) => {
             res.status(200).json({
                 success: true,
                 data: data,
-                preco: preco.length > 0 ? parseFloat(preco[0].preco).toFixed(2) : 0,
-                classificacao: classificacao ? parseFloat(classificacao.classificacao).toFixed(2) : 0,
+                preco_medio: preco.length > 0 ? parseFloat(preco[0].preco).toFixed(2) : 0,
+                classificacao_media: classificacao ? parseFloat(classificacao.classificacao).toFixed(2) : 0,
             });
         } else {
             res.status(404).json({

@@ -54,7 +54,7 @@ useEffect(() => {
   };
 
   return (
-    <Box sx={{ height: '80vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height:'40vh', display: 'flex', flexDirection: 'column' }}>
 
       {utilizador && (
           <Typography variant="h4" sx={{ marginBottom: 2 }}>
@@ -62,8 +62,8 @@ useEffect(() => {
           </Typography>
         )}
 
-      <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={2} sx={{ height: '110%' }}>
+      <Box sx={{ flexGrow: 1}}>
+          <Grid container spacing={2} sx={{ height: '50vh' }}>
             <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column' }}>
               <Validacoes sx={{ flexGrow: 1 }} />
             </Grid>
