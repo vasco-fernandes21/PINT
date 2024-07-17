@@ -5,6 +5,10 @@ const { uploadAlbuns } = require('../config/multer');
 const auth = require('../middlewares/decodeJWT');
 
 
+
+router.get('/validar', albumController.albumsFalse);
+router.put('/:id/validar', albumController.validarAlbum);
+
 router.get('/', albumController.listarAlbums);
 router.get('/:id', albumController.getAlbum);
 router.post('/', auth, uploadAlbuns.single('foto'), albumController.criarAlbum);
@@ -15,5 +19,6 @@ router.get('/:id/fotos', albumController.getFotosAlbum);
 router.post('/:id/fotos', auth, uploadAlbuns.single('foto'), albumController.adicionarFotoAlbum);
 router.put('/:id/fotos', uploadAlbuns.single('foto'), albumController.editarFotoAlbum);
 router.delete('/:id/fotos', albumController.apagarFotoAlbum);
+
 
 module.exports = router;

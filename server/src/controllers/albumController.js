@@ -58,7 +58,7 @@ exports.criarAlbum = async (req, res) => {
 
 exports.listarAlbums = async (req, res) => {
     try {
-        const { idPosto: queryIdPosto, areaId} = req.query;
+        const { idPosto: queryIdPosto, areaId } = req.query;
 
         const tokenIdPosto = req.user ? req.user.idPosto : null;
         const bodyIdPosto = req.body ? req.body.idPosto : null;
@@ -74,9 +74,10 @@ exports.listarAlbums = async (req, res) => {
         if (areaId) {
             whereClause.idArea = areaId;
         }
+        whereClause.estado = true; 
 
         const data = await Album.findAll({
-            where: whereClause,  
+            where: whereClause,
         });
 
         res.json({
@@ -170,7 +171,7 @@ exports.getFotosAlbum = async (req, res) => {
     try {
         const { id } = req.params;
         const data = await FotoAlbum.findAll({ 
-            where: { idAlbum: id }, 
+            where: { idAlbum: id, estado: true }, 
             include: [{ model: Utilizador, as: 'criador', attributes: ['nome'] }] 
         });
         res.json({
@@ -206,6 +207,37 @@ exports.apagarFotoAlbum = async (req, res) => {
     try {
         const { id } = req.params;
         const data = await FotoAlbum.destroy({ where: { id } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.albumsFalse = async (req, res) => {
+    try {
+        const data = await Album.findAll({ where: { estado: false } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
+exports.validarAlbum = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await Album.update({ estado: true }, { where: { id } });
         res.json({
             success: true,
             data: data,
