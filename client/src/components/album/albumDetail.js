@@ -103,9 +103,21 @@ const AlbumDetails = () => {
         },
       });
       setNewPhoto(null);
-      fetchAlbumFotos(); // Refetch the album photos
+      fetchAlbumFotos(); 
+      Swal.fire({
+        title: 'Sucesso',
+        text: 'Foto enviada com sucesso para validação!',
+        icon: 'success',
+        confirmButtonColor: '#1D324F',
+      });
     } catch (error) {
       console.error('Erro ao enviar foto:', error);
+      Swal.fire({
+        title: 'Erro',
+        text: 'Erro ao enviar foto, tente mais tarde.',
+        icon: 'error',
+        confirmButtonColor: '#1D324F',
+      });
     } finally {
       setUploading(false);
     }
@@ -130,7 +142,7 @@ const AlbumDetails = () => {
           color="primary"
           startIcon={<EditIcon />}
           sx={{ mb: 2 }}
-          onClick={() => setOpenEditDialog(true)} // Abre o modal de edição
+          onClick={() => setOpenEditDialog(true)} 
         >
           Editar Álbum
         </Button>
@@ -140,7 +152,7 @@ const AlbumDetails = () => {
       </Typography>
       <Grid container spacing={2}>
         {fotos.map((foto) => (
-          <Grid item xs={12} sm={6} md={4} key={foto.id}>
+          <Grid item xs={12} sm={6} md={3} key={foto.id}>
             <Card sx={{ position: 'relative' }}>
               <CardMedia
                 component="img"

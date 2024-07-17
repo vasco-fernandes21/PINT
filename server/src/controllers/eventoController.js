@@ -305,36 +305,78 @@ exports.editarEvento = async (req, res) => {
         inscricaoAberta
     } = req.body;
 
-    const eventoAtual = await Evento.findOne({ where: { id: id } });
-    const fotoExistente = eventoAtual ? eventoAtual.foto : null;
-
-    const foto = req.file ? req.file.filename : fotoExistente;
-
-    let updateData = {};
-
-    if (titulo !== undefined) updateData.titulo = titulo;
-    if (descricao !== undefined) updateData.descricao = descricao;
-    if (data !== undefined) updateData.data = data;
-    if (hora !== undefined) updateData.hora = hora;
-    if (morada !== undefined) updateData.morada = morada;
-    if (telemovel !== undefined) updateData.telemovel = telemovel;
-    if (email !== undefined) updateData.email = email;
-    if (idArea !== undefined) updateData.idArea = idArea;
-    if (idSubarea !== undefined) updateData.idSubarea = idSubarea;
-    if (idCriador !== undefined) updateData.idCriador = idCriador;
-    if (estado !== undefined) updateData.estado = estado;
-    if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
-    if (foto !== undefined) updateData.foto = foto; 
-    if (inscricaoAberta !== undefined) updateData.inscricaoAberta = inscricaoAberta;
-
     try {
+        // Verifica se o evento existe
+        const eventoAtual = await Evento.findOne({ where: { id: id } });
+        if (!eventoAtual) {
+            return res.status(404).json({ success: false, message: 'Evento não encontrado.' });
+        }
+
+        // Verifica a foto existente e a nova foto
+        const fotoExistente = eventoAtual ? eventoAtual.foto : null;
+        const foto = req.file ? req.file.filename : fotoExistente;
+
+        // Prepara os dados para atualização
+        let updateData = {};
+
+        if (titulo !== undefined) updateData.titulo = titulo;
+        if (descricao !== undefined) updateData.descricao = descricao;
+        if (data !== undefined) updateData.data = data;
+        if (hora !== undefined) updateData.hora = hora;
+        if (morada !== undefined) updateData.morada = morada;
+        if (telemovel !== undefined) updateData.telemovel = telemovel;
+        if (email !== undefined) updateData.email = email;
+        if (idArea !== undefined) updateData.idArea = idArea;
+        if (idSubarea !== undefined) updateData.idSubarea = idSubarea;
+        if (idCriador !== undefined) updateData.idCriador = idCriador;
+        if (estado !== undefined) updateData.estado = estado;
+        if (idAdmin !== undefined) updateData.idAdmin = idAdmin;
+        if (foto !== undefined) updateData.foto = foto;
+        if (inscricaoAberta !== undefined) updateData.inscricaoAberta = inscricaoAberta;
+
+        // Atualiza o evento
         const [updated] = await Evento.update(updateData, {
             where: { id: id }
         });
 
         if (updated) {
+            // Encontra todos os inscritos no evento
+            const inscritos = await Inscricao.findAll({
+                where: { idEvento: id },
+                include: [
+                    { model: Utilizador, as: 'utilizador' }
+                ]
+            });
+
+            const notificacoes = [];
+            for (const inscricao of inscritos) {
+                const utilizador = inscricao.utilizador;
+
+                try {
+                    const notificacao = await Notificacao.create({
+                        idUtilizador: utilizador.id,
+                        titulo: 'Evento Atualizado',
+                        descricao: `Foram efetuadas alterações num evento onde se inscreveu: ${eventoAtual.titulo}`,
+                        estado: false,
+                        data: new Date()
+                    });
+
+                    notificacoes.push(notificacao);
+                } catch (notificacaoError) {
+                    console.error(`Erro ao criar notificação para o utilizador ${utilizador.id}:`, notificacaoError);
+                }
+            }
+
+            // Obtém o evento atualizado
             const updatedEvento = await Evento.findOne({ where: { id: id } });
-            res.status(200).json({ success: true, message: 'Evento atualizado com sucesso!', data: updatedEvento });
+
+            // Retorna a resposta com sucesso e as notificações
+            res.status(200).json({
+                success: true,
+                message: 'Evento atualizado com sucesso!',
+                data: updatedEvento,
+                notificacoes: notificacoes
+            });
         } else {
             res.status(404).json({ success: false, message: 'Não foi possível atualizar o evento.' });
         }
@@ -344,15 +386,28 @@ exports.editarEvento = async (req, res) => {
     }
 };
 
+
+
 exports.apagarEvento = async (req, res) => {
     const { id } = req.params;
     try {
+        // Encontrar o evento para obter o título
+        const evento = await Evento.findByPk(id);
+        if (!evento) {
+            return res.status(404).json({ success: false, message: 'Evento não encontrado.' });
+        }
+
         // Apagar todas as avaliações associadas ao evento
         await AvaliacaoEvento.destroy({
             where: { idEvento: id }
         });
 
         // Apagar todas as inscrições associadas ao evento
+        const inscricoes = await Inscricao.findAll({
+            where: { idEvento: id },
+            include: [{ model: Utilizador, as: 'utilizador' }]
+        });
+
         await Inscricao.destroy({
             where: { idEvento: id }
         });
@@ -363,20 +418,41 @@ exports.apagarEvento = async (req, res) => {
         });
 
         // Apagar o evento
-        const evento = await Evento.destroy({
+        await Evento.destroy({
             where: { id: id }
         });
 
-        if (evento) {
-            res.status(200).json({ success: true, message: 'Evento apagado com sucesso!' });
-        } else {
-            res.status(404).json({ success: false, message: 'Evento não encontrado.' });
+        // Enviar notificações para todos os utilizadores inscritos
+        const notificacoes = [];
+        for (const inscricao of inscricoes) {
+            const utilizador = inscricao.utilizador;
+
+            try {
+                const notificacao = await Notificacao.create({
+                    idUtilizador: utilizador.id,
+                    titulo: 'Evento Eliminado',
+                    descricao: `Um evento onde se inscreveu foi eliminado: ${evento.titulo}`,
+                    estado: false,
+                    data: new Date()
+                });
+
+                notificacoes.push(notificacao);
+            } catch (notificacaoError) {
+                console.error(`Erro ao criar notificação para o utilizador ${utilizador.id}:`, notificacaoError);
+            }
         }
+
+        res.status(200).json({
+            success: true,
+            message: 'Evento apagado com sucesso!',
+            notificacoes: notificacoes
+        });
     } catch (error) {
         console.error('Erro ao apagar evento:', error);
         res.status(500).json({ success: false, message: "Erro ao apagar o evento!" });
     }
 };
+
 
 exports.getFotoEvento = async (req, res) => {
     const { id } = req.params;

@@ -10,14 +10,16 @@ const ValidacaoFotoAlbum = () => {
   const [fotos, setFotos] = useState([]);
   const [open, setOpen] = useState(false);
   const [fotoSelecionada, setFotoSelecionada] = useState(null);
+  const [albuns, setAlbuns] = useState([]);
 
   useEffect(() => {
     fetchFotos();
+    fetchAlbuns(); // Certifique-se de que os álbuns também são carregados
   }, []);
 
   const fetchFotos = async () => {
     try {
-      const response = await api.get('/albuns/validar/fotos');
+      const response = await api.get('/album/validar/fotos');
       if (response.data.success && Array.isArray(response.data.data)) {
         console.log('Fotos recebidas:', response.data.data);
         setFotos(response.data.data);
@@ -26,6 +28,20 @@ const ValidacaoFotoAlbum = () => {
       }
     } catch (error) {
       console.error('Erro ao buscar fotos:', error);
+    }
+  };
+
+  const fetchAlbuns = async () => {
+    try {
+      const response = await api.get('/album');
+      if (response.data.success && Array.isArray(response.data.data)) {
+        console.log('Álbuns recebidos:', response.data.data);
+        setAlbuns(response.data.data);
+      } else {
+        console.error('Erro: a resposta da API não é um array');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar álbuns:', error);
     }
   };
 
@@ -52,7 +68,7 @@ const ValidacaoFotoAlbum = () => {
       if (result.isConfirmed) {
         try {
           const id = fotoSelecionada.id;
-          await api.put(`/albuns/validar/fotos/${id}`);
+          await api.put(`/album/validar/fotos/${id}`);
           fetchFotos();
           Swal.fire({
             title: 'Validado!',
@@ -125,15 +141,10 @@ const ValidacaoFotoAlbum = () => {
       headerName: 'Foto',
       width: 200,
       renderCell: (params) => (
-        <a href={`${process.env.REACT_APP_API_URL}/uploads/fotos/${params.row.foto}`} target="_blank" rel="noopener noreferrer">
-          <img src={`${process.env.REACT_APP_API_URL}/uploads/fotos/${params.row.foto}`} alt="Foto" style={{ width: 100, height: 100, objectFit: 'cover' }} />
+        <a href={`${process.env.REACT_APP_API_URL}/uploads/albuns/${params.row.foto}`} target="_blank" rel="noopener noreferrer">
+          <img src={`${process.env.REACT_APP_API_URL}/uploads/albuns/${params.row.foto}`} alt="Foto" style={{ width: 100, height: 100, objectFit: 'cover' }} />
         </a>
       ),
-    },
-    {
-      field: 'descricao',
-      headerName: 'Descrição',
-      width: 250,
     },
     {
       field: 'actions',
@@ -150,9 +161,8 @@ const ValidacaoFotoAlbum = () => {
   const rows = fotos.map((foto) => ({
     id: foto.id,
     idAlbum: foto.idAlbum,
-    album: foto.album,
+    album: foto.Album, // Certifique-se de que o nome do campo corresponde ao dado da resposta da API
     foto: foto.foto,
-    descricao: foto.descricao,
   }));
 
   return (

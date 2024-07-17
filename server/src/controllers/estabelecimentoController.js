@@ -122,7 +122,7 @@ exports.validarEstabelecimento = async (req, res) => {
         const notificacaoCriador = await Notificacao.create({
             idUtilizador: estabelecimento.idCriador,
             titulo: 'Estabelecimento validado',
-            descricao: `O seu estabelecimento ${estabelecimento.nome} foi validado com sucesso!`,
+            descricao: `O seu estabelecimento, ${estabelecimento.nome}, foi validado com sucesso!`,
             estado: false, 
             data: new Date(),
         });

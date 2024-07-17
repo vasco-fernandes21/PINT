@@ -6,6 +6,7 @@ const Utilizador = require('../models/utilizadorModel');
 const Voto = require('../models/VotoModel');
 const Notificacao = require('../models/notificacaoModel');
 const Sequelize = require('sequelize');
+const Inscricao = require('../models/inscricaoModel');
 
 exports.listarAvaliacoesEstabelecimento = async (req, res) => {
     try {
@@ -266,6 +267,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
         const { idUtilizador, classificacao, comentario } = req.body;
         const idEvento = req.params.id; 
 
+        // Verifica se classificação ou comentário foram fornecidos
         if (!classificacao && !comentario) {
             return res.status(400).json({
                 success: false,
@@ -273,6 +275,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             });
         }
 
+        // Verifica se o utilizador existe
         const user = await Utilizador.findByPk(idUtilizador);
         if (!user) {
             return res.status(404).json({
@@ -281,6 +284,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             });
         }
 
+        // Verifica se o evento existe
         const evento = await Evento.findByPk(idEvento);
         if (!evento) {
             return res.status(404).json({
@@ -289,14 +293,7 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             });
         }
 
-        const notificacao = await Notificacao.create({
-            idUtilizador: evento.idCriador,
-            titulo: 'Nova Avaliação',
-            descricao: `Tem uma nova avaliação no seu evento: ${evento.titulo}`,
-            estado: false,
-            data: new Date()
-        });
-
+        // Cria a avaliação
         const avaliacao = await AvaliacaoEvento.create({
             idUtilizador,
             idEvento,
@@ -305,10 +302,45 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             estado: true,
         });
 
+        // Envia notificação para o criador do evento
+        const notificacaoCriador = await Notificacao.create({
+            idUtilizador: evento.idCriador,
+            titulo: 'Nova Avaliação',
+            descricao: `Tem uma nova avaliação no seu evento: ${evento.titulo}`,
+            estado: false,
+            data: new Date()
+        });
+
+        // Envia notificação para todos os utilizadores inscritos no evento
+        const inscritos = await Inscricao.findAll({
+            where: { idEvento: idEvento },
+            include: [{ model: Utilizador, as: 'utilizador' }]
+        });
+
+        const notificacoes = [];
+        for (const inscricao of inscritos) {
+            const utilizador = inscricao.utilizador;
+
+            try {
+                const notificacao = await Notificacao.create({
+                    idUtilizador: utilizador.id,
+                    titulo: 'Nova Avaliação no Evento',
+                    descricao: `Existem novas avaliações no evento onde se inscreveu: ${evento.titulo}`,
+                    estado: false,
+                    data: new Date()
+                });
+
+                notificacoes.push(notificacao);
+            } catch (notificacaoError) {
+                console.error(`Erro ao criar notificação para o utilizador ${utilizador.id}:`, notificacaoError);
+            }
+        }
+
         res.json({
             success: true,
             data: avaliacao,
-            notificacao: notificacao
+            notificacoesCriador: notificacaoCriador,
+            notificacoesInscritos: notificacoes
         });
     } catch (err) {
         res.status(500).json({
@@ -316,7 +348,8 @@ exports.CriarAvaliacaoEvento = async (req, res) => {
             error: 'Erro: ' + err.message,
         });
     }
-}
+};
+
 
 exports.editarAvaliacaoEvento = async (req, res) => {
     try {

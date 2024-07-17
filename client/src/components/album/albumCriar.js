@@ -56,7 +56,7 @@ function CriarAlbum({ open, handleClose, handleAlbumCreated }) {
 
       Swal.fire({
         title: "Sucesso",
-        text: "Álbum criado com sucesso!",
+        text: "Álbum criado com sucesso e enviado para validação!",
         icon: "success",
         confirmButtonColor: '#1D324F',
       });

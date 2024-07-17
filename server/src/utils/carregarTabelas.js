@@ -19,6 +19,7 @@ const utilizadores = [
   {
     nome: 'Artur Oliveira',
     nif: '123456789',
+    palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     localidade: 'Viseu',
     telemovel: '912345678',
     email: 'artur@email.com',
@@ -30,6 +31,7 @@ const utilizadores = [
   {
     nome: 'Vasco Fernandes',
     nif: '987654321',
+    palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     localidade: 'Porto',
     telemovel: '987654321',
     email: 'vasco@email.com',
@@ -41,6 +43,7 @@ const utilizadores = [
   {
     nome: 'Pedro Figueiredo',
     nif: '123456789',
+    palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     localidade: 'Viseu',
     telemovel: '912345678',
     email: 'pedro@email.com',
@@ -52,6 +55,7 @@ const utilizadores = [
   {
     nome: 'Mateus Vasconcelos',
     nif: '987654321',
+    palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     localidade: 'Viseu',
     telemovel: '987654321',
     email: 'mateus@email.com',
@@ -63,6 +67,7 @@ const utilizadores = [
   {
     nome: 'Simão Ramos',
     nif: '123456789',
+    palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     localidade: 'Viseu',
     telemovel: '912345678',
     email: 'simao@email.com',
@@ -72,7 +77,7 @@ const utilizadores = [
     ultimoLogin: '2024-07-17 00:07:50.918000 +00:00'
   },
   {
-    nome: 'Utilizador Teste',
+    nome: 'Ricardo Pombo',
     email: 'teste@email.com',
     palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     estado: true,
@@ -80,7 +85,7 @@ const utilizadores = [
     isPrimeiroLogin: false,
     idPosto: 1,
     cargo: 'Gestor de Dados',
-    descricao: 'Utilizador de teste',
+    descricao: 'Amante da natureza, gosto de fazer caminhadas e de passear pelo campo, bem como explorar novos locais e culturas. Sou um apaixonado por fotografia e gosto de captar os melhores momentos da vida.',
   },
 ];
 
