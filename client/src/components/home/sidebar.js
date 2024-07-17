@@ -82,31 +82,31 @@ const Sidebar = () => {
         <div className="menu" style={{ width: "300px", backgroundColor: "#1D324F", height: "100vh", color: "white", display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: "5%" }}>
           <div>
             <img src={logo} alt="Logo" className="logo img-fluid mx-auto d-block mb-3" />
-            <NavLink className={location.pathname === "/" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/" onClick={handleDrawerClose}>
               <FaHome className='icone' /> Dashboard
             </NavLink>
-            <NavLink className={location.pathname === "/calendario" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/calendario" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/calendario" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/calendario" onClick={handleDrawerClose}>
               <FaCalendarAlt className='icone' /> Calendário
             </NavLink>
-            <NavLink className={location.pathname === "/utilizadores" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/utilizadores" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/utilizadores" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/utilizadores" onClick={handleDrawerClose}>
               <FaUser className='icone' /> Utilizadores
             </NavLink>
-            <NavLink className={location.pathname === "/estabelecimentos" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/estabelecimentos" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/estabelecimentos" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/estabelecimentos" onClick={handleDrawerClose}>
               <BsBuildings className='icone' /> Estabelecimentos
             </NavLink>
-            <NavLink className={location.pathname === "/eventos" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/eventos" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/eventos" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/eventos" onClick={handleDrawerClose}>
               <MdEvent className='icone' /> Eventos
             </NavLink>
-            <NavLink className={location.pathname === "/albuns" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/albuns" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/albuns" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/albuns" onClick={handleDrawerClose}>
               <IoMdPhotos className='icone' /> Álbuns
             </NavLink>
-            <NavLink className={location.pathname === "/notificacoes" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/notificacoes" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/notificacoes" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/notificacoes" onClick={handleDrawerClose}>
               <ContadorNotificacoes className='icone' /> Notificações
             </NavLink>
-            <NavLink className={location.pathname === "/validacao" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/validacao" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/validacao" onClick={handleDrawerClose}>
               <FaCheck className='icone' /> Moderação
             </NavLink>
-            <NavLink className={location.pathname === "/criar" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/criar" onClick={handleDrawerClose}>
+            <NavLink className={location.pathname === "/criar" ? "menu-item text-white mb-3 d-block text-start active" : "menu-item text-white mb-3 d-block text-start"} to="/criar" onClick={handleDrawerClose}>
               <IoIosAddCircle className='icone' /> Nova Entidade
             </NavLink>
           </div>
