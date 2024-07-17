@@ -4,7 +4,7 @@ import { FaCalendarAlt, FaHome, FaBars, FaUser, FaCheck} from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { BsBuildings } from "react-icons/bs";
 import { MdEvent } from "react-icons/md";
-import { IoIosAddCircle } from "react-icons/io";
+import { IoIosAddCircle, IoMdPhotos} from "react-icons/io";
 import { Drawer, IconButton, AppBar, Toolbar } from '@mui/material';
 import api from '../api/api';
 import logo from '../../assets/softinsabranco.svg';
@@ -96,6 +96,9 @@ const Sidebar = () => {
             </NavLink>
             <NavLink className={location.pathname === "/eventos" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/eventos" onClick={handleDrawerClose}>
               <MdEvent className='icone' /> Eventos
+            </NavLink>
+            <NavLink className={location.pathname === "/albuns" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/albuns" onClick={handleDrawerClose}>
+              <IoMdPhotos className='icone' /> Álbuns
             </NavLink>
             <NavLink className={location.pathname === "/notificacoes" ? "menu-item text-white mb-4 d-block text-start active" : "menu-item text-white mb-4 d-block text-start"} to="/notificacoes" onClick={handleDrawerClose}>
               <ContadorNotificacoes className='icone' /> Notificações

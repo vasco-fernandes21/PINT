@@ -26,7 +26,11 @@ const FotoAlbum = sequelize.define('FotoAlbum', {
         }
     },
     foto: DataTypes.STRING,
-    descricao: DataTypes.STRING,
+    descricao: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'Sem descrição'
+    },
     data: {
         type: DataTypes.DATE,
         allowNull: false,

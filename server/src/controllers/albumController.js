@@ -129,6 +129,9 @@ exports.editarAlbum = async (req, res) => {
 exports.apagarAlbum = async (req, res) => {
     try {
         const { id } = req.params;
+        // Apagar todas as fotos do álbum
+        await FotoAlbum.destroy({ where: { idAlbum: id } });
+        // Apagar o álbum
         const data = await Album.destroy({ where: { id } });
         res.json({
             success: true,
