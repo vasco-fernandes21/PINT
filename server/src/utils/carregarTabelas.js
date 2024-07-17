@@ -464,11 +464,11 @@ for (let eventoIndex = 1; eventoIndex <= 22; eventoIndex++) {
 }
 
 const Albuns = [
-  {nome:'teste', descricao:'teste', foto:'cuf.jpg' ,idAdmin: 1, idCriador: 1, estado: 1, idArea: 1, idPosto: 1, estado: true},
+  {nome:'Viseu XMAS Run 2023', descricao:'Em 2023, o Viseu XMAS RUN trouxe o espírito natalício às ruas e avenidas da Cidade-Jardim!', foto:'corrida.png' ,idAdmin: 1, idCriador: 1,  idArea: 2, idPosto: 1, estado: true},
 ]
 
 const FotosAlbum = [
-  { idAlbum: 1, foto: 'cuf.jpg', idCriador: 1, descricao: 'teste', estado: false},
+  { idAlbum: 1, foto: 'natal.png', idCriador: 1, descricao: 'teste', estado: true},
 ]
 
 

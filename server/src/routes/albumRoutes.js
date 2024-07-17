@@ -8,6 +8,8 @@ const auth = require('../middlewares/decodeJWT');
 
 router.get('/validar', albumController.albumsFalse);
 router.put('/:id/validar', albumController.validarAlbum);
+router.get('/validar/fotos', albumController.fotosFalse);
+router.put('/validar/fotos/:id', albumController.validarFoto);
 
 router.get('/', albumController.listarAlbums);
 router.get('/:id', albumController.getAlbum);

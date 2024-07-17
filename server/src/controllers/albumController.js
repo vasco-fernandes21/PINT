@@ -249,3 +249,41 @@ exports.validarAlbum = async (req, res) => {
         });
     }
 }
+
+exports.fotosFalse = async (req, res) => {
+    try {
+        const data = await FotoAlbum.findAll({
+            where: { estado: false },
+            include: [{
+                model: Album, // Ensure 'Album' is imported and available
+                attributes: ['nome'], // Assuming the album name field is 'name'
+            }]
+        });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+};
+
+exports.validarFoto = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = await FotoAlbum.update({ estado: true }, { where: { id } });
+        res.json({
+            success: true,
+            data: data,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            error: 'Erro: ' + err.message,
+        });
+    }
+}
+
