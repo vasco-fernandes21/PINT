@@ -3,33 +3,33 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from '../api/api';
 import { IconButton, Dialog, DialogActions, DialogTitle, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
-const ValidacaoAlbum = () => {
-  const [albuns, setAlbuns] = useState([]);
+const ValidacaoFotoAlbum = () => {
+  const [fotos, setFotos] = useState([]);
   const [open, setOpen] = useState(false); // Estado para controlar a abertura do diálogo
-  const [albumSelecionado, setAlbumSelecionado] = useState(null); // Estado para armazenar o álbum selecionado
+  const [fotoSelecionada, setFotoSelecionada] = useState(null); // Estado para armazenar a foto selecionada
 
   useEffect(() => {
-    fetchAlbuns();
+    fetchFotos();
   }, []);
 
-  const fetchAlbuns = async () => {
+  const fetchFotos = async () => {
     try {
-      const response = await api.get('/album/validar');
+      const response = await api.get('/fotos/validar');
       if (response.data.success && Array.isArray(response.data.data)) {
-        setAlbuns(response.data.data);
+        setFotos(response.data.data);
       } else {
         console.error('Erro: a resposta da API não é um array');
       }
     } catch (error) {
-      console.error('Erro ao buscar álbuns:', error);
+      console.error('Erro ao buscar fotos:', error);
     }
   };
 
   const handleClickOpen = (row) => {
-    setAlbumSelecionado(row); // Armazena o álbum selecionado
+    setFotoSelecionada(row); // Armazena a foto selecionada
     setOpen(true); // Abre o diálogo
   };
 
@@ -41,7 +41,7 @@ const ValidacaoAlbum = () => {
     handleClose(); // Fecha o diálogo
     Swal.fire({
       title: 'Tem certeza?',
-      text: 'Deseja realmente validar este álbum?',
+      text: 'Deseja realmente validar esta foto?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#1d324f',
@@ -50,20 +50,20 @@ const ValidacaoAlbum = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const id = albumSelecionado.id; 
-          await api.put(`/album/${id}/validar`);
-          fetchAlbuns(); // Atualiza a lista de álbuns após a alteração
+          const id = fotoSelecionada.id; 
+          await api.put(`/fotos/${id}/validar`);
+          fetchFotos(); // Atualiza a lista de fotos após a alteração
           Swal.fire({
             title: 'Validado!',
-            text: 'O álbum foi validado com sucesso.',
+            text: 'A foto foi validada com sucesso.',
             icon: 'success',
             confirmButtonColor: '#1d324f',
           });
         } catch (error) {
-          console.error('Erro ao validar o álbum:', error);
+          console.error('Erro ao validar a foto:', error);
           Swal.fire({
             title: 'Erro',
-            text: 'Erro ao validar o álbum. Por favor, tente novamente.',
+            text: 'Erro ao validar a foto. Por favor, tente novamente.',
             icon: 'error',
             confirmButtonColor: '#1d324f',
           });
@@ -76,7 +76,7 @@ const ValidacaoAlbum = () => {
     handleClose(); // Fecha o diálogo
     Swal.fire({
       title: 'Tem certeza?',
-      text: 'Deseja realmente recusar este álbum?',
+      text: 'Deseja realmente recusar esta foto?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#1d324f',
@@ -85,20 +85,20 @@ const ValidacaoAlbum = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const id = albumSelecionado.id; 
-          await api.delete(`/album/${id}`);
-          fetchAlbuns();
+          const id = fotoSelecionada.id; 
+          await api.delete(`/fotos/${id}`);
+          fetchFotos();
           Swal.fire({
             title: 'Recusado!',
-            text: 'O álbum foi recusado com sucesso.',
+            text: 'A foto foi recusada com sucesso.',
             icon: 'success',
             confirmButtonColor: '#1d324f',
           });
         } catch (error) {
-          console.error('Erro ao recusar o álbum:', error);
+          console.error('Erro ao recusar a foto:', error);
           Swal.fire({
             title: 'Erro',
-            text: 'Erro ao recusar o álbum. Por favor, tente novamente.',
+            text: 'Erro ao recusar a foto. Por favor, tente novamente.',
             icon: 'error',
             confirmButtonColor: '#1d324f',
           });
@@ -110,22 +110,22 @@ const ValidacaoAlbum = () => {
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
-      field: 'titulo',
-      headerName: 'Título',
+      field: 'albumTitulo',
+      headerName: 'Álbum',
       width: 200,
       renderCell: (params) => (
-        <Link to={`/albuns/${params.row.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-          {params.row.titulo || 'Título não disponível'}
+        <Link to={`/albuns/${params.row.albumId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {params.row.albumTitulo || 'Título não disponível'}
         </Link>
       ),
     },
     {
-      field: 'fotoPrincipal',
+      field: 'foto',
       headerName: 'Foto',
       width: 200,
       renderCell: (params) => (
-        <a href={`${process.env.REACT_APP_API_URL}/uploads/albuns/${params.row.fotoPrincipal}`} target="_blank" rel="noopener noreferrer">
-          <img src={`${process.env.REACT_APP_API_URL}/uploads/albuns/${params.row.fotoPrincipal}`} alt="Foto Principal" style={{ width: 100, height: 100, objectFit: 'cover' }} />
+        <a href={`${process.env.REACT_APP_API_URL}/uploads/fotos/${params.row.foto}`} target="_blank" rel="noopener noreferrer">
+          <img src={`${process.env.REACT_APP_API_URL}/uploads/fotos/${params.row.foto}`} alt="Foto" style={{ width: 100, height: 100, objectFit: 'cover' }} />
         </a>
       ),
     },
@@ -152,12 +152,13 @@ const ValidacaoAlbum = () => {
     },
   ];
 
-  const rows = albuns.map((album) => ({
-    id: album.id,
-    titulo: album.nome,
-    fotoPrincipal: album.foto,
-    descricao: album.descricao,
-    estado: album.estado,
+  const rows = fotos.map((foto) => ({
+    id: foto.id,
+    albumId: foto.albumId,
+    albumTitulo: foto.albumTitulo,
+    foto: foto.foto,
+    descricao: foto.descricao,
+    estado: foto.estado,
   }));
 
   return (
@@ -170,7 +171,7 @@ const ValidacaoAlbum = () => {
         disableSelectionOnClick
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Validar Álbum</DialogTitle>
+        <DialogTitle>Validar Foto</DialogTitle>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleRecusar} color="error">
@@ -185,4 +186,4 @@ const ValidacaoAlbum = () => {
   );
 };
 
-export default ValidacaoAlbum;
+export default ValidacaoFotoAlbum;
