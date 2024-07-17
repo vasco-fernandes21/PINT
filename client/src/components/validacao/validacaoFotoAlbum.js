@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 
 const ValidacaoFotoAlbum = () => {
   const [fotos, setFotos] = useState([]);
-  const [open, setOpen] = useState(false); // Estado para controlar a abertura do diálogo
-  const [fotoSelecionada, setFotoSelecionada] = useState(null); // Estado para armazenar a foto selecionada
+  const [open, setOpen] = useState(false);
+  const [fotoSelecionada, setFotoSelecionada] = useState(null);
 
   useEffect(() => {
     fetchFotos();
@@ -17,8 +17,9 @@ const ValidacaoFotoAlbum = () => {
 
   const fetchFotos = async () => {
     try {
-      const response = await api.get('/fotos/validar');
+      const response = await api.get('/albuns/validar/fotos');
       if (response.data.success && Array.isArray(response.data.data)) {
+        console.log('Fotos recebidas:', response.data.data);
         setFotos(response.data.data);
       } else {
         console.error('Erro: a resposta da API não é um array');
@@ -29,16 +30,16 @@ const ValidacaoFotoAlbum = () => {
   };
 
   const handleClickOpen = (row) => {
-    setFotoSelecionada(row); // Armazena a foto selecionada
-    setOpen(true); // Abre o diálogo
+    setFotoSelecionada(row);
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false); // Fecha o diálogo
+    setOpen(false);
   };
 
-  const handleValidar = () => {
-    handleClose(); // Fecha o diálogo
+  const handleValidar = async () => {
+    handleClose();
     Swal.fire({
       title: 'Tem certeza?',
       text: 'Deseja realmente validar esta foto?',
@@ -50,9 +51,9 @@ const ValidacaoFotoAlbum = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const id = fotoSelecionada.id; 
-          await api.put(`/fotos/${id}/validar`);
-          fetchFotos(); // Atualiza a lista de fotos após a alteração
+          const id = fotoSelecionada.id;
+          await api.put(`/albuns/validar/fotos/${id}`);
+          fetchFotos();
           Swal.fire({
             title: 'Validado!',
             text: 'A foto foi validada com sucesso.',
@@ -72,8 +73,8 @@ const ValidacaoFotoAlbum = () => {
     });
   };
 
-  const handleRecusar = () => {
-    handleClose(); // Fecha o diálogo
+  const handleRecusar = async () => {
+    handleClose();
     Swal.fire({
       title: 'Tem certeza?',
       text: 'Deseja realmente recusar esta foto?',
@@ -81,11 +82,11 @@ const ValidacaoFotoAlbum = () => {
       showCancelButton: true,
       confirmButtonColor: '#1d324f',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Sim, Recusar',
+      confirmButtonText: 'Sim, recusar',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const id = fotoSelecionada.id; 
+          const id = fotoSelecionada.id;
           await api.delete(`/fotos/${id}`);
           fetchFotos();
           Swal.fire({
@@ -114,8 +115,8 @@ const ValidacaoFotoAlbum = () => {
       headerName: 'Álbum',
       width: 200,
       renderCell: (params) => (
-        <Link to={`/albuns/${params.row.albumId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-          {params.row.albumTitulo || 'Título não disponível'}
+        <Link to={`/albuns/${params.row.idAlbum}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {params.row.album ? params.row.album.nome : 'Título não disponível'}
         </Link>
       ),
     },
@@ -135,12 +136,6 @@ const ValidacaoFotoAlbum = () => {
       width: 250,
     },
     {
-      field: 'estado',
-      headerName: 'Estado',
-      width: 100,
-      type: 'boolean',
-    },
-    {
       field: 'actions',
       headerName: 'Ações',
       width: 150,
@@ -154,11 +149,10 @@ const ValidacaoFotoAlbum = () => {
 
   const rows = fotos.map((foto) => ({
     id: foto.id,
-    albumId: foto.albumId,
-    albumTitulo: foto.albumTitulo,
+    idAlbum: foto.idAlbum,
+    album: foto.album,
     foto: foto.foto,
     descricao: foto.descricao,
-    estado: foto.estado,
   }));
 
   return (
