@@ -78,7 +78,7 @@ const utilizadores = [
   },
   {
     nome: 'Ricardo Pombo',
-    email: 'teste@email.com',
+    email: 'pombo@email.com',
     palavra_passe: '$2a$10$uD0hKNj4bXFQMtmB4XCNe.7scC5pkgddQvdYySm22nAPV0voT3ozO',
     estado: true,
     isAdmin: true,

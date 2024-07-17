@@ -17,12 +17,12 @@ const Preco = sequelize.define('Preco', {
     },
     preco: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false
+        allowNull: false,
     },
     estado: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: true
     }
 }, {
     freezeTableName: true,

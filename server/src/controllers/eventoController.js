@@ -243,7 +243,7 @@ exports.CriarEventoMobile = async (req, res) => {
         });
 
         // Notificação para o criador do evento
-        const notificacaoCriador = await Notificacao.create({
+        const notificacao = await Notificacao.create({
             idUtilizador: idCriador,
             titulo: 'Evento Enviado para Validação',
             descricao: `O seu evento, ${titulo}, foi criado e enviado para validação.`,
@@ -259,26 +259,13 @@ exports.CriarEventoMobile = async (req, res) => {
             whereClause.idSubarea = idSubarea;
         }
         
-        const utilizadores = await Utilizador.findAll({
-            where: whereClause
-        });
 
-        const notificacoes = await Promise.all(utilizadores.map(utilizador => {
-            return Notificacao.create({
-                idUtilizador: utilizador.id,
-                titulo: 'Novo Evento Criado',
-                descricao: `Um novo evento, ${titulo}, foi criado na sua área de interesse!`,
-                estado: false, 
-                data: new Date()
-            });
-        }));
 
         res.status(200).json({
             success: true,
             message: 'Evento criado com sucesso, notificação enviada ao criador e notificações enviadas aos utilizadores!',
             data: newEvento,
-            notificacaoCriador: notificacaoCriador,
-            notificacoes: notificacoes 
+            notificacao: notificacao,
         });
     } catch (error) {
         console.log('Error: ', error);

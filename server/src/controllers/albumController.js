@@ -28,16 +28,10 @@ exports.criarAlbum = async (req, res) => {
         // Verificar se `req.file` está disponível
         const foto = req.file ? req.file.filename : null;
 
-        // Verificar se `req.user` está definido e tem as propriedades esperadas
-        if (!req.user || !req.user.id || !req.user.idPosto) {
-            return res.status(400).json({
-                success: false,
-                error: 'Usuário não autenticado ou informações do usuário estão ausentes.',
-            });
-        }
-
-        const idCriador = req.user.id;
-        const idPosto = req.user.idPosto;
+        const idCriador = req.user ? req.user.id : null;
+        const bodyIdPosto = req.body ? req.body.idPosto : null;
+        const tokenIdPosto = req.user ? req.user.idPosto : null;
+        const idPosto = bodyIdPosto || tokenIdPosto || 1;
 
         // Criar o álbum no banco de dados
         const data = await Album.create({ nome, descricao, foto, idArea, idCriador, idPosto });

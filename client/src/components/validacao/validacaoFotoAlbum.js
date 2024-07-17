@@ -103,7 +103,7 @@ const ValidacaoFotoAlbum = () => {
       if (result.isConfirmed) {
         try {
           const id = fotoSelecionada.id;
-          await api.delete(`/fotos/${id}`);
+          await api.delete(`/album/${id}/fotos`);
           fetchFotos();
           Swal.fire({
             title: 'Recusado!',

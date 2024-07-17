@@ -5,7 +5,7 @@ const auth = require('../middlewares/decodeJWT');
 
 router.get('/', denunciaController.listarDenuncias);
 router.post('/', auth, denunciaController.criarDenuncia);
-router.post('/validar/:id', denunciaController.validarDenuncia);
+router.put('/validar/:id', denunciaController.validarDenuncia);
 router.delete('/:id', denunciaController.apagarDenuncia);
 
 module.exports = router;

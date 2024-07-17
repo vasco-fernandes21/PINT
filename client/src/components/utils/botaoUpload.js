@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@mui/material';
 import api from '../api/api';
+import Swal from 'sweetalert2';
 
 const BotaoUpload = ({ tipo, id, idUtilizador, updateFotos }) => {
     const handleFileChange = async (event) => {
@@ -20,6 +21,12 @@ const BotaoUpload = ({ tipo, id, idUtilizador, updateFotos }) => {
                 if (response.status === 200) {
                     console.log('Foto enviada com sucesso:', response.data);
                     updateFotos();
+                    Swal.fire({
+                        title: 'Sucesso!',
+                        text: 'Foto enviada para validação com sucesso.',
+                        icon: 'success',
+                        confirmButtonColor: '#1d324f',
+                    });
                 } else {
                     throw new Error('Falha ao enviar foto');
                 }
