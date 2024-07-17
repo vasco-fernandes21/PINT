@@ -3,69 +3,68 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from '../api/api';
 import { IconButton, Dialog, DialogActions, DialogTitle, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
-const ValidacaoFotoEvento = () => {
-  const [eventos, setEventos] = useState([]);
-  const [open, setOpen] = useState(false); // Estado para controlar a abertura do diálogo
-  const [eventoSelecionado, setEventoSelecionado] = useState(null); // Estado para armazenar o evento selecionado
+const ValidacaoFotoAlbum = () => {
+  const [fotos, setFotos] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [fotoSelecionada, setFotoSelecionada] = useState(null);
 
   useEffect(() => {
-    fetchEventos();
+    fetchFotos();
   }, []);
 
-  const fetchEventos = async () => {
+  const fetchFotos = async () => {
     try {
-      const response = await api.get('/estatistica/foto-evento');
+      const response = await api.get('/album/validar/fotos');
+      console.log(response); // Debugging: Log the response
       if (response.data.success && Array.isArray(response.data.data)) {
-        setEventos(response.data.data);
+        setFotos(response.data.data);
       } else {
         console.error('Erro: a resposta da API não é um array');
       }
     } catch (error) {
-      console.error('Erro ao procurar eventos de validação de foto:', error);
+      console.error('Erro ao buscar fotos:', error);
     }
   };
 
   const handleClickOpen = (row) => {
-    setEventoSelecionado(row); // Armazena o evento selecionado
-    setOpen(true); // Abre o diálogo
+    setFotoSelecionada(row);
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false); // Fecha o diálogo
+    setOpen(false);
   };
 
   const handleValidar = async () => {
-    handleClose(); // Fecha o diálogo para vermos o alerta
-    // Exibe um diálogo de confirmação
+    handleClose();
     Swal.fire({
       title: 'Tem certeza?',
-      text: 'Deseja realmente validar esta foto do evento?',
+      text: 'Deseja realmente validar esta foto?',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#1d324f', 
-      cancelButtonColor: '#6c757d', 
+      confirmButtonColor: '#1d324f',
+      cancelButtonColor: '#6c757d',
       confirmButtonText: 'Sim, validar',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const id = eventoSelecionado.id;
-          await api.put(`/estatistica/foto-evento/${id}`);
-          handleClose();
-          fetchEventos(); 
+          const id = fotoSelecionada.id;
+          await api.put(`/album/validar/fotos/${id}`);
+          fetchFotos();
           Swal.fire({
             title: 'Validado!',
-            text: 'A foto do evento foi validada com sucesso.',
+            text: 'A foto foi validada com sucesso.',
             icon: 'success',
             confirmButtonColor: '#1d324f',
           });
         } catch (error) {
-          console.error('Erro ao validar a foto do evento:', error);
+          console.error('Erro ao validar a foto:', error);
           Swal.fire({
             title: 'Erro',
-            text: 'Erro ao validar a foto do evento. Por favor, tente novamente.',
+            text: 'Erro ao validar a foto. Por favor, tente novamente.',
             icon: 'error',
             confirmButtonColor: '#1d324f',
           });
@@ -74,11 +73,11 @@ const ValidacaoFotoEvento = () => {
     });
   };
 
-  const handleRecusar = () => {
-    handleClose(); // Fecha o diálogo para vermos o alerta
+  const handleRecusar = async () => {
+    handleClose();
     Swal.fire({
       title: 'Tem certeza?',
-      text: 'Deseja realmente recusar esta foto do evento?',
+      text: 'Deseja realmente recusar esta foto?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#1d324f',
@@ -87,19 +86,23 @@ const ValidacaoFotoEvento = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const id = eventoSelecionado.id; 
-          await api.delete(`/estatistica/foto-evento/${id}`);
-          handleClose();
-          fetchEventos();
+          const id = fotoSelecionada.id;
+          await api.delete(`/fotos/${id}`);
+          fetchFotos();
           Swal.fire({
             title: 'Recusado!',
-            text: 'A foto do evento foi recusada com sucesso.',
+            text: 'A foto foi recusada com sucesso.',
             icon: 'success',
             confirmButtonColor: '#1d324f',
           });
         } catch (error) {
-          console.error('Erro ao recusar a foto do evento:', error);
-          Swal.fire('Erro', 'Erro ao recusar a foto do evento. Por favor, tente novamente.', 'error');
+          console.error('Erro ao recusar a foto:', error);
+          Swal.fire({
+            title: 'Erro',
+            text: 'Erro ao recusar a foto. Por favor, tente novamente.',
+            icon: 'error',
+            confirmButtonColor: '#1d324f',
+          });
         }
       }
     });
@@ -108,12 +111,12 @@ const ValidacaoFotoEvento = () => {
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
-      field: 'evento',
-      headerName: 'Evento',
+      field: 'albumTitulo',
+      headerName: 'Álbum',
       width: 200,
       renderCell: (params) => (
-        <Link to={`/eventos/${params.row.idEvento}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-          {params.value}
+        <Link to={`/album/${params.row.idAlbum}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {params.row.Album.nome || 'Título não disponível'}
         </Link>
       ),
     },
@@ -122,14 +125,20 @@ const ValidacaoFotoEvento = () => {
       headerName: 'Foto',
       width: 200,
       renderCell: (params) => (
-        <a href={`${process.env.REACT_APP_API_URL}/uploads/eventos/${params.value}`} target="_blank" rel="noopener noreferrer">
-          Ver Foto
+        <a href={`${process.env.REACT_APP_API_URL}/uploads/fotos/${params.row.foto}`} target="_blank" rel="noopener noreferrer">
+          <img src={`${process.env.REACT_APP_API_URL}/uploads/fotos/${params.row.foto}`} alt="Foto" style={{ width: 100, height: 100, objectFit: 'cover' }} />
         </a>
       ),
     },
     {
+      field: 'descricao',
+      headerName: 'Descrição',
+      width: 250,
+    },
+    {
       field: 'actions',
       headerName: 'Ações',
+      width: 150,
       renderCell: (params) => (
         <IconButton color="primary" onClick={() => handleClickOpen(params.row)}>
           <EditIcon />
@@ -138,11 +147,12 @@ const ValidacaoFotoEvento = () => {
     },
   ];
 
-  const rows = eventos.map((evento) => ({
-    ...evento,
-    id: evento.id,
-    evento: evento?.evento?.titulo,
-    foto: evento.foto,
+  const rows = fotos.map((foto) => ({
+    id: foto.id,
+    idAlbum: foto.idAlbum,
+    Album: foto.Album,
+    foto: foto.foto,
+    descricao: foto.descricao,
   }));
 
   return (
@@ -155,7 +165,7 @@ const ValidacaoFotoEvento = () => {
         disableSelectionOnClick
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Validar Foto do Evento</DialogTitle>
+        <DialogTitle>Validar Foto</DialogTitle>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleRecusar} color="error">
@@ -170,4 +180,4 @@ const ValidacaoFotoEvento = () => {
   );
 };
 
-export default ValidacaoFotoEvento;
+export default ValidacaoFotoAlbum;
